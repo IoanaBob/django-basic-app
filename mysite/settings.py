@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
+    'django.contrib.sites',
+    'voting_system',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -77,15 +78,40 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'mysite',
-        'USER': 'ioana',
-        'PASSWORD': 'ioana',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'admin',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'voterauth': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'voterAuth',
+        'USER': 'voterauth',
+        'PASSWORD': 'voterauth',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'region1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'region1',
+        'USER': 'region1',
+        'PASSWORD': 'region1',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'region2': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'region2',
+        'USER': 'region2',
+        'PASSWORD': 'region2',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
+DATABASE_ROUTERS = ['voting_system.routers.dbRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
