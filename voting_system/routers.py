@@ -9,7 +9,7 @@ class dbRouter(object):
         """
         if model._meta.app_label == 'admin':
             return 'default'
-        elif model._meta.app_label == 'authv':
+        elif model._meta.app_label == 'auth':
             return 'voterauth'
         elif model._meta.app_label == 'reg1':
             return 'region1'
@@ -23,7 +23,7 @@ class dbRouter(object):
         """
         if model._meta.app_label == 'admin':
             return 'default'
-        elif model._meta.app_label == 'authv':
+        elif model._meta.app_label == 'auth':
             return 'voterauth'
         elif model._meta.app_label == 'reg1':
             return 'region1'
@@ -38,8 +38,8 @@ class dbRouter(object):
         if obj1._meta.app_label == 'admin' or \
            obj2._meta.app_label == 'admin':
            return True
-        if obj1._meta.app_label == 'authv' or \
-           obj2._meta.app_label == 'authv':
+        if obj1._meta.app_label == 'auth' or \
+           obj2._meta.app_label == 'auth':
            return True
         if obj1._meta.app_label == 'reg1' or \
            obj2._meta.app_label == 'reg1':
@@ -56,7 +56,7 @@ class dbRouter(object):
         """
         if app_label == 'admin':
             return db == 'default'
-        if app_label == 'authv':
+        if app_label == 'auth':
             return db == 'voterauth'
         if app_label == 'reg1':
             return db == 'region1'

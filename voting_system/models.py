@@ -8,7 +8,7 @@ class Test(models.Model):
     def __str__(self):
         return self.ID
     class Meta:
-    	app_label = 'authv'
+    	app_label = 'auth'
 
 '''
 class Admin(models.Model):
