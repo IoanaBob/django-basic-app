@@ -20,22 +20,38 @@ class Admin(models.Model):
     firstName = models.CharField(max_length=45)
     lastName = models.CharField(max_length=45)
     userName = models.CharField(max_length=30)
-    password_hash = models.CharField()
+    password_hash = models.CharField(max_length=300)
     email = models.CharField(max_length=60)
+    # foreign key
+    roles = models.ManyToManyField(Role)
+    class Meta:
+        db_table = 'admins'
+        app_label = 'admin'
 
 class Role(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'roles'
+        app_label = 'admin'
 
 class Party(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'parties'
+        app_label = 'admin'
 
 class Candidate(models.Model):
     id = models.IntegerField(primary_key=True)
     firstName = models.CharField(max_length=45)
     lastName = models.CharField(max_length=45)
     email = models.CharField(max_length=60)
+    # foreign key
+    candidate = models.ForeignKey(Party, on_delete=models.CASCADE, db_column='candidate_id')
+    class Meta:
+        db_table = 'candidates'
+        app_label = 'admin'
 
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -44,18 +60,33 @@ class Election(models.Model):
     #uninominal or secret voting =>
     # if uninominal true, if secret false
     uninominalVoting = models.BooleanField()
+    #foreign keys
+    parties = models.ManyToManyField(Party)
+    candidates = models.ManyToManyField(Candidate)
+    class Meta:
+        db_table = 'elections'
+        app_label = 'admin'
 
 class VoterCode(models.Model):
     id = models.IntegerField(primary_key=True)
     verifiedDate = models.DateTimeField()
     invalidatedDate = models.DateTimeField()
     registeredNumber = models.IntegerField()
-    # should set up minumum = maximum length here => I put 15
-    code = models.CharField(min_length=15, max_length=15)
+    # should set up minumum = maximum length here 
+    code = models.CharField(max_length=15)
+    # foreign keys
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'voter_codes'
+        app_label = 'admin'
 
 class Region(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'regions'
+        app_label = 'admin'
 
 
 #################################
@@ -65,7 +96,10 @@ class Region(models.Model):
 class VoterAuth(models.Model):
     id = models.IntegerField(primary_key=True)
     regionNumber = models.IntegerField()
-    password_hash = models.CharField()
+    password_hash = models.CharField(max_length=300)
+    class Meta:
+        db_table = 'voter_auth'
+        app_label = 'auth'
 
 
 ########################################################
@@ -84,6 +118,7 @@ class Region1Name(models.Model):
     candidateCount = models.IntegerField()
 
     class Meta:
+        db_table = 'region1_name'
         app_label = 'reg1'
 
 class Region2Name(models.Model):
@@ -93,6 +128,7 @@ class Region2Name(models.Model):
     candidateCount = models.IntegerField()
 
     class Meta:
+        db_table = 'region2_name'
         app_label = 'reg2'
 
 
