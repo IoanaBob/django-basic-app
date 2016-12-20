@@ -75,8 +75,8 @@ class VoterCode(models.Model):
     # should set up minumum = maximum length here 
     code = models.CharField(max_length=15)
     # foreign keys
-    election = models.ForeignKey(Election, on_delete=models.CASCADE)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, db_column='elecion_id')
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, db_column='region_id')
     class Meta:
         db_table = 'voter_codes'
         app_label = 'admin'
@@ -132,6 +132,7 @@ class Region2Name(models.Model):
         app_label = 'reg2'
 
 
+# sample model, will be deleted later
 '''
 class Admin(models.Model):
     author = models.ForeignKey('auth.User')
