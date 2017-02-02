@@ -74,6 +74,7 @@ class Election(models.Model):
     #foreign keys
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')
+    regions = models.ManyToManyField(Candidate, through='ElectionRegion')
     class Meta:
         db_table = 'elections'
         app_label = 'admin'
@@ -94,13 +95,23 @@ class ElectionCandidate(models.Model):
         db_table = 'election_candidates'
         app_label = 'admin'
 
+class ElectionRegion(models.Model):
+    id = models.IntegerField(primary_key=True)
+    election = models.ForeignKey(Election, db_column='election_id')
+    region = models.ForeignKey(Party, db_column='region_id')
+    class Meta:
+        db_table = 'election_regions'
+        app_label = 'admin'
+
 class VoterCode(models.Model):
     id = models.IntegerField(primary_key=True)
     verified_date = models.DateTimeField()
     invalidated_date = models.DateTimeField()
-    registered_number = models.CharField()
     # should set up minumum = maximum length here 
     code = models.CharField(max_length=15)
+    #default false
+    # TODO: modify in the DB too!!
+    vote_status = models.BooleanField()
     # foreign keys
     election = models.ForeignKey(Election, on_delete=models.CASCADE, db_column='election_id')
     region = models.ForeignKey(Region, on_delete=models.CASCADE, db_column='region_id')
@@ -111,6 +122,7 @@ class VoterCode(models.Model):
 class Region(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
+    elections = models.ManyToManyField(Candidate, through='ElectionRegion')
     class Meta:
         db_table = 'regions'
         app_label = 'admin'
@@ -122,7 +134,7 @@ class Region(models.Model):
 
 class VoterAuth(models.Model):
     id = models.IntegerField(primary_key=True)
-    registration_number = models.IntegerField()
+    voter_code_number = models.IntegerField()
     password_hash = models.CharField(max_length=300)
     class Meta:
         db_table = 'voter_auth'
@@ -157,24 +169,3 @@ class Region2Votes(models.Model):
     class Meta:
         db_table = 'region2_votes'
         app_label = 'reg2'
-
-
-# sample model, will be deleted later
-'''
-class Admin(models.Model):
-    author = models.ForeignKey('auth.User')
-    title = models.CharField(max_length=200)
-    text = models.TextField()
-    created_date = models.DateTimeField(
-            default=timezone.now)
-    published_date = models.DateTimeField(
-            blank=True, null=True)
-
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
-
-    def __str__(self):
-        return self.title
-# Create your models here.
-'''
