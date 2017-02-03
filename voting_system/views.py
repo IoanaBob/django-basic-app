@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from .models import *
+from voting_system.models.region import Region
+from voting_system.models.test import Test
 from .forms import TestForm
 from django.shortcuts import redirect, render, get_object_or_404
 

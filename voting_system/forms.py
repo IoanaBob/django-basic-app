@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Test
+from voting_system.models.test import Test
 
 class TestForm(forms.ModelForm):
 
