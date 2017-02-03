@@ -15,6 +15,13 @@ class Test(models.Model):
 ### admin database tables ###
 #############################
 
+class Role(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'roles'
+        app_label = 'admin'
+
 class Admin(models.Model):
     id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=45)
@@ -26,13 +33,6 @@ class Admin(models.Model):
     roles = models.ManyToManyField(Role, through='AdminRole')
     class Meta:
         db_table = 'admins'
-        app_label = 'admin'
-
-class Role(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
-    class Meta:
-        db_table = 'roles'
         app_label = 'admin'
 
 class AdminRole(models.Model):
