@@ -10,4 +10,7 @@ urlpatterns = [
     #these are for the beginning test db, leave them here for now
     url(r'^test/$', views.test, name='test'),
     url(r'^post/new/$', views.post_new, name='post_new'),
+
+    #admin interface
+    url(r'^regions/$', views.regions, name='regions'),
 ]

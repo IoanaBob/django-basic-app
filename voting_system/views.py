@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Test
+from .models import *
 from .forms import TestForm
 from django.shortcuts import redirect, render, get_object_or_404
 
@@ -20,3 +20,7 @@ def post_new(request):
     else:
         form = TestForm()
     return render(request, 'voting_system/post_edit.html', {'form': form})
+
+def regions(request):
+    regions = Region.objects.all()
+    return render(request, 'admin_interface/regions.html', {'regions': regions})
