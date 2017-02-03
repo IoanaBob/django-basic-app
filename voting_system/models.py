@@ -22,6 +22,32 @@ class Role(models.Model):
         db_table = 'roles'
         app_label = 'admin'
 
+class Party(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=30)
+    class Meta:
+        db_table = 'parties'
+        app_label = 'admin'
+
+class Candidate(models.Model):
+    id = models.IntegerField(primary_key=True)
+    first_name = models.CharField(max_length=45)
+    last_name = models.CharField(max_length=45)
+    email = models.CharField(max_length=60)
+    # foreign key
+    party = models.ForeignKey(Party, on_delete=models.CASCADE, db_column='party_id')
+    class Meta:
+        db_table = 'candidates'
+        app_label = 'admin'
+
+class Region(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=30)
+    elections = models.ManyToManyField(Candidate, through='ElectionRegion')
+    class Meta:
+        db_table = 'regions'
+        app_label = 'admin'
+
 class Admin(models.Model):
     id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=45)
@@ -44,23 +70,7 @@ class AdminRole(models.Model):
         db_table = 'admin_roles'
         app_label = 'admin'
 
-class Party(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
-    class Meta:
-        db_table = 'parties'
-        app_label = 'admin'
 
-class Candidate(models.Model):
-    id = models.IntegerField(primary_key=True)
-    first_name = models.CharField(max_length=45)
-    last_name = models.CharField(max_length=45)
-    email = models.CharField(max_length=60)
-    # foreign key
-    party = models.ForeignKey(Party, on_delete=models.CASCADE, db_column='party_id')
-    class Meta:
-        db_table = 'candidates'
-        app_label = 'admin'
 
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -119,13 +129,7 @@ class VoterCode(models.Model):
         db_table = 'voter_codes'
         app_label = 'admin'
 
-class Region(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
-    elections = models.ManyToManyField(Candidate, through='ElectionRegion')
-    class Meta:
-        db_table = 'regions'
-        app_label = 'admin'
+
 
 
 #################################
