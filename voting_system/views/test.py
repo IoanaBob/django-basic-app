@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from voting_system.models.test import Test
-from voting_system import forms
+from voting_system.models import Test
+from voting_system.forms import TestForm
 from django.shortcuts import redirect, render, get_object_or_404
 
 def test(request):

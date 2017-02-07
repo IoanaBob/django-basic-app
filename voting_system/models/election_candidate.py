@@ -1,5 +1,6 @@
 from django.db import models
-from .models import election, candidate
+from .election import Election
+from .candidate import Candidate
 
 class ElectionCandidate(models.Model):
     id = models.IntegerField(primary_key=True)

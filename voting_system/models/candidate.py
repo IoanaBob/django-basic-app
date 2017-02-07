@@ -1,5 +1,5 @@
 from django.db import models
-from .models import party
+from .party import Party
 
 class Candidate(models.Model):
     id = models.IntegerField(primary_key=True)

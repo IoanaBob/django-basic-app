@@ -1,5 +1,6 @@
 from django.db import models
-from .models import election, region
+from .election import Election
+from .region import Region
 import random
 
 class VoterCode(models.Model):

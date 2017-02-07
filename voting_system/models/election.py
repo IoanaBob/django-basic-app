@@ -1,5 +1,8 @@
 from django.db import models
-from .models import party, candidate, region
+from django.utils import timezone
+from .party import Party
+from .candidate import Candidate
+from .region import Region
 
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)

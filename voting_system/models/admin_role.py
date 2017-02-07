@@ -1,5 +1,5 @@
 from django.db import models
-from .models import admin, role
+from . import Admin, Role
 
 class AdminRole(models.Model):
     id = models.IntegerField(primary_key=True)
