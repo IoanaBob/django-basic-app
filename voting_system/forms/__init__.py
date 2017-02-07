@@ -1,1 +1,1 @@
-from voting_system.forms import *
+from .test_form import *
