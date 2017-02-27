@@ -13,4 +13,8 @@ urlpatterns = [
 
     #admin interface
     url(r'^regions/$', views.regions, name='regions'),
+    url(r'^view_candidates/$', views.candidates, name='candidates'),
+    url(r'^create_candidates/$', views.newCandidate, name='newCandidate'),
+
+
 ]

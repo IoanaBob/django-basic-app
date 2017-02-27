@@ -19,3 +19,4 @@ def post_new(request):
     else:
         form = TestForm()
     return render(request, 'voting_system/post_edit.html', {'form': form})
+

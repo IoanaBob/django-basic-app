@@ -8,6 +8,7 @@ class Candidate(models.Model):
     email = models.CharField(max_length=60)
     # foreign key
     party = models.ForeignKey(Party, on_delete=models.CASCADE, db_column='party_id')
+
     class Meta:
         db_table = 'candidates'
         app_label = 'admin'
