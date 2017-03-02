@@ -13,4 +13,5 @@ urlpatterns = [
 
     #admin interface
     url(r'^regions/$', views.regions, name='regions'),
+    url(r'^regions/populate$', views.populate_regions, name='populate_regions'),
 ]
