@@ -1,10 +1,11 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import Region
 from voting_system.models import Candidate
+from voting_system.models import Role
 from voting_system.forms.candForm import candForm
 from voting_system.models import Election
 from voting_system.forms import ElectionForm
-
+from voting_system.forms.role_form import RoleForm
 
 def populate_regions(request):
     if not Region.objects.all():
@@ -88,3 +89,38 @@ def election_delete(request, id=None):
     return redirect('elections')
 
 
+def roles(request):
+    roles = Role.objects.all()
+    return render(request, 'admin_interface/roles.html', {'roles' : roles})
+
+def role_create(request):
+    if request.method == "POST":
+        form = RoleForm(request.POST)
+        if form.is_valid():
+            role = form.save(commit=False)
+           # role.id = int(request.user)
+            #role.name = request.user
+            role.save()
+            return redirect('roles')
+    else:
+        form = RoleForm()
+    return render(request, 'admin_interface/role_form.html', {'form': form})
+
+def role_edit(request, id=None):
+    role = get_object_or_404(Role, id=id)
+    if request.method == "POST":
+        form = RoleForm(request.POST, instance=role)
+        if form.is_valid():
+            role = form.save(commit=False)
+            #role.id = request.user
+            #role.name = request.user
+            role.save()
+            return redirect('roles')
+    else:
+        form = RoleForm(instance=role)
+    return render(request, 'admin_interface/role_form.html', {'form': form})
+
+def role_delete(request, id=None):
+    role = get_object_or_404(Role, id=id)
+    role.delete()
+    return redirect('roles')

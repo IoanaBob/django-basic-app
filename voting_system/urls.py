@@ -28,6 +28,12 @@ urlpatterns = [
     url(r'^elections/edit/(?P<id>\d+)/$', views.election_edit, name='election_edit'),
     url(r'^elections/delete/(?P<id>\d+)/$', views.election_delete, name='election_delete'),
 
+    # roles pages CRUD
+    url(r'^roles/$', views.roles, name='roles'),
+    url(r'^roles/create/$', views.role_create, name='role_create'),
+    url(r'^roles/edit/(?P<id>\d+)/$', views.role_edit, name='role_edit'),
+    url(r'^roles/delete/(?P<id>\d+)/$', views.role_delete, name='role_delete'),
+
     #voter interface
     url(r'^$', views.homepage, name='homepage'),
 ]
