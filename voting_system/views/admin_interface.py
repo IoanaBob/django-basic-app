@@ -32,7 +32,7 @@ def candidate_create(request):
             return redirect('candidates')
     else:
         form = candForm()
-    return render(request, 'admin_interface/new_candidate.html', {'form': form})
+    return render(request, 'admin_interface/candidate_form.html', {'form': form})
 
 def candidate_edit(request, id=None):
     candidate = get_object_or_404(Candidate, id=id)
@@ -44,7 +44,7 @@ def candidate_edit(request, id=None):
             return redirect('candidates')
     else:
         form = candForm(instance=candidate)
-    return render(request, 'admin_interface/edit_candidate.html', {'form': form})
+    return render(request, 'admin_interface/candidate_form.html', {'form': form})
 
 def candidate_delete(request, id=None):
     candidate = get_object_or_404(Candidate, id=id)
