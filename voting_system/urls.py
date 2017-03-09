@@ -13,8 +13,9 @@ urlpatterns = [
 
     #admin interface
     url(r'^regions/$', views.regions, name='regions'),
-    url(r'^view_candidates/$', views.candidates, name='candidates'),
-    url(r'^create_candidates/$', views.newCandidate, name='newCandidate'),
-
+    url(r'^candidates/$', views.candidates, name='candidates'),
+    url(r'^candidates/create/$', views.newCandidate, name='newCandidate'),
+    url(r'^candidates/edit/(?P<id>\d+)/$', views.editCandidate, name='editCandidates'),
+    url(r'^candidates/delete/(?P<id>\d+)/$', views.deleteCandidate, name='DeleteCandidate'),
 
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import Region
 from voting_system.models import Candidate
-from voting_system.forms import candForm
+from voting_system.forms.candForm import candForm
 
 def regions(request):
     regions = Region.objects.all()
@@ -15,13 +15,34 @@ def newCandidate(request):
     if request.method == "POST":
         form = candForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
-            #post.id = int(request.user)
-            #post.first_name = request.user
-            #post.last_name = request.user
-            #post.email = request.user
-            post.save(using='admin')
+            candidate = form.save(commit=False)
+            #candidate.id = int(request.user)
+            candidate.first_name = request.user
+            candidate.last_name = request.user
+            candidate.email = request.user
+            candidate.save()
             return redirect('candidates')
     else:
         form = candForm()
-    return render(request, 'voting_system/new_candidate.html', {'form': form})
+    return render(request, 'admin_interface/new_candidate.html', {'form': form})
+
+def editCandidate(request, id=None):
+    candidate = get_object_or_404(Candidate, id=id)
+    if request.method == "POST":
+        form = candForm(request.POST, instance=candidate)
+        if form.is_valid():
+            candidate = form.save(commit=False)
+            #candidate.id = int(request.user)
+            candidate.first_name = request.user
+            candidate.last_name = request.user
+            candidate.email = request.user
+            candidate.save()
+            return redirect('candidates')
+    else:
+        form = candForm(instance=candidate)
+    return render(request, 'admin_interface/edit_candidate.html', {'form': form})
+
+def deleteCandidate(request, id=None):
+    candidate = get_object_or_404(Candidate, id=id)
+    candidate.delete()
+    return redirect('candidates')
