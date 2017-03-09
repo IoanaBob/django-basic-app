@@ -16,6 +16,6 @@ urlpatterns = [
     url(r'^elections/$', views.elections, name='elections'),
 	url(r'^elections/create/$', views.election_create, name='election_create'),
     url(r'^elections/edit/$', views.election_edit, name='election_edit'),
-    url(r'^elections/delete/$', views.election_delete, name='election_delete')
-    url(r'^regions/populate$', views.populate_regions, name='populate_regions'),
+    url(r'^elections/delete/$', views.election_delete, name='election_delete'),
+    url(r'^regions/populate$', views.populate_regions, name='populate_regions')
 ]
