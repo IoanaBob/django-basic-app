@@ -15,6 +15,18 @@ urlpatterns = [
     url(r'^regions/$', views.regions, name='regions'),
     url(r'^regions/populate$', views.populate_regions, name='populate_regions'),
 
+    # candidates pages CRUD
+    url(r'^candidates/$', views.candidates, name='candidates'),
+    url(r'^candidates/create/$', views.newCandidate, name='newCandidate'),
+    url(r'^candidates/edit/(?P<id>\d+)/$', views.editCandidate, name='editCandidates'),
+    url(r'^candidates/delete/(?P<id>\d+)/$', views.deleteCandidate, name='DeleteCandidate'),
+
+    # elections pages CRUD
+    url(r'^elections/$', views.elections, name='elections'),
+	url(r'^elections/create/$', views.election_create, name='election_create'),
+    url(r'^elections/edit/$', views.election_edit, name='election_edit'),
+    url(r'^elections/delete/$', views.election_delete, name='election_delete'),
+
     #voter interface
     url(r'^$', views.homepage, name='homepage'),
 ]
