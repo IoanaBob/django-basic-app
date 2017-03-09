@@ -12,7 +12,7 @@ class Election(models.Model):
     # if uninominal voting = true, if party list = false
     uninominal_voting = models.BooleanField()
     # if secret voting, is true
-    secret_voting = models.BooleanField()
+    #secret_voting = models.BooleanField()
     #foreign keys
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')
