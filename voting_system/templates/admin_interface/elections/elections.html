@@ -1,0 +1,26 @@
+<h1>Elections</h1>
+<a href="create/">Create New</a> 
+<table>
+<tr>
+	<th>Election ID</th>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th></th>
+</tr>
+{% for election in elections %}
+<tr>
+	<td>
+    {{ election.id }}
+    </td>
+    <td>
+   	{{ election.start_date }}
+    </td>
+    <td>
+   	{{ election.end_date }}
+    </td>
+    <td>
+   	<a href="edit/{{ election.id }}">edit</a> | <a href="delete/{{ election.id }}">delete</a>
+    </td>
+</tr>
+{% endfor %}
+</table>
