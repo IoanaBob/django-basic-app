@@ -1,7 +1,11 @@
-{% for region in regions %}
-    {{ region.id }}
-    <br>
-    {{ region.name }}
-    <br>
-    <br>
-{% endfor %}
+{% if are_regions == True %}
+	{% for region in regions %}
+	    {{ region.id }}
+	    <br>
+	    {{ region.name }}
+	    <br>
+	    <br>
+	{% endfor %}
+{% else %}
+<a href="{% url 'populate_regions' %}">Populate Table</a>
+{% endif %}
