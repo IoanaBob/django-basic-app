@@ -27,6 +27,11 @@ urlpatterns = [
     url(r'^elections/edit/$', views.election_edit, name='election_edit'),
     url(r'^elections/delete/$', views.election_delete, name='election_delete'),
 
-    #voter interface
+    # voter codes
+    url(r'^voter_codes/$', views.voter_codes, name='voter_codes'),
+    url(r'^voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
+
+
+    # voter interface
     url(r'^$', views.homepage, name='homepage'),
 ]

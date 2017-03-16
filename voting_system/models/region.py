@@ -10,6 +10,9 @@ class Region(models.Model):
         db_table = 'regions'
         app_label = 'admin'
 
+    def __str__(self):
+        return '%s %s' % (self.id, self.name)
+
     def populate_regions():
         region0 = requests.get(url='http://lda.data.parliament.uk/constituencies.json?exists-endedDate=false&_pageSize=400&_page=0').json()
         region1 = requests.get(url='http://lda.data.parliament.uk/constituencies.json?exists-endedDate=false&_pageSize=400&_page=1').json()
