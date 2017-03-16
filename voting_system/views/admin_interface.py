@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
 
-from voting_system.models import Region
-from voting_system.models import Candidate
-from voting_system.models import Election
+from voting_system.models import Region, Candidate, Role, Election
 
 from voting_system.forms import *
 
@@ -42,44 +40,33 @@ def candidates(request):
     candidates = Candidate.objects.all()
     return render(request, 'admin_interface/view_candidates.html', {'candidates': candidates})
 
-def newCandidate(request):
+def candidate_create(request):
     if request.method == "POST":
         form = candForm(request.POST)
         if form.is_valid():
             candidate = form.save(commit=False)
-            #candidate.id = int(request.user)
-            candidate.first_name = request.user
-            candidate.last_name = request.user
-            candidate.email = request.user
             candidate.save()
             return redirect('candidates')
     else:
         form = candForm()
-    return render(request, 'admin_interface/new_candidate.html', {'form': form})
+    return render(request, 'admin_interface/candidate_form.html', {'form': form})
 
-def editCandidate(request, id=None):
+def candidate_edit(request, id=None):
     candidate = get_object_or_404(Candidate, id=id)
     if request.method == "POST":
         form = candForm(request.POST, instance=candidate)
         if form.is_valid():
             candidate = form.save(commit=False)
-            #candidate.id = int(request.user)
-            candidate.first_name = request.user
-            candidate.last_name = request.user
-            candidate.email = request.user
             candidate.save()
             return redirect('candidates')
     else:
         form = candForm(instance=candidate)
-    return render(request, 'admin_interface/edit_candidate.html', {'form': form})
+    return render(request, 'admin_interface/candidate_form.html', {'form': form})
 
-def deleteCandidate(request, id=None):
+def candidate_delete(request, id=None):
     candidate = get_object_or_404(Candidate, id=id)
     candidate.delete()
     return redirect('candidates')
-
-
-
 
 
 def elections(request):
@@ -92,8 +79,6 @@ def election_create(request):
         form = ElectionForm(request.POST)
         if form.is_valid():
             election = form.save(commit=False)
-            #post.ID = int(request.user)
-            #post.name = request.user
             election.save()
             return redirect('elections')
     else:
@@ -101,29 +86,57 @@ def election_create(request):
     return render(request, 'admin_interface/elections/election_form.html', {'form': form})
 
 
-def election_edit(request):
+def election_edit(request, id=None):
+    election = get_object_or_404(Election, id=id)
     if request.method == "POST":
-        form = ElectionForm(request.POST)
+        form = ElectionForm(request.POST, instance=election)
         if form.is_valid():
             election = form.save(commit=False)
-            #post.ID = int(request.user)
-            #post.name = request.user
             election.save()
             return redirect('elections')
     else:
-        form = ElectionForm()
+        form = ElectionForm(instance=election)
     return render(request, 'admin_interface/elections/election_form.html', {'form': form})
 
 
-def election_delete(request):
+def election_delete(request, id=None):
+    election = get_object_or_404(Election, id=id)
+    election.delete()
+    return redirect('elections')
+
+
+def roles(request):
+    roles = Role.objects.all()
+    return render(request, 'admin_interface/roles.html', {'roles' : roles})
+
+def role_create(request):
     if request.method == "POST":
-        form = ElectionForm(request.POST)
+        form = RoleForm(request.POST)
         if form.is_valid():
-            election = form.save(commit=False)
-            #post.ID = int(request.user)
-            #post.name = request.user
-            election.save()
-            return redirect('elections')
+            role = form.save(commit=False)
+           # role.id = int(request.user)
+            #role.name = request.user
+            role.save()
+            return redirect('roles')
     else:
-        form = ElectionForm()
-    return render(request, 'admin_interface/elections/election_form.html', {'form': form})
+        form = RoleForm()
+    return render(request, 'admin_interface/role_form.html', {'form': form})
+
+def role_edit(request, id=None):
+    role = get_object_or_404(Role, id=id)
+    if request.method == "POST":
+        form = RoleForm(request.POST, instance=role)
+        if form.is_valid():
+            role = form.save(commit=False)
+            #role.id = request.user
+            #role.name = request.user
+            role.save()
+            return redirect('roles')
+    else:
+        form = RoleForm(instance=role)
+    return render(request, 'admin_interface/role_form.html', {'form': form})
+
+def role_delete(request, id=None):
+    role = get_object_or_404(Role, id=id)
+    role.delete()
+    return redirect('roles')
