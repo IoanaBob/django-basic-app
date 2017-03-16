@@ -2,7 +2,7 @@ from django import forms
 
 from voting_system.models.candidate import Candidate
 
-class candForm(forms.ModelForm):
+class CandidateForm(forms.ModelForm):
 
     class Meta:
         model = Candidate

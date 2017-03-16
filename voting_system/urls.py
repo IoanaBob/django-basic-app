@@ -17,7 +17,6 @@ urlpatterns = [
 
     # candidates pages CRUD
     url(r'^candidates/$', views.candidates, name='candidates'),
-
     url(r'^candidates/create/$', views.candidate_create, name='candidate_create'),
     url(r'^candidates/edit/(?P<id>\d+)/$', views.candidate_edit, name='candidates_edit'),
     url(r'^candidates/delete/(?P<id>\d+)/$', views.candidate_delete, name='candidate_delete'),
@@ -33,6 +32,10 @@ urlpatterns = [
     url(r'^roles/create/$', views.role_create, name='role_create'),
     url(r'^roles/edit/(?P<id>\d+)/$', views.role_edit, name='role_edit'),
     url(r'^roles/delete/(?P<id>\d+)/$', views.role_delete, name='role_delete'),
+
+    # party pages CRUD
+    url(r'^parties/$', views.party, name='party'),
+    url(r'^parties/create/$', views.party_create, name='party_create'),
 
     #voter interface
     url(r'^$', views.homepage, name='homepage'),
