@@ -1,8 +1,21 @@
 <h1>Roles</h1>
+<a href="create/">Create New</a> 
+<table>
+<tr>
+	<th>Role ID</th>
+    <th>Role name</th>
+</tr>
 {% for role in roles %}
-    {{ roles.id }}
-    <br>
-    {{ roles.name }}
-    <br>
-    <br>
+<tr>
+	<td>
+    {{ role.id }}
+    </td>
+    <td>
+   	{{ role.name }}
+    </td>
+    <td>
+   	<a href="edit/{{ role.id }}">edit</a> | <a href="delete/{{ role.id }}">delete</a>
+    </td>
+</tr>
 {% endfor %}
+</table>
