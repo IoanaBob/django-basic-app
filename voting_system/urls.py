@@ -38,5 +38,8 @@ urlpatterns = [
     url(r'^parties/create/$', views.party_create, name='party_create'),
 
     #voter interface
+    # voter codes
+    url(r'^voter_codes/$', views.voter_codes, name='voter_codes'),
+    url(r'^voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
     url(r'^$', views.homepage, name='homepage'),
 ]

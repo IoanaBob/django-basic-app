@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import Region, Candidate, Role, Party, Election
 from voting_system.forms import *
@@ -14,6 +15,23 @@ def regions(request):
 	if not regions:
 		are_regions = False
 	return render(request, 'admin_interface/regions.html', {'regions': regions, 'are_regions': are_regions})
+
+def populate_voter_codes(request):
+    if request.method == "POST":
+        form = VoterCodeForm(request.POST)
+        if form.is_valid():
+            election = form.instance.election
+            form.save(commit=False)
+            print(election)
+            VoterCode.populate_voter_codes(election)
+            return redirect('elections')
+    else:
+        form = VoterCodeForm()
+    return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
+
+def voter_codes(request):
+    voter_codes = VoterCode.objects.all()
+    return render(request, 'admin_interface/voter_codes.html', {'voter_codes': voter_codes})
 
 def candidates(request):
 	candidates = Candidate.objects.all()

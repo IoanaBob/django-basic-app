@@ -1,0 +1,11 @@
+{% for entry in voter_codes %}
+    {{ entry.id }}
+    <br>
+    {{ entry.code }}
+    <br>
+    {{ entry.election.name }}
+    <br>
+    {{ entry.region }}
+    <br>
+    <br>
+{% endfor %}
