@@ -7,7 +7,7 @@ class ElectionForm(forms.ModelForm):
 
     class Meta:
         model = Election
-        fields = ('id', 'uninominal_voting','start_date','end_date')
+        fields = ('id', 'name', 'uninominal_voting', 'start_date', 'end_date')
         widgets = {
             'start_date':  forms.DateInput(),
             'end_date':  forms.DateInput()

@@ -6,6 +6,7 @@ from .region import Region
 
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=60)
     start_date = models.DateField(default=timezone.now)
     end_date = models.DateField()
     #uninominal or secret voting =>
@@ -17,6 +18,10 @@ class Election(models.Model):
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')
     regions = models.ManyToManyField(Region, through='ElectionRegion')
+
+    def __str__(self):
+        return '%s; from: %s; to: %s' % (self.name, self.start_date, self.end_date)
+
     class Meta:
         db_table = 'elections'
         app_label = 'admin'
