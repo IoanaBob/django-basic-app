@@ -27,7 +27,7 @@ def populate_voter_codes(request):
             form.save(commit=False)
             print(election)
             VoterCode.populate_voter_codes(election)
-            return redirect('elections')
+            return redirect('voter_codes')
     else:
         form = VoterCodeForm()
     return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
