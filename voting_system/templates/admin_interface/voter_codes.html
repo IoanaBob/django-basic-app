@@ -1,0 +1,13 @@
+{% for entry in voter_codes %}
+    {{ entry.id }}
+    <br>
+    {{ entry.code }}
+    <br>
+    {{ entry.election.name }}
+    <br>
+    {{ entry.region }}
+    <br>
+    <br>
+{% endfor %}
+
+<a href="{% url 'populate_voter_codes' %}">Populate for New Election</a>
