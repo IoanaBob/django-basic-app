@@ -4,6 +4,63 @@ from voting_system.models import Candidate
 from voting_system.forms.candForm import candForm
 from voting_system.models import Election
 from voting_system.forms import ElectionForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from voting_system.forms import LoginForm
+
+from voting_system.views.CheckAuthorisation import CheckAuthorisation
+
+
+
+from voting_system.models import Admin
+
+def CreateDummyUser(request):
+    admin_user = Admin()
+    admin_user.id = 1
+    admin_user.first_name = "John"
+    admin_user.last_name = "Smith"
+    admin_user.user_name = "j_smith"
+    admin_user.password_hash = "abc"
+    admin_user.email = "smithj@email.com"
+    # foreign key
+    
+    admin_user.save()
+
+    return render(request, 'admin_interface/login/create_dummy_user.html')
+
+def AdminUsers(request):
+    admins = Admin.objects.all()
+    
+    return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins})
+
+
+def Login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = Admin.objects.get(user_name = "j_smith")
+            if user is not None:
+                print(user.user_name)
+                request.session['username'] = user.user_name
+                return render(request, 'admin_interface/login/success.html',{'user': user})
+            else:
+                form = LoginForm()
+
+                return render(request, 'admin_interface/login/login.html',{'form': form,'message': "You could not be logged in."})
+            
+    else:
+        form = LoginForm()
+    return render(request, 'admin_interface/login/login.html',{'form': form,'message': ""})
+
+def Logout(request):
+    try:
+        del request.session['username']
+    except:
+        pass
+    
+    return render(request, 'admin_interface/login/logged_out.html',{})
+    
+
 
 
 def populate_regions(request):
@@ -64,9 +121,13 @@ def deleteCandidate(request, id=None):
 
 
 def elections(request):
-    elections = Election.objects.all()
-    return render(request, 'admin_interface/elections/elections.html', {'elections': elections})
-
+    authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+    if(authorised):
+        elections = Election.objects.all()
+        return render(request, 'admin_interface/elections/elections.html', {'elections': elections})
+    else:
+        message = "You are not authorised to view this page."
+        return render(request, 'admin_interface/login/not_authorised.html', {'message': message})
 
 def election_create(request):
     if request.method == "POST":
