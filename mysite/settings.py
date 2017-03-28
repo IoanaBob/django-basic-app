@@ -87,7 +87,7 @@ DATABASES = {
     },
     'voterauth': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'voterAuth',
+        'NAME': 'voterauth',
         'USER': 'voterauth',
         'PASSWORD': 'voterauth',
         'HOST': 'localhost',
