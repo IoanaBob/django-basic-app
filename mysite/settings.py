@@ -87,7 +87,7 @@ DATABASES = {
     },
     'voterauth': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'voterAuth',
+        'NAME': 'voterauth',
         'USER': 'voterauth',
         'PASSWORD': 'voterauth',
         'HOST': 'localhost',
@@ -150,3 +150,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

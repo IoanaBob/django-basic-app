@@ -24,8 +24,17 @@ urlpatterns = [
     # elections pages CRUD
     url(r'^elections/$', views.elections, name='elections'),
     url(r'^elections/create/$', views.election_create, name='election_create'),
-    url(r'^elections/edit/(?P<id>\d+)/$', views.election_edit, name='election_edit'),
-    url(r'^elections/delete/(?P<id>\d+)/$', views.election_delete, name='election_delete'),
+    url(r'^elections/edit/$', views.election_edit, name='election_edit'),
+    url(r'^elections/delete/$', views.election_delete, name='election_delete'),
+    url(r'^regions/populate$', views.populate_regions, name='populate_regions'),
+    
+    #admins
+    url(r'^admins/$', views.AdminUsers, name='admin_users'),
+
+    #login
+    url(r'^login/create/$', views.CreateDummyUser, name='CreateDummyUser'),
+    url(r'^login/$', views.Login, name='Login'),
+    url(r'^logout/$', views.Logout, name='Logout'),
 
     # roles pages CRUD
     url(r'^roles/$', views.roles, name='roles'),
@@ -43,5 +52,5 @@ urlpatterns = [
     # voter codes
     url(r'^voter_codes/$', views.voter_codes, name='voter_codes'),
     url(r'^voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
-    url(r'^$', views.homepage, name='homepage'),
+    url(r'^$', views.homepage, name='homepage')
 ]

@@ -1,6 +1,5 @@
 from django.db import models
-from .election import Election
-from .region import Region
+from . import Election, Region, VoterAuth
 import random
 import string
 import requests
@@ -53,7 +52,7 @@ class VoterCode(models.Model):
         for person in data:
             voter_code = VoterCode.generate_voter_code()
             region = VoterCode.postcode_to_region(person["postcode"])
-            print(region)
+            VoterAuth.save_password(i)
             entry = VoterCode(id=i, code=voter_code, election = the_election, region = region)
             entry.save()
             i += 1
