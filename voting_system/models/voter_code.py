@@ -1,17 +1,16 @@
 from django.db import models
-from .election import Election
-from .region import Region
+from . import Election, Region, VoterAuth
 import random
 import string
 import requests
 import json
 
 class VoterCode(models.Model):
-    id = models.IntegerField(primary_key=True)
-    verified_date = models.DateTimeField()
-    invalidated_date = models.DateTimeField()
+    id = models.IntegerField(primary_key=True, editable=False)
+    verified_date = models.DateTimeField(editable=False)
+    invalidated_date = models.DateTimeField(editable=False)
     # should set up minumum = maximum length here 
-    code = models.CharField(max_length=15, unique = True)
+    code = models.CharField(max_length=15, unique = True, editable=False)
     #default false
     # TODO: modify in the DB too!!
     vote_status = models.BooleanField(default=False)
@@ -36,7 +35,6 @@ class VoterCode(models.Model):
         postcode = postcode.replace(" ", "")
         # fake postcode - from the people API
         if postcode == "YO913X0":
-            #print(Region.objects.filter(name = "Cardiff Central").first())
             return Region.objects.get(name = "Cardiff Central")
         else:
             data = requests.get(url = 'https://api.postcodes.io/postcodes/' + postcode).json()
@@ -47,14 +45,14 @@ class VoterCode(models.Model):
     def populate_voter_codes(the_election):
         data = requests.get(url = "http://t2a.co/rest/?output=json&method=person_search&api_key=test").json()
         data = data["person_list"]
-        i = 1
+        if VoterCode.objects.exists():
+            i = VoterCode.objects.latest('id').id + 1
+        else:
+            i = 1
         for person in data:
             voter_code = VoterCode.generate_voter_code()
-            #print(person["postcode"])
-
-            print("hellohello")
             region = VoterCode.postcode_to_region(person["postcode"])
-            print(region)
+            VoterAuth.save_password(i)
             entry = VoterCode(id=i, code=voter_code, election = the_election, region = region)
             entry.save()
             i += 1
