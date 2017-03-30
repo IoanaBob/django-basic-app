@@ -6,7 +6,7 @@ from .region import Region
 
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=60)
+    #name = models.CharField(max_length=60)
     start_date = models.DateField(default=timezone.now)
     end_date = models.DateField()
     #uninominal or secret voting =>

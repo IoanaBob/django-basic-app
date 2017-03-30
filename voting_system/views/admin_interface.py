@@ -91,7 +91,9 @@ def election_create(request):
 			return redirect('elections')
 	else:
 		form = ElectionForm()
-	return render(request, 'admin_interface/elections/election_form.html', {'form': form})
+		candidates = Candidate.objects.all()
+		regions = Region.objects.all()
+	return render(request, 'admin_interface/elections/election_form.html', {'form': form, 'candidates': candidates, 'regions': regions})
 
 
 def election_edit(request, id=None):
@@ -100,7 +102,6 @@ def election_edit(request, id=None):
 		form = ElectionForm(request.POST, instance=election)
 		if form.is_valid():
 			election = form.save(commit=False)
-
 			election.save()
 			return redirect('elections')
 	else:
@@ -174,6 +175,19 @@ def party_delete(request, id=None):
 	party = get_object_or_404(Party, id=id)
 	party.delete()
 	return redirect('parties')
+
+def party_edit(request, id=None):
+	party = get_object_or_404(Party, id=id)
+	if request.method == "POST":
+		form = PartyForm(request.POST, instance=party)
+		if form.is_valid():
+			party = form.save(commit=False)
+			
+			party.save()
+			return redirect('party')
+	else:
+		form = PartyForm(instance=party)
+	return render(request, 'admin_interface/role_form.html', {'form': form})
 def getNextID(tblName):
 	cursor = connection.cursor()
 	cursor.execute( "select nextval('"+tblName+"_id_seq')")

@@ -23,7 +23,7 @@ urlpatterns = [
     
     # elections pages CRUD
     url(r'^elections/$', views.elections, name='elections'),
-	url(r'^elections/create/$', views.election_create, name='election_create'),
+    url(r'^elections/create/$', views.election_create, name='election_create'),
     url(r'^elections/edit/(?P<id>\d+)/$', views.election_edit, name='election_edit'),
     url(r'^elections/delete/(?P<id>\d+)/$', views.election_delete, name='election_delete'),
 
@@ -36,6 +36,8 @@ urlpatterns = [
     # party pages CRUD
     url(r'^parties/$', views.party, name='party'),
     url(r'^parties/create/$', views.party_create, name='party_create'),
+    url(r'^parties/edit/(?P<id>\d+)/$', views.party_edit, name='party_edit'),
+    url(r'^parties/delete/(?P<id>\d+)/$', views.party_delete, name='party_delete'),
 
     #voter interface
     # voter codes

@@ -9,11 +9,8 @@ class UserModelChoiceField(forms.ModelChoiceField):
 class CandidateForm(forms.ModelForm):
 
 	id = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-	partyData = Party.objects.only('id', 'name')
-	
-	party_id = UserModelChoiceField(required=True, queryset=(partyData), widget=forms.Select(attrs={'style':'background_color:#F5F8EC'}))
 
-
+	party_id = UserModelChoiceField(required=True, queryset=(Party.objects.only('id', 'name')), widget=forms.Select(attrs={'style':'background_color:#F5F8EC'}))
 
 	class Meta:
 		model = Candidate
