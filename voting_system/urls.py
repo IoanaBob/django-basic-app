@@ -64,7 +64,7 @@ urlpatterns = [
     url(r'^verify/$', views.public_verify, name='public_verify'),
 
     #cast_vote
-    url(r'^cast_vote/$', views.CastVote, name='cast_vote')
+    url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
     
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
