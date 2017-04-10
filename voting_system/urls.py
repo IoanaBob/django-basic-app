@@ -53,5 +53,14 @@ urlpatterns = [
     # voter codes
     url(r'^voter_codes/$', views.voter_codes, name='voter_codes'),
     url(r'^voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
-    url(r'^$', views.homepage, name='homepage')
+    url(r'^$', views.homepage, name='homepage'),
+
+
+
+
+    #cast_vote
+    url(r'^cast_vote/$', views.CastVote, name='cast_vote')
+    
+
+
 ]

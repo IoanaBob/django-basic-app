@@ -1,0 +1,114 @@
+.centered_block
+{
+	width:100%;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	box-sizing: border-box;
+}
+
+#ballot_paper_container
+{
+	display:block;
+	width:90%;
+	padding:10px;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),
+                          0 1px 5px 0 rgba(0,0,0,0.12),
+0 3px 1px -2px rgba(0,0,0,0.2);
+
+clear:both;
+}
+
+#ballot_top_container
+{
+	border: solid 1px black;
+
+
+}
+
+.ballot_top_containers
+{
+	padding:5px;
+}
+
+#ballot_top_top_container
+{
+	font-weight: bold;
+	border-bottom: solid 1px black;
+}
+
+#ballot_candidates_container
+{
+	border-bottom:solid 3px black;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+
+.ballot_candidate_container
+{
+	margin-top:5px;
+	border-top: solid 2px black;
+	padding-top: 5px;
+}
+
+.ballot_candidate_info_container
+{
+	width:70%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.ballot_candidate_party_container
+{
+	width:15%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.party_logo
+{
+	width:50px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.ballot_candidate_vote_container
+{
+	width:14%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.ballot_vote_box
+{
+	width:50px;
+	height:50px;
+	border:solid 1px black;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.vote_x_img
+{
+	width:95%;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	display:none;
+}
+
+.ballot_vote_box:hover
+{
+	border-color: orange;
+}
+
+#submit_vote_button
+{	
+	display:block;
+	margin-left: auto;
+	margin-right: auto;
+	max-width:200px;
+	margin-top:20px;
+}

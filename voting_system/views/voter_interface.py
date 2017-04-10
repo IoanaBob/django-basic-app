@@ -6,3 +6,18 @@ def homepage(request):
 
 def check_code(request):
 	return render(request, '')
+
+
+
+
+def CastVote(request):
+	#TO DO
+	# - pass election details
+	# - validate request 
+	# 	- logged in
+	#	- verify
+	#	- voter password
+	#	- voter code
+	# - switch template based on voting system. 
+
+	return render(request, 'voter_interface/ballot_paper_fptp.html')
