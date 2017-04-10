@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import *
-
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from voting_system.forms import LoginForm
+from django.contrib.auth.hashers import make_password, check_password
 from voting_system.forms import *
 from voting_system.forms.admin_formn import *
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
@@ -14,18 +15,18 @@ from django.db import connection
 
 
 def CreateDummyUser(request):
-	admin_user = Admin()
-	admin_user.id = 1
-	admin_user.first_name = "John"
-	admin_user.last_name = "Smith"
-	admin_user.user_name = "j_smith"
-	admin_user.password_hash = "abc"
-	admin_user.email = "smithj@email.com"
-	# foreign key
-	
-	admin_user.save()
+    admin_user = Admin()
+    admin_user.id = 1
+    admin_user.first_name = "John"
+    admin_user.last_name = "Smith"
+    admin_user.user_name = "j_smith"
+    admin_user.password_hash = make_password("abc")
+    admin_user.email = "smithj@email.com"
+    # foreign key
+    
+    admin_user.save()
 
-	return render(request, 'admin_interface/login/create_dummy_user.html')
+    return render(request, 'admin_interface/login/create_dummy_user.html')
 
 def admin_view(request):
 	admins = Admin.objects.all()
@@ -86,22 +87,26 @@ def admin_create(request):
 		return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles})
 
 def Login(request):
-	if request.method == "POST":
-		form = LoginForm(request.POST)
-		if form.is_valid():
-			user = Admin.objects.get(user_name = "j_smith")
-			if user is not None:
-				print(user.user_name)
-				request.session['username'] = user.user_name
-				return render(request, 'admin_interface/login/success.html',{'user': user})
-			else:
-				form = LoginForm()
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = Admin.objects.get(user_name = request.POST.get('username'))
+            
+            if user is not None:
+                if check_password(request.POST.get('password'), user.password_hash):
+                    request.session['username'] = user.user_name
+                    return render(request, 'admin_interface/login/success.html',{'user': user})
+                else:
+                    form = LoginForm()
+                    return render(request, 'admin_interface/login/login.html',{'form': form,'message': "Incorrect Password"})
+            else:
+                form = LoginForm()
 
-				return render(request, 'admin_interface/login/login.html',{'form': form,'message': "You could not be logged in."})
-			
-	else:
-		form = LoginForm()
-	return render(request, 'admin_interface/login/login.html',{'form': form,'message': ""})
+                return render(request, 'admin_interface/login/login.html',{'form': form,'message': "You could not be logged in."})
+            
+    else:
+        form = LoginForm()
+    return render(request, 'admin_interface/login/login.html',{'form': form,'message': ""})
 
 def Logout(request):
 	try:
@@ -111,10 +116,6 @@ def Logout(request):
 	
 	return render(request, 'admin_interface/login/logged_out.html',{})
 	
-
-
-
-
 def populate_regions(request):
 	if not Region.objects.all():
 		Region.populate_regions()
