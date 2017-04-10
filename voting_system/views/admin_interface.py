@@ -1,22 +1,18 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
-from voting_system.models import Region
-from voting_system.models import Candidate
-from voting_system.models import Election
-from voting_system.forms import ElectionForm
+from voting_system.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from voting_system.forms import LoginForm
 from django.contrib.auth.hashers import make_password, check_password
-
+from voting_system.forms import *
+from voting_system.forms.admin_formn import *
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
 
-from voting_system.models import Region, Candidate, Role, Party, Election
-from voting_system.forms import *
+
+
 from django.db import connection
 
-
-from voting_system.models import Admin
 
 def CreateDummyUser(request):
     admin_user = Admin()
@@ -32,11 +28,63 @@ def CreateDummyUser(request):
 
     return render(request, 'admin_interface/login/create_dummy_user.html')
 
-def AdminUsers(request):
-    admins = Admin.objects.all()
-    
-    return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins})
+def admin_view(request):
+	admins = Admin.objects.all()
+	
+	return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins})
 
+def admin_edit(request, id =None):
+	admin = get_object_or_404(Admin, id=id)
+	role_current = AdminRole.objects.filter(admin_id = id).values_list("role_id", flat=True)
+	roles = Role.objects.all()
+
+	if request.method == "POST":
+
+		form = AdminForm(request.POST, instance=admin)
+		if form.is_valid():
+			admin = form.save(commit=False)
+			selected_roles = request.POST.getlist('roles[]')
+
+
+			# Dirty way... 
+			# Remove all previous roles for admin then assign new ones -- TALK TO ME ABOUT THIS -- need a more efficienet way 
+			AdminRole.objects.filter(admin_id = id).delete()
+			
+			for role in selected_roles:
+				new_role = AdminRole()
+				new_role.id = getNextID("admin_roles")
+				new_role.admin_id = id
+				new_role.role_id = role
+				new_role.save()
+			admin.save()
+			return redirect('admin_users')
+	else:
+		form = AdminForm(instance=admin)
+		
+	return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'current_roles': role_current})
+def admin_create(request):
+	roles = Role.objects.all()
+	if request.method == "POST":
+		form = AdminForm(request.POST)
+		if form.is_valid():
+			id = getNextID("admins")
+			admin = form.save(commit=False)
+			admin.id = id
+			admin.save()
+			selected_roles = request.POST.getlist('roles[]')
+
+			for role in selected_roles:
+				new_role = AdminRole()
+				new_role.id = getNextID("admin_roles")
+				new_role.admin_id = id
+				new_role.role_id = role
+				new_role.save()
+		
+			return redirect('admin_users')
+	else:
+		form = AdminForm()
+		
+		return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles})
 
 def Login(request):
     if request.method == "POST":
@@ -61,17 +109,13 @@ def Login(request):
     return render(request, 'admin_interface/login/login.html',{'form': form,'message': ""})
 
 def Logout(request):
-    try:
-        del request.session['username']
-    except:
-        pass
-    
-    return render(request, 'admin_interface/login/logged_out.html',{})
-    
-
-
-
-
+	try:
+		del request.session['username']
+	except:
+		pass
+	
+	return render(request, 'admin_interface/login/logged_out.html',{})
+	
 def populate_regions(request):
 	if not Region.objects.all():
 		Region.populate_regions()
@@ -86,21 +130,21 @@ def regions(request):
 	return render(request, 'admin_interface/regions.html', {'regions': regions, 'are_regions': are_regions})
 
 def populate_voter_codes(request):
-    if request.method == "POST":
-        form = VoterCodeForm(request.POST)
-        if form.is_valid():
-            election = form.instance.election
-            form.save(commit=False)
-            print(election)
-            VoterCode.populate_voter_codes(election)
-            return redirect('elections')
-    else:
-        form = VoterCodeForm()
-    return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
+	if request.method == "POST":
+		form = VoterCodeForm(request.POST)
+		if form.is_valid():
+			election = form.instance.election
+			form.save(commit=False)
+			print(election)
+			VoterCode.populate_voter_codes(election)
+			return redirect('elections')
+	else:
+		form = VoterCodeForm()
+	return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
 
 def voter_codes(request):
-    voter_codes = VoterCode.objects.all().order_by('id')
-    return render(request, 'admin_interface/voter_codes.html', {'voter_codes': voter_codes})
+	voter_codes = VoterCode.objects.all().order_by('id')
+	return render(request, 'admin_interface/voter_codes.html', {'voter_codes': voter_codes})
 
 def candidates(request):
 	candidates = Candidate.objects.all().order_by('id')
@@ -146,13 +190,13 @@ def candidate_delete(request, id=None):
 
 def elections(request):
 
-    authorised,username = CheckAuthorisation(request,True,[("test_role",)])
-    if(authorised):
-        elections = Election.objects.all()
-        return render(request, 'admin_interface/elections/elections.html', {'elections': elections})
-    else:
-        message = "You are not authorised to view this page."
-        return render(request, 'admin_interface/login/not_authorised.html', {'message': message})
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		elections = Election.objects.all()
+		return render(request, 'admin_interface/elections/elections.html', {'elections': elections})
+	else:
+		message = "You are not authorised to view this page."
+		return render(request, 'admin_interface/login/not_authorised.html', {'message': message})
 
 
 
@@ -166,8 +210,8 @@ def election_create(request):
 			return redirect('elections')
 	else:
 		form = ElectionForm()
-	candidates = Candidate.objects.all()
-	regions = Region.objects.all()
+		candidates = Candidate.objects.all()
+		regions = Region.objects.all()
 	return render(request, 'admin_interface/elections/election_form.html', {'form': form, 'candidates': candidates, 'regions': regions})
 
 
