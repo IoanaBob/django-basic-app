@@ -1,0 +1,49 @@
+{% extends 'voter_interface/base.html' %}
+{% block content %}
+
+{% if not acknowledgement %}
+<div class="container">
+	<h1>Vote Code</h1>
+	<div class="row">
+	    <p class="col-md-8">Enter your online vote code to continue. You can't continue without a valid code. This code can only be used once and must be associated with your Voter ID.</p>
+	</div>
+	<div class="row">
+		<div class="form-group col-md-4">
+ 			<label class="control-label" for="votecode">Online Code:</label>
+ 			<div class="input-group">
+  				<form method="POST">
+                    {% csrf_token %}
+  					<input class="form-control" placeholder="Enter your votecode here" type="text" name="votecode" >
+                    <input type="submit" class="btn btn-primary" value="Submit">
+				</form>
+			</div>
+		</div>
+	</div>
+    {% if errors %}
+    <div class="errors">
+        {% for error in erros %}
+            <p class="error">{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+		
+</div>
+{% else %}
+<div class="container">
+	<h1>Acknowledgement</h1>
+	<hr/>
+	<div class="row">
+		<p class="col-md-10">By clicking <i>Agree – Continue</i>, you are agree to the <a href=#>Terms and Conditions</a> of using the GOV.UK Online Voting tool. Please, <b>carefully</b> read the below statement before continuing. If you disagree with the provided acknowedgement for any reason, <b>DO NOT</b> continue.</p>
+	</div>
+	<div class="row">
+		<p class="col-md-11" style="border-style: solid; border-color: #00823b; font-size: 15px;"><i>By proceeding, I acknowledge that my voter code cannot be used after my vote is cast. Therefore, I recognise that that I have thoroughly considered all candidates and that the vote I cast is in favour of my chosen candidate.</br> In addition, I confirm that the voter code I have used to gain access to this ballot was intended for me, and I recognise that it is a criminal offense to use another's voter code to gain access to their ballot. If I am voting for another individual through an accepted proxy application, I confirm that the vote cast is in favour of the candidate chosen by the individual that has entrusted me to vote on their behalf. I also recognise that it is a criminal offence to vote for a candidate that has not been chosen by the individual that has entrusted me to vote on their behalf.</br>Furthermore, I acknowledge that I have had the option to decline to the above statements for whatever reason I may have. By clicking Continue, and casting this ballot, I confirm that I have read the Terms and Conditions related to the use of the GOV.UK Online Voting tool. I also confirm that I have read, and agree to, this acknowledgement.</i></p>
+	</div>
+	
+	<a href="{% url 'public_vote__place_vote' %}" class="btn btn-success" role="button">Agree - Continue</a>
+	<a href="{% url 'public_vote__home' %}" class="btn btn-danger" role="button">Decline - Return</a>
+	
+	
+</div>
+{% endif %}
+
+{% endblock %}

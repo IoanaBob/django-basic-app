@@ -16,7 +16,11 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div id="global-header-bar">
+                <div id="welcome-header-bar">
+                    {% if header_messages.welcome %}
+                    <p id="welcome-message">{{ header_messages.welcome }}</p>
+                    <p id="voter-message">{{ header_messages.voter }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -25,7 +29,8 @@
     <!--BREADCRUMBS<-->
     <div class="container">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="https://www.gov.uk/">Home</a></li>
-            <li class="breadcrumb-item"><a href="index.html">Elections</a></li>
+            {% for item in breadcrumb %}
+            <li class="breadcrumb-item"><a href="{{ item.1 }}">{{ item.0 }}</a></li>
+            {% endfor %}
         </ol>
     </div>
