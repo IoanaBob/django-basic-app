@@ -111,6 +111,43 @@ DATABASES = {
     }
 }
 
+
+#To go back to local DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'admin',
+#         'USER': 'admin',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     },
+#     'voterauth': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'voterauth',
+#         'USER': 'voterauth',
+#         'PASSWORD': 'voterauth',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     },
+#     'region1': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'region1',
+#         'USER': 'region1',
+#         'PASSWORD': 'region1',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     },
+#     'region2': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'region2',
+#         'USER': 'region2',
+#         'PASSWORD': 'region2',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASE_ROUTERS = ['voting_system.routers.dbRouter']
 
 # Password validation
