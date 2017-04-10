@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^admins/edit/(?P<id>\d+)/$', views.admin_edit, name='admin_edit'),
     url(r'^admins/create/$', views.admin_create, name='admin_create'),
     #login
-    url(r'^login/create/$', views.CreateDummyUser, name='CreateDummyUser'),
+    url(r'^login/create$', views.CreateDummyUser, name='CreateDummyUser'),
     url(r'^login/', views.Login, name='Login'),
     url(r'^logout/$', views.Logout, name='Logout'),
 
