@@ -72,20 +72,24 @@ def admin_create(request):
 	if request.method == "POST":
 		form = AdminForm(request.POST)
 		if form.is_valid():
-			id = getNextID("admins")
-			admin = form.save(commit=False)
-			admin.id = id
-			admin.save()
-			selected_roles = request.POST.getlist('roles[]')
+			if(request.POST.get('password') != request.POST.get('repeatPassword')):
+				return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'errors': ["Password Does not match"]})
+			else:
+				id = getNextID("admins")
+				admin = form.save(commit=False)
+				admin.id = id
+				admin.password_hash = request.POST.get('password')
+				admin.save()
+				selected_roles = request.POST.getlist('roles[]')
 
-			for role in selected_roles:
-				new_role = AdminRole()
-				new_role.id = getNextID("admin_roles")
-				new_role.admin_id = id
-				new_role.role_id = role
-				new_role.save()
-		
-			return redirect('admin_users')
+				for role in selected_roles:
+					new_role = AdminRole()
+					new_role.id = getNextID("admin_roles")
+					new_role.admin_id = id
+					new_role.role_id = role
+					new_role.save()
+			
+				return redirect('admin_users')
 	else:
 		form = AdminForm()
 		

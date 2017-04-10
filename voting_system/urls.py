@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^administration/admins/edit/(?P<id>\d+)/$', views.admin_edit, name='admin_edit'),
     url(r'^administration/admins/create/$', views.admin_create, name='admin_create'),
     #login
-    url(r'^administration/login/create$', views.CreateDummyUser, name='CreateDummyUser'),
+    #url(r'^administration/login/create$', views.CreateDummyUser, name='CreateDummyUser'),
     
 
     # roles pages CRUD

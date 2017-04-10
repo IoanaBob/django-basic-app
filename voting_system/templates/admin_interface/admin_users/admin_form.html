@@ -1,23 +1,31 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 <h1>Admin</h1>
-    <form method="POST">{% csrf_token %}
+<form method="POST">{% csrf_token %}
 
-        <h2>Personal Information</h2>
-        {{ form.as_p }}
-        <h2>Change Password</h2>
-        
-        <h2>Roles</h2>
-        <select name="roles[]" id="roles" class="js-example-basic-multiple js-states form-control" multiple="multiple">
-        {% for role in roles %}
-            <option value="{{ role.id }}" {% if role.id in current_roles %} selected {% endif %} >{{ role.name }}</option>
-        {% endfor %}
-        </select>
-        <input type="checkbox" id="selectAll" >
-        
-        <input type="submit" value="Submit">
-    </form>
+    <h2>Personal Information</h2>
+    {{ form.as_p }}
+    <h2>Change Password</h2>
+    <label>Password<input type="password" name="password" required></lable>
+    <label>Repeat Password<input type="password" name="repeatPassword" required></label>
+    <h2>Roles</h2>
+    <select name="roles[]" id="roles" class="js-example-basic-multiple js-states form-control" multiple="multiple">
+    {% for role in roles %}
+        <option value="{{ role.id }}" {% if role.id in current_roles %} selected {% endif %} >{{ role.name }}</option>
+    {% endfor %}
+    </select>
+    <input type="checkbox" id="selectAll" >
+    
+    <input type="submit" value="Submit">
 </form>
+<div class="errors">
+    {% for error in errors %}
+    <span class="error">{{ error }}</span>
+    {% endfor %}
+</div>
+
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="{% static 'js/select2.full.min.js' %}"></script>
 <script>

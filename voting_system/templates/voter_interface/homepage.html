@@ -1,15 +1,29 @@
-<p> First static page!!! </p>
+{% extends 'voter_interface/base.html' %}
+{% block content %}
+<div class="container">
 
-<a href="/admins/"><button>Admin</button></a>
-<a href="/regions/"><button>Regions</button></a>
-<a href="/candidates/"><button>Candidates</button></a>
-<a href="/elections/"><button>Elections</button></a>
-<a href="/regions/"><button>Regions</button></a>
-<a href="/candidates/"><button>Candidates</button></a>
-<a href="/elections/"><button>Elections</button></a>
-<a href="/login/"><button>Login</button></a>
-<a href="/logout/"><button>Logout</button></a>
-<a href="/elections/"><button>Elections</button></a>
-<a href="/roles/"><button>Roles</button></a>
-<a href="/parties/"><button>Parties</button></a>
-<a href="/voter_codes/"><button>Voter codes</button></a>
+	<h1><b>Online Voting</b></h1>
+
+	<div class="row">
+			<p class="col-md-8">Sign in or register to become eligable to vote online in elections. Then you can cast your vote within an election.</p>
+	</div>
+	</br>
+	<div class="row">
+		<p class="col-md-1" style="padding-top: 25px; padding-left: 35px;"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></p>
+		<p class="col-md-8">We use <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">GOV.UK Verify</a>. If you do not already have an account, we will ask you to make one before you cast your vote. We advise this is done before the day of elections.</p>
+	</div>
+	</br>
+	<a href="varify.html"><button type="button" class="btn btn-success">Begin</button></a>
+</div>
+<!--________________________________________________________________________________<-->
+
+<!--FOOTER BLUE BAR THAT GOES ABOVE FOOTER<-->
+	<div class="row">
+		<div class="col-md-12">
+			<div id="global-footer-bar">
+				
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
