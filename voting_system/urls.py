@@ -70,6 +70,6 @@ urlpatterns = [
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
     url(r'^voting/ballot/$', views.public_vote_ballot, name='public_vote__ballot'),
     url(r'^voting/request/$', views.public_vote_request, name='public_vote__request_code'),
-    url(r'^voting/place/$', views.public_vote_place, name='public_vote__place_vote'),
+    url(r'^voting/place/$', views.public_vote_place, name='public_vote__place_vote')
 
 ]
