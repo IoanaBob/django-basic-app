@@ -7,6 +7,7 @@ from voting_system.forms import ElectionForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from voting_system.forms import LoginForm
+from django.contrib.auth.hashers import make_password, check_password
 
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
 
@@ -23,7 +24,7 @@ def CreateDummyUser(request):
     admin_user.first_name = "John"
     admin_user.last_name = "Smith"
     admin_user.user_name = "j_smith"
-    admin_user.password_hash = "abc"
+    admin_user.password_hash = make_password("abc")
     admin_user.email = "smithj@email.com"
     # foreign key
     
@@ -41,11 +42,15 @@ def Login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = Admin.objects.get(user_name = "j_smith")
+            user = Admin.objects.get(user_name = request.POST.get('username'))
+            
             if user is not None:
-                print(user.user_name)
-                request.session['username'] = user.user_name
-                return render(request, 'admin_interface/login/success.html',{'user': user})
+                if check_password(request.POST.get('password'), user.password_hash):
+                    request.session['username'] = user.user_name
+                    return render(request, 'admin_interface/login/success.html',{'user': user})
+                else:
+                    form = LoginForm()
+                    return render(request, 'admin_interface/login/login.html',{'form': form,'message': "Incorrect Password"})
             else:
                 form = LoginForm()
 
@@ -162,7 +167,7 @@ def election_create(request):
 	else:
 		form = ElectionForm()
 	candidates = Candidate.objects.all()
-		regions = Region.objects.all()
+	regions = Region.objects.all()
 	return render(request, 'admin_interface/elections/election_form.html', {'form': form, 'candidates': candidates, 'regions': regions})
 
 
