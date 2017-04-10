@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 html {
 	font-family: arial
 }
@@ -263,4 +264,271 @@ h1 {
     padding-right: 5px;
     text-align: left;
     text-decoration: none;
+=======
+html {
+	font-family: arial
+}
+
+p {
+	font-size: 19px;
+}
+
+h1 {
+	font-size: 50px;
+}
+
+/*Aligns all the content within .container, which is set to a defined width*/
+.container {
+	width: 51%;
+}
+
+/*Sets up the blue bar underneath the navbar*/
+#global-header-bar {
+	background-color: #005EA5;
+	height: 10px;
+}
+
+#welcome-header-bar {
+	background-color: #005EAC;
+	height: 200px;
+}
+
+#global-footer-bar {
+	background-color: #005EA5;
+	height: 10px;
+	margin-top: 100px;
+}
+
+
+.navbar-inverse {
+	background-color: #0B0C0C;
+}
+
+#footer {
+	background-color: #DEE0E2;
+	width: 100%;
+}
+
+.bottom-border {
+	padding: 0 0 20px;
+    border-bottom: 1px solid #bfc1c3;
+}
+
+#Departments {
+	float:right;
+}
+
+.bold-footer {
+	font-family: arial ;
+}
+
+.footer-list {
+	padding-left: 0;
+	list-style-type: none;
+	text-decoration: underline
+}
+
+.footer-list a:link {
+	color: #454a4c;
+	font-family: arial;
+	font-size: 16px;
+	line-height: 1.25;
+	font-weight: 400;
+}
+
+
+.breadcrumb {
+	background-color: white;
+	padding-left: 0;
+}
+
+.list-inline {
+	color: #454a4c;
+	font-family: arial;
+	font-size: 16px;
+	text-decoration: none;
+	list-style-type: none;
+}
+
+.list-inline > li > a {
+	color: #454a4c;
+	text-decoration: underline;
+}
+
+.li-space {
+	margin-top: 10px
+}
+
+.navbar-brand {
+	font-family: arial ;
+	color: white;
+}
+
+/*Edit the nav menu options minus the active page*/
+.navbar-inverse .navbar-nav > li > a {
+	color: white;
+	font-family: arial ;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+	color: #005ea5;
+}
+
+#CopyLogo {
+	display: table-cell;
+	margin-left: 85%;
+	padding-top: 50px;
+	padding-right: 50px;
+	width: 150px;
+	height: 150px;
+	float: right;
+}
+
+#list-move-down {
+	margin-top: 60px;
+}
+
+#footerLogoCopyright {
+	margin-bottom: 100px
+}
+
+.footer-move-down {
+	margin-top: 50px;
+}
+
+#headerLogo {
+	margin-bottom: 20px
+}
+
+/*Remove space between navbar and other elements below it*/
+.navbar {
+	margin-bottom: 0
+}
+
+.navbar .navbar-brand {
+	color: white;
+	margin-top: 0;
+	margin-bottom: auto;
+	font-size: 30px
+}
+
+.navbar-brand {
+	padding-top: 10px
+}
+
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus,
+.navbar-inverse .navbar-brand > img {
+	text-decoration: underline
+}
+
+/*FOR PHONE DEVICES */
+@media (max-width: 667px) {
+	.container {
+  		width: 100%;
+  	}
+
+  	.submenu, .dropdown-menu {
+  		float: left;
+  	}
+}
+
+/*TABLETS*/
+@media (min-width: 667px) and (max-width: 1100px) {
+	.container {
+		width: 85%;
+	}
+}
+
+/*DESKTOP*/
+@media (min-width: 1101px) and (max-width: 1700px) {
+	.container {
+		width: 70%;
+	}
+}
+
+/*PULL COPYRIGHT LOGO WHEN CERTAIN WIDTH*/
+@media (max-width: 667px) {
+	#Copyright {
+		margin-left: auto:
+		margin-right: auto;
+		float: none;
+		width: 70%;
+	}
+} 
+
+.navbar {
+	border-radius: 0;
+}
+
+.dropdown-menu >li > a {
+	background-color: #0B0C0C;
+	color: white;
+}
+
+.dropdown-menu > li > a:hover {
+	color: #005EAC;
+	background-color: #333333;
+
+}
+.submenu {
+	background-color: #0B0C0C;
+}
+
+#welcome-message {
+	font-size: 36px;
+	color: white;
+	font-family: arial;
+	margin-left: 15px;
+	padding-top: 10px;
+}
+
+#voter-message {
+	font-size: 18px ;
+	color: white;
+	font-family: arial;
+	margin-left: 15px;
+	width: 50%;
+}
+
+.home-nav {
+	padding-top: 30px
+}
+
+.home-nav > li > a,
+.home-nav > li > a:hover,
+.home-nav > li > a:focus {
+	color: #005EAC;
+	font-family: arial;
+}
+
+.glyphicon {
+    font-size: 30px;
+}
+
+.breadcrumb > li + li:before {
+  content: ">\00a0";
+}
+
+.constituencies {
+	float: left;
+	width: 20%;
+	overflow:hidden;
+}
+
+.bottom-border {
+	font-size: 22px;
+	font-weight: bold;
+	color: black;
+}
+
+.select {
+	background: none;
+    border: none;
+    padding: 0;
+    padding-right: 5px;
+    text-align: left;
+    text-decoration: none;
+>>>>>>> a298022602096b5a19bc28da018ca3acb9a1d7e2
 }

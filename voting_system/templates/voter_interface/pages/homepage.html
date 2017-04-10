@@ -1,0 +1,29 @@
+{% extends 'voter_interface/base.html' %}
+{% block content %}
+<div class="container">
+
+	<h1><b>Online Voting</b></h1>
+
+	<div class="row">
+			<p class="col-md-8">Sign in or register to become eligable to vote online in elections. Then you can cast your vote within an election.</p>
+	</div>
+	</br>
+	<div class="row">
+		<p class="col-md-1" style="padding-top: 25px; padding-left: 35px;"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></p>
+		<p class="col-md-8">We use <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">GOV.UK Verify</a>. If you do not already have an account, we will ask you to make one before you cast your vote. We advise this is done before the day of elections.</p>
+	</div>
+	</br>
+	<a href="{% url 'public_verify' %}"><button type="button" class="btn btn-success">Begin</button></a>
+</div>
+<!--________________________________________________________________________________<-->
+
+<!--FOOTER BLUE BAR THAT GOES ABOVE FOOTER<-->
+	<div class="row">
+		<div class="col-md-12">
+			<div id="global-footer-bar">
+				
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

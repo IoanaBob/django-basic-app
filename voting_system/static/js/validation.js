@@ -14,6 +14,3 @@ $(document).ready(function() {
 		}
 	})
 });
-
-
-
