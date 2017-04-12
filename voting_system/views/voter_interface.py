@@ -100,7 +100,7 @@ def check_password(request):
 # This should not be allowed to be accessed in any other way than from check_for_code (POST)
 # when it's working
 def cast_vote(request):
-	return render(request, 'voter_interface/homepage.html')
+	return render(request, 'voter_interface/cast_vote.html')
 
 def CastVote(request):
 	#TO DO
