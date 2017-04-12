@@ -6,11 +6,11 @@ import requests
 import json
 
 class VoterCode(models.Model):
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.IntegerField(primary_key=True, editable=True)
     verified_date = models.DateTimeField(editable=False)
     invalidated_date = models.DateTimeField(editable=False)
     # should set up minumum = maximum length here 
-    code = models.CharField(max_length=15, unique = True, editable=False)
+    code = models.CharField(max_length=15, unique = True, editable=True)
     #default false
     # TODO: modify in the DB too!!
     vote_status = models.BooleanField(default=False)

@@ -47,6 +47,12 @@ urlpatterns = [
     url(r'^parties/create/$', views.party_create, name='party_create'),
 
     #voter interface
+
+    # voter identity check
+    url(r'^check_voter_code/$', views.check_code, name='check_code'),
+    url(r'^check_voter_password/$', views.check_password, name='check_password'),
+    url(r'^cast_vote/$', views.cast_vote, name='cast_vote'),
+
     # voter codes
     url(r'^voter_codes/$', views.voter_codes, name='voter_codes'),
     url(r'^voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
