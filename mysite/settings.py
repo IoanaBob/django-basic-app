@@ -82,6 +82,43 @@ DATABASES = {
         'NAME': 'admin',
         'USER': 'admin',
         'PASSWORD': 'admin',
+        'HOST': '5.179.102.239',
+        'PORT': '20001',
+    },
+    'voterauth': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'voterauth',
+        'USER': 'voterauth',
+        'PASSWORD': 'voterauth',
+        'HOST': '5.179.102.239',
+        'PORT': '20002',
+    },
+    'region1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'region1',
+        'USER': 'region1',
+        'PASSWORD': 'region1',
+        'HOST': '5.179.102.239',
+        'PORT': '20003',
+    },
+    'region2': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'region2',
+        'USER': 'region2',
+        'PASSWORD': 'region2',
+        'HOST': '5.179.102.239',
+        'PORT': '20004',
+    }
+}
+
+
+#To go back to local DB
+'''DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'admin',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
     },
@@ -109,7 +146,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     }
-}
+}'''
 
 DATABASE_ROUTERS = ['voting_system.routers.dbRouter']
 
@@ -152,4 +189,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedSHA1PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+    'django.contrib.auth.hashers.CryptPasswordHasher',
+]

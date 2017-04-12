@@ -1,0 +1,52 @@
+{% extends 'voter_interface/base.html' %}
+{% block content %}
+{% if not sent %}
+<div class="container">
+	<h1><b>Request Vote Code</b></h1>
+	<div class="row">
+		<p class="col-md-12">By entering your Voter ID and a password of your choice, a unique online code will be sent to your home address. This code is only usable with your personal Voter ID and won't be usable with another ID. Once you have your online code, you will be able to log in and use your one time code to vote in the election. This online code is only usable once.</p>
+	</div>
+	<form method="post" actions="#">
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="row">
+                <label for="VoterID" class="col-md-5">Voter ID</label>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="email" class="form-control" id="VoterID" placeholder="Voter ID">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <label for="Password" class="col-md-5">Password</label>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="email" class="form-control" id="Password" placeholder="Password">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </div>
+	</form>
+</div>
+{% else %}
+<div class="container">
+	<h1><b>Vote Code Sent</b></h1>
+
+	<div class="row">
+	<p class="col-md-8">Your details have been saved. Your online code will be sent to your home address affiliated with the Voter ID. This code is valid for one use and is required in order to vote on the ballot</p>
+	</div>
+	<div class="row">
+		<span class="col-md-8">
+			<a href="{% url 'public_vote__home' %}"><button class="btn btn-success">OK</button></a>
+		</span>
+	</div>
+</div>
+{% endif %}
+{% endblock %}

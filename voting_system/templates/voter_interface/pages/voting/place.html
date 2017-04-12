@@ -1,0 +1,90 @@
+
+{% extends 'voter_interface/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if not placed %}
+<div class="container">
+	<h1>Vote</h1>
+	<hr/>
+	<div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <p>To cast your vote, click the box alongside your choice of candidate. You may only vote once so your decision is final.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+        <div id="ballot_paper_container" class="centered_block">
+            <div id="ballot_top_container" class="centered_block">
+                <div id="ballot_top_top_container" class="centered_block ballot_top_containers">
+                    <span class="election_title">Election of the Member of Parliament for the Buckinghamshire constituency</span>
+
+                </div>
+
+                <div id="ballot_top_bottom_container" class="centered_block ballot_top_containers">
+                    <span class="election_instructions">Vote for <b>only one candidate</b> by putting a cross in the box next to your choice</span>
+
+                </div>
+
+            </div>
+
+            <div id="ballot_candidates_container" class="centered_block">
+                
+
+                <div class="ballot_candidate_container centered_block">
+                    <div class="ballot_candidate_info_container">
+                        <span class="candidate_name centered_block">LastName, First</span>
+                        <span class="candidate_address centered_block">4 why address road, Pointless Town,  AB1 2CD</span>
+                        <span class="candidate_party_name centered_block">Labour</span>
+                    </div><div class="ballot_candidate_party_container">
+                        <img class="party_logo" src="{% static '/images/labour_logo.jpg' %}"/>
+                    </div>
+                    <div class="ballot_candidate_vote_container">
+                        <div id="candidate_box_1" class="ballot_vote_box" onclick="ToggleVoteX(this)">
+                            <input id="candidate_rank_1" class="ballot_rank" type="hidden" value=0 />
+                            <img id="candidate_x_1" class="vote_x_img" src="{% static '/images/vote_x.jpg' %}" />
+                        </div>					
+                    </div>
+                </div>	
+        
+
+                <div class="ballot_candidate_container centered_block">
+                    <div class="ballot_candidate_info_container">
+                        <span class="candidate_name centered_block">LastName, First</span>
+                        <span class="candidate_address centered_block">4 why address road, Pointless Town,  AB1 2CD</span>
+                        <span class="candidate_party_name centered_block">Labour</span>
+                    </div><div class="ballot_candidate_party_container">
+                        <img class="party_logo" src="{% static '/images/labour_logo.jpg'' %}"/>
+                    </div>
+                    <div class="ballot_candidate_vote_container">
+                        <div id="candidate_box_2" class="ballot_vote_box" onclick="ToggleVoteX(this)">
+                            <input id="candidate_rank_2" class="ballot_rank" type="hidden" value=0 />
+                            <img id="candidate_x_2" class="vote_x_img" src="{% static '/images/vote_x.jpg' %}" />
+                        </div>					
+                    </div>
+                </div>	
+
+            </div>
+        
+
+        </div>
+
+
+
+        <input type="submit" class="btn btn-success" value="Submit Vote">
+        </form>
+	</div>
+</div>
+
+{% else %}
+<div class="container">
+	<h1>Vote Submitted</h1>
+	<hr/>
+	<div class="row">
+	<p class="col-md-8">Your vote has been submitted. Thank you for voting.</p>
+	</div>
+</div>
+{% endif %}
+
+
+{% endblock %}
