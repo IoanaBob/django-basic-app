@@ -78,7 +78,7 @@ def admin_create(request):
 				id = getNextID("admins")
 				admin = form.save(commit=False)
 				admin.id = id
-				admin.password_hash = request.POST.get('password')
+				admin.password_hash = make_password(request.POST.get('password'))
 				admin.save()
 				selected_roles = request.POST.getlist('roles[]')
 
@@ -103,7 +103,7 @@ def admin_login(request):
 				user = Admin.objects.get(user_name = request.POST.get('username'))
 				if user is not None:
 					#removethis check
-					if (request.POST.get('password'), user.password_hash):
+					if check_password(request.POST.get('password'), user.password_hash):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name
 						return redirect ('admin_homepage')
