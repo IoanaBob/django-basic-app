@@ -1,0 +1,32 @@
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+<div class="container">
+	<style>
+		table 
+		{
+			width: 100%;
+		}
+
+		tr, td
+		{
+			width: 39%;
+			vertical-align: top;
+		}
+	</style>
+	<table>
+		<tr>
+			<td><a href="{% url 'admin_users' %}"><u><b><p>Admin Dashboard</p></b></u></a></td>
+            <td><a href="{% url 'elections_homepage' %}"><u><b><p>View Election</p></b></u></a></td>
+			<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
+			<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
+		</tr>
+		<tr>
+			<td><p>Create new admins who will have access to specific admin privilages</p></td>
+			<td><p>Edit the homepage for non-admin users</p></td>
+			<td><p>Edit the Admin homepage</p></td>
+		</tr>
+		
+	</table>
+</div>
+{% endblock %}

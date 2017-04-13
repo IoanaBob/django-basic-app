@@ -1,0 +1,33 @@
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+<div class="container">
+	<style>
+		table 
+		{
+			width: 100%;
+		}
+
+		tr, td
+		{
+			width: 39%;
+			vertical-align: top;
+		}
+	</style>
+	<table>
+		<tr>
+            <td><a href="{% url 'elections' %}"><u><b><p>View Election</p></b></u></a></td>
+            <td><a href="{% url 'election_edit' %}"><u><b><p>Edit Election</p></b></u></a></td>
+            <td><a href="{% url 'election_create' %}"><u><b><p>Create Election</p></b></u></a></td>
+			<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
+			<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
+		</tr>
+		<tr>
+			<td><p>View all elections</p></td>
+			<td><p>Edit an election</p></td>
+			<td><p>Create a new election</p></td>
+		</tr>
+		
+	</table>
+</div>
+{% endblock %}

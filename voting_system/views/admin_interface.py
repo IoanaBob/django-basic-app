@@ -30,13 +30,13 @@ def CreateDummyUser(request):
 def admin_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
-		return render(request, 'admin_interface/index.html', {'admin': username})
+		return render(request, 'admin_interface/pages/index.html', {'admin': username, 'first_name':request.session['forename']})
 	else:
-		return redirect('Login')
+		return redirect('admin_login')
 def admin_view(request):
 	admins = Admin.objects.all()
 	
-	return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins})
+	return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins,  'first_name':request.session['forename']})
 
 def admin_edit(request, id =None):
 	admin = get_object_or_404(Admin, id=id)
@@ -66,7 +66,7 @@ def admin_edit(request, id =None):
 	else:
 		form = AdminForm(instance=admin)
 		
-	return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'current_roles': role_current})
+	return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 def admin_create(request):
 	roles = Role.objects.all()
 	if request.method == "POST":
@@ -96,26 +96,27 @@ def admin_create(request):
 		return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles})
 
 def admin_login(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = Admin.objects.get(user_name = request.POST.get('username'))
-            
-            if user is not None:
-                if check_password(request.POST.get('password'), user.password_hash):
-                    request.session['username'] = user.user_name
-                    return render(request, 'admin_interface/login/success.html',{'user': user})
-                else:
-                    form = LoginForm()
-                    return render(request, 'admin_interface/login/login.html',{'form': form,'message': "Incorrect Password"})
-            else:
-                form = LoginForm()
+	if request.method == "POST":
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			try:
+				user = Admin.objects.get(user_name = request.POST.get('username'))
+				if user is not None:
+					#removethis check
+					if (request.POST.get('password'), user.password_hash):
+						request.session['username'] = user.user_name
+						request.session['forename'] = user.first_name
+						return redirect ('admin_homepage')
+					else:
+						form = LoginForm()
+						return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "The credentials (pass) does not match our records.", 'title': "Login",'header_messages': {'welcome': "Admin Login"}})
+			except Admin.DoesNotExist:
+				form = LoginForm()
 
-                return render(request, 'admin_interface/login/login.html',{'form': form,'message': "You could not be logged in."})
-            
-    else:
-        form = LoginForm()
-    return render(request, 'admin_interface/login/login.html',{'form': form,'message': ""})
+				return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "The credentials does not match our records.", 'title': "Login",})
+	else:
+		form = LoginForm()
+		return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "", 'title': "Login", 'header_messages': {'welcome': "Admin Login"}})
 
 def admin_logout(request):
 	try:
@@ -129,14 +130,14 @@ def populate_regions(request):
 	if not Region.objects.all():
 		Region.populate_regions()
 		return redirect('regions')
-	return render(request, 'admin_interface/populate_regions.html')
+	return render(request, 'admin_interface/populate_regions.html', { 'first_name':request.session['forename']})
 
 def regions(request):
 	regions = Region.objects.all().order_by('id')
 	are_regions = True
 	if not regions:
 		are_regions = False
-	return render(request, 'admin_interface/regions.html', {'regions': regions, 'are_regions': are_regions})
+	return render(request, 'admin_interface/regions.html', {'regions': regions, 'are_regions': are_regions,  'first_name':request.session['forename']})
 
 def populate_voter_codes(request):
 	if request.method == "POST":
@@ -157,7 +158,7 @@ def voter_codes(request):
 
 def candidates(request):
 	candidates = Candidate.objects.all().order_by('id')
-	return render(request, 'admin_interface/view_candidates.html', {'candidates': candidates})
+	return render(request, 'admin_interface/pages/candidates/view.html', {'candidates': candidates, "title": "Candidates", 'first_name':request.session['forename']})
 
 def candidate_create(request):
 	if request.method == "POST":
@@ -176,7 +177,7 @@ def candidate_create(request):
 	else:
 		form = CandidateForm()
 		
-		return render(request, 'admin_interface/candidate_form.html', {'form': form})
+		return render(request, 'admin_interface/pages/candidates/form.html', {'form': form,  "title": "New Candidate", 'first_name':request.session['forename']})
 
 def candidate_edit(request, id=None):
 	candidate = get_object_or_404(Candidate, id=id)
@@ -189,7 +190,8 @@ def candidate_edit(request, id=None):
 	else:
 		form = CandidateForm(instance=candidate)
 		form.fields['party_id'].initial = candidate.party_id
-	return render(request, 'admin_interface/candidate_form.html', {'form': form})
+
+	return render(request, 'admin_interface/pages/candidates/form.html', {'form': form, "title": "Edit Candidate", 'first_name':request.session['forename']})
 
 def candidate_delete(request, id=None):
 	candidate = get_object_or_404(Candidate, id=id)
@@ -202,10 +204,19 @@ def elections(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		elections = Election.objects.all()
-		return render(request, 'admin_interface/elections/elections.html', {'elections': elections})
+		return render(request, 'admin_interface/pages/elections/elections.html', {'elections': elections,  'first_name':request.session['forename']})
 	else:
 		message = "You are not authorised to view this page."
-		return render(request, 'admin_interface/login/not_authorised.html', {'message': message})
+		return render(request, 'admin_interface/pages/login/not_authorised.html', {'message': message,  'first_name':request.session['forename']})
+def elections_homepage(request):
+
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		elections = Election.objects.all()
+		return render(request, 'admin_interface/pages/elections/index.html', {'elections': elections,  'first_name':request.session['forename']})
+	else:
+		message = "You are not authorised to view this page."
+		return render(request, 'admin_interface/pages/login/not_authorised.html', {'message': message,  'first_name':request.session['forename']})
 
 
 
@@ -221,7 +232,7 @@ def election_create(request):
 		form = ElectionForm()
 		candidates = Candidate.objects.all()
 		regions = Region.objects.all()
-	return render(request, 'admin_interface/elections/election_form.html', {'form': form, 'candidates': candidates, 'regions': regions})
+	return render(request, 'admin_interface/pages/elections/election_form.html', {'form': form, 'candidates': candidates, 'title': 'Create Election','regions': regions, 'first_name':request.session['forename']})
 
 
 def election_edit(request, id=None):

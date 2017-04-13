@@ -1,0 +1,34 @@
+{% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
+
+
+{% block content %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+{% endblock %}
+<div class="container">
+<h1>New Candidate</h1>
+
+{% if form.party_id %}
+<form method="POST">{% csrf_token %}
+
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% else %}
+    <h2>Sorry, This action could not be executed</h2>
+    <p>You must have atleast 1 Party to assign a candidate. Click to add a party below.</p>
+    <a href="{{ url }}">Add New Party</a>
+
+{% endif %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+  $(".js-example-basic-single").select2({
+      width: 300
+  });
+});
+    </script>
+
+{% endblock %}

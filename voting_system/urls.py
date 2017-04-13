@@ -14,8 +14,8 @@ urlpatterns = [
 
      #Home
     url(r'^administration/$', views.admin_homepage, name='admin_homepage'),
-    url(r'^administration/login/', views.admin_login, name='Login'),
-    url(r'^administration/logout/$', views.admin_logout, name='Logout'),
+    url(r'^administration/login/', views.admin_login, name='admin_login'),
+    url(r'^administration/logout/$', views.admin_logout, name='admin_logout'),
 
     #admin interface
     url(r'^administration/regions/$', views.regions, name='regions'),
@@ -23,12 +23,14 @@ urlpatterns = [
 
     # candidates pages CRUD
     url(r'^administration/candidates/$', views.candidates, name='candidates'),
+    
     url(r'^administration/candidates/create/$', views.candidate_create, name='candidate_create'),
-    url(r'^administration/candidates/edit/(?P<id>\d+)/$', views.candidate_edit, name='candidates_edit'),
+    url(r'^administration/candidates/edit/(?P<id>\d+)/$', views.candidate_edit, name='candidate_edit'),
     url(r'^administration/candidates/delete/(?P<id>\d+)/$', views.candidate_delete, name='candidate_delete'),
     
     # elections pages CRUD
-    url(r'^administration/elections/$', views.elections, name='elections'),
+    url(r'^administration/elections/$', views.elections_homepage, name='elections_homepage'),
+    url(r'^administration/elections/view/$', views.elections, name='elections'),
     url(r'^administration/elections/create/$', views.election_create, name='election_create'),
     url(r'^administration/elections/edit/$', views.election_edit, name='election_edit'),
     url(r'^administration/elections/delete/$', views.election_delete, name='election_delete'),
