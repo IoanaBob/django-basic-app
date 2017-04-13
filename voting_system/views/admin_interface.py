@@ -30,7 +30,7 @@ def CreateDummyUser(request):
 def admin_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/index.html', {'admin': username, 'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/index.html', {'admin': username})
 	else:
 		return redirect('admin_login')
 def admin_view(request):
