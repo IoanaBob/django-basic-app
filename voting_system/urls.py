@@ -57,6 +57,12 @@ urlpatterns = [
     url(r'^administration/parties/delete/(?P<id>\d+)/$', views.party_delete, name='party_delete'),
 
     #voter interface
+
+    # voter identity check
+    url(r'^check_voter_code/$', views.check_code, name='check_code'),
+    url(r'^check_voter_password/$', views.check_password, name='check_password'),
+    url(r'^cast_vote/$', views.cast_vote, name='cast_vote'),
+
     # voter codes
     url(r'^administration/voter_codes/$', views.voter_codes, name='voter_codes'),
     url(r'^administration/voter_codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
@@ -66,7 +72,7 @@ urlpatterns = [
     url(r'^verify/$', views.public_verify, name='public_verify'),
 
     #cast_vote
-    url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
+    #url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
     
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),

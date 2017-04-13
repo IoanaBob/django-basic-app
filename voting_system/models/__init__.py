@@ -9,6 +9,7 @@ from .party import *
 from .region import *
 from .region1_votes import *
 from .region2_votes import *
+from .region_vote import *
 from .role import *
 from .test import *
 from .voter_auth import *
