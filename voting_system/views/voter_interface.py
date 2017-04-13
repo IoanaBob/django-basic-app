@@ -92,6 +92,7 @@ def public_vote_place(request):
 
 	else:
 
+		# test data TODO: get this from DB
 		election_id = 1
 		election_vote_method = "fptp"
 		region_id = 1
