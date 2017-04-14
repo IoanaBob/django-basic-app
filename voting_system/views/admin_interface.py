@@ -3,41 +3,98 @@ from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from voting_system.forms import LoginForm
 from django.contrib.auth.hashers import make_password, check_password
 from voting_system.forms import *
-from voting_system.forms.admin_formn import *
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
+from django.contrib import messages
 
-
-
+from django.core.paginator import Paginator
 from django.db import connection
+from django.conf import settings
 
 
-def CreateDummyUser(request):
-    admin_user = Admin()
-    admin_user.id = 1
-    admin_user.first_name = "John"
-    admin_user.last_name = "Smith"
-    admin_user.user_name = "j_smith"
-    admin_user.password_hash = make_password("abc")
-    admin_user.email = "smithj@email.com"
-    # foreign key
-    
-    admin_user.save()
-
-    return render(request, 'admin_interface/login/create_dummy_user.html')
-def admin_homepage(request):
+def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
 		return render(request, 'admin_interface/pages/index.html', {'admin': username})
 	else:
 		return redirect('admin_login')
-def admin_view(request):
-	admins = Admin.objects.all()
-	
-	return render(request, 'admin_interface/admin_users/admin_users.html', {'admins': admins,  'first_name':request.session['forename']})
+#---- Authentication START ----#
+def admin_login(request):
+	if request.method == "POST":
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			try:
+				user = Admin.objects.get(user_name = request.POST.get('username'))
+				if user is not None:
+					#remove this check SAM ADD encryption ;P
+					if request.POST.get('password') == user.password_hash:
+						request.session['username'] = user.user_name
+						request.session['forename'] = user.first_name.capitalize()
+						messages.success(request, "Welcome! You have been successfully logged in!")
+						return redirect ('admin_homepage')
+					else:
+						form = LoginForm()
+						messages.error(request, "Your credentials does not match our records.")
+						return render(request, 'admin_interface/pages/authentication/login.html',{'form': form, 'title': "Login",'header_messages': {'welcome': "Admin Login"}})
+			except Admin.DoesNotExist:
+				form = LoginForm()
+				messages.error(request, "Your credentials does not match our records.")
+				return render(request, 'admin_interface/pages/authentication/login.html',{'form': form, 'title': "Login",})
+	else:
+		form = LoginForm()
+		return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "", 'title': "Login", 'header_messages': {'welcome': "Admin Login"}})
 
+def admin_logout(request):
+	try:
+		del request.session['username']
+		del request.session['forename']
+	except:
+		pass
+	
+	messages.success(request, "You have been successfully logged out")
+	return render(request, 'voter_interface/pages/homepage.html',{})
+
+#---- Authentication END ----#
+
+
+#---- Admin START ----#
+def admin_view(request):
+	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
+	if(authorised):
+		admin_list = Admin.objects.all().order_by('id')
+		paginator = Paginator(admin_list, settings.PAGINATION_LENGTH)
+		try:
+			admins = paginator.page(1)
+		except PageNotAnInteger:
+			admins = paginator.page(1)
+		except EmptyPage:
+			admins = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'admins': admins,  'first_name':request.session['forename']})
+	else:
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+def admin_view_page(request, page_id=None):
+	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
+	if(authorised):
+		admin_list = Admin.objects.all().order_by('id')
+		paginator = Paginator(admin_list, settings.PAGINATION_LENGTH)
+		try:
+			admins = paginator.page(page_id)
+		except PageNotAnInteger:
+			admins = paginator.page(1)
+		except EmptyPage:
+			admins = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'admins': admins,  'first_name':request.session['forename']})
+	else:
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+def admins_homepage(request):
+	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
+	if(authorised):
+		return render(request, 'admin_interface/pages/admin/index.html', {'first_name': request.session['forename']})
+	else:
+		return redirect('admin_login')
 def admin_edit(request, id =None):
 	admin = get_object_or_404(Admin, id=id)
 	role_current = AdminRole.objects.filter(admin_id = id).values_list("role_id", flat=True)
@@ -62,18 +119,18 @@ def admin_edit(request, id =None):
 				new_role.role_id = role
 				new_role.save()
 			admin.save()
-			return redirect('admin_users')
+			return redirect('admin_view')
 	else:
 		form = AdminForm(instance=admin)
 		
-	return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
+	return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 def admin_create(request):
 	roles = Role.objects.all()
 	if request.method == "POST":
 		form = AdminForm(request.POST)
 		if form.is_valid():
 			if(request.POST.get('password') != request.POST.get('repeatPassword')):
-				return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles, 'errors': ["Password Does not match"]})
+				return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'roles': roles, 'errors': ["Password Does not match"]})
 			else:
 				id = getNextID("admins")
 				admin = form.save(commit=False)
@@ -93,52 +150,53 @@ def admin_create(request):
 	else:
 		form = AdminForm()
 		
-		return render(request, 'admin_interface/admin_users/admin_form.html', {'form': form, 'roles': roles})
+		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'roles': roles})
 
-def admin_login(request):
-	if request.method == "POST":
-		form = LoginForm(request.POST)
-		if form.is_valid():
-			try:
-				user = Admin.objects.get(user_name = request.POST.get('username'))
-				if user is not None:
-					#removethis check
-					if check_password(request.POST.get('password'), user.password_hash):
-						request.session['username'] = user.user_name
-						request.session['forename'] = user.first_name
-						return redirect ('admin_homepage')
-					else:
-						form = LoginForm()
-						return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "The credentials (pass) does not match our records.", 'title': "Login",'header_messages': {'welcome': "Admin Login"}})
-			except Admin.DoesNotExist:
-				form = LoginForm()
+def admin_delete(request, id=None):
+	admin = get_object_or_404(Admin, id=id)
+	admin.delete()
+	messages.error(request, "Admin #"+id+" has been deleted!")
+	return redirect('admin_view')
+#---- Admin END ----#
 
-				return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "The credentials does not match our records.", 'title': "Login",})
+#---- Voter Code START ----#
+def voter_code_homepage(requests):
+	return render(request, 'admin_interface/pages/codes/index.html')
+def voter_code_view(request):
+	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
+	if(authorised):
+		codes_list = VoterCode.objects.all().order_by('id')
+		paginator = Paginator(codes_list, settings.PAGINATION_LENGTH)
+		try:
+			voter_codes = paginator.page(1)
+		except PageNotAnInteger:
+			voter_codes = paginator.page(1)
+		except EmptyPage:
+			voter_codes = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'voter_codes': voter_codes,  'first_name':request.session['forename']})
 	else:
-		form = LoginForm()
-		return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "", 'title': "Login", 'header_messages': {'welcome': "Admin Login"}})
-
-def admin_logout(request):
-	try:
-		del request.session['username']
-	except:
-		pass
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+def voter_code_view_page(request, page_id=None):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		codes_list = VoterCode.objects.all().order_by('id')
+		paginator = Paginator(codes_list, settings.PAGINATION_LENGTH)
+		try:
+			voter_codes = paginator.page(page_id)
+		except PageNotAnInteger:
+			voter_codes = paginator.page(1)
+		except EmptyPage:
+			voter_codes = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'voter_codes': voter_codes,  'first_name':request.session['forename']})
+	else:
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+#---- Voter Code END ----#
 	
-	return render(request, 'admin_interface/login/logged_out.html',{})
-	
-def populate_regions(request):
-	if not Region.objects.all():
-		Region.populate_regions()
-		return redirect('regions')
-	return render(request, 'admin_interface/populate_regions.html', { 'first_name':request.session['forename']})
+#---- MISC START (TO SORTT) ----#
 
-def regions(request):
-	regions = Region.objects.all().order_by('id')
-	are_regions = True
-	if not regions:
-		are_regions = False
-	return render(request, 'admin_interface/regions.html', {'regions': regions, 'are_regions': are_regions,  'first_name':request.session['forename']})
-
+# DEPRECATED
 def populate_voter_codes(request):
 	if request.method == "POST":
 		form = VoterCodeForm(request.POST)
@@ -152,13 +210,32 @@ def populate_voter_codes(request):
 		form = VoterCodeForm()
 	return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
 
-def voter_codes(request):
-	voter_codes = VoterCode.objects.all().order_by('id')
-	return render(request, 'admin_interface/voter_codes.html', {'voter_codes': voter_codes})
 
-def candidates(request):
-	candidates = Candidate.objects.all().order_by('id')
-	return render(request, 'admin_interface/pages/candidates/view.html', {'candidates': candidates, "title": "Candidates", 'first_name':request.session['forename']})
+#---- Candidates START ----#
+
+def candidate_homepage(request):
+	return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'first_name':request.session['forename']})
+def candidate_view(request):
+	candidate_list = Candidate.objects.all().order_by('id')
+	paginator = Paginator(candidate_list, settings.PAGINATION_LENGTH)
+
+	try:
+		candidates = paginator.page(1)
+	except PageNotAnInteger:
+		candidates = paginator.page(1)
+	except EmptyPage:
+		candidates = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'candidates':candidates,  'first_name':request.session['forename']})
+def candidate_view_page(request, page_id=None):
+	candidate_list = Candidate.objects.all().order_by('id')
+	paginator = Paginator(candidate_list, settings.PAGINATION_LENGTH)
+	try:
+		candidates = paginator.page(page_id)
+	except PageNotAnInteger:
+		candidates = paginator.page(1)
+	except EmptyPage:
+		candidates = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'candidates': candidates,  'first_name':request.session['forename']})
 
 def candidate_create(request):
 	if request.method == "POST":
@@ -168,15 +245,13 @@ def candidate_create(request):
 		if form.is_valid():
 
 			candidate = form.save(commit=False)
-
-
 			candidate.id = getNextID('candidates')
 			candidate.party_id = party
 			candidate.save()
-		return redirect('candidates')
+			messages.success(request, "Successfully added a new candidiate!")
+		return redirect('candidate_view')
 	else:
 		form = CandidateForm()
-		
 		return render(request, 'admin_interface/pages/candidates/form.html', {'form': form,  "title": "New Candidate", 'first_name':request.session['forename']})
 
 def candidate_edit(request, id=None):
@@ -186,7 +261,8 @@ def candidate_edit(request, id=None):
 		if form.is_valid():
 			candidate = form.save(commit=False)
 			candidate.save()
-			return redirect('candidates')
+			messages.success(request, "Candidate #"+id+" successfully update!")
+			return redirect('candidate_view')
 	else:
 		form = CandidateForm(instance=candidate)
 		form.fields['party_id'].initial = candidate.party_id
@@ -196,19 +272,14 @@ def candidate_edit(request, id=None):
 def candidate_delete(request, id=None):
 	candidate = get_object_or_404(Candidate, id=id)
 	candidate.delete()
-	return redirect('candidates')
+	messages.error(request, "Candidate #"+id+" has been deleted!")
+	return redirect('candidate_view')
 
 
-def elections(request):
+#---- Candidates END ----#
 
-	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
-	if(authorised):
-		elections = Election.objects.all()
-		return render(request, 'admin_interface/pages/elections/elections.html', {'elections': elections,  'first_name':request.session['forename']})
-	else:
-		message = "You are not authorised to view this page."
-		return render(request, 'admin_interface/pages/login/not_authorised.html', {'message': message,  'first_name':request.session['forename']})
-def elections_homepage(request):
+#---- Election START ----#
+def election_homepage(request):
 
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -220,19 +291,53 @@ def elections_homepage(request):
 
 
 
+
+def election_view(request):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		election_list = Election.objects.all().order_by('id')
+		paginator = Paginator(election_list, settings.PAGINATION_LENGTH)
+
+		try:
+			elections = paginator.page(1)
+		except PageNotAnInteger:
+			elections = paginator.page(1)
+		except EmptyPage:
+			elections = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'elections': elections,  'first_name':request.session['forename']})
+	else:
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+def election_view_page(request, page_id=None):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		election_list = Election.objects.all().order_by('id')
+		paginator = Paginator(election_list, settings.PAGINATION_LENGTH)
+		try:
+			elections = paginator.page(page_id)
+		except PageNotAnInteger:
+			elections = paginator.page(1)
+		except EmptyPage:
+			elections = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'elections': elections,  'first_name':request.session['forename']})
+	else:
+		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
 def election_create(request):
+	candidates = Candidate.objects.all()
 	if request.method == "POST":
 		form = ElectionForm(request.POST)
 		if form.is_valid():
 			election = form.save(commit=False)
-			party.id = getNextID('elections')
+			election.id = getNextID('elections')
 			election.save()
-			return redirect('elections')
+			messages.success(request, "Successfully added new Election!")
+			return redirect('election_view')
 	else:
 		form = ElectionForm()
-		candidates = Candidate.objects.all()
 		regions = Region.objects.all()
-	return render(request, 'admin_interface/pages/elections/election_form.html', {'form': form, 'candidates': candidates, 'title': 'Create Election','regions': regions, 'first_name':request.session['forename']})
+	
+	return render(request, 'admin_interface/pages/elections/form.html', {'form': form, 'candidates': candidates, 'title': 'Create Election','regions': regions, 'first_name':request.session['forename']})
 
 
 def election_edit(request, id=None):
@@ -245,31 +350,54 @@ def election_edit(request, id=None):
 			return redirect('elections')
 	else:
 		form = ElectionForm(instance=election)
-	return render(request, 'admin_interface/elections/election_form.html', {'form': form})
+		candidates = Candidate.objects.all()
+		regions = Region.objects.all()
+	return render(request, 'admin_interface/pages/elections/form.html', {'form': form, 'candidates': candidates, 'title': 'Edit Election','regions': regions, 'first_name':request.session['forename']})
 
 
 def election_delete(request, id=None):
 	election = get_object_or_404(Election, id=id)
 	election.delete()
-	return redirect('elections')
+	messages.error(request, "Election #"+id+" has been Deleted")
+	return redirect('election_view')
+#---- Election END ----#
 
+#---- Role START ----#
+def role_homepage(request):
+	return render(request, 'admin_interface/pages/roles/index.html')
+def role_view(request):
+	roles_list = Role.objects.all().order_by('id')
+	paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
 
-def roles(request):
-	roles = Role.objects.all().order_by('id')
-	return render(request, 'admin_interface/roles.html', {'roles' : roles})
-
+	try:
+		roles = paginator.page(1)
+	except PageNotAnInteger:
+		roles = paginator.page(1)
+	except EmptyPage:
+		roles = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'roles': roles,  'first_name':request.session['forename']})
+def role_view_page(request, page_id=None):
+	roles_list = Role.objects.all().order_by('id')
+	paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
+	try:
+		roles = paginator.page(page_id)
+	except PageNotAnInteger:
+		roles = paginator.page(1)
+	except EmptyPage:
+		roles = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'roles': roles,  'first_name':request.session['forename']})
 def role_create(request):
 	if request.method == "POST":
 		form = RoleForm(request.POST)
 		if form.is_valid():
 			role = form.save(commit=False)
 			role.id = getNextID('roles')
-			
 			role.save()
-			return redirect('roles')
+			messages.success(request, "Successfully added 1 new role")
+			return redirect('role_view')
 	else:
 		form = RoleForm()
-	return render(request, 'admin_interface/role_form.html', {'form': form})
+	return render(request, 'admin_interface/pages/roles/form.html', {'form': form})
 
 def role_edit(request, id=None):
 	role = get_object_or_404(Role, id=id)
@@ -280,23 +408,47 @@ def role_edit(request, id=None):
 			#role.id = request.user
 			#role.name = request.user
 			role.save()
-			return redirect('roles')
+			messages.success(request, "Role #"+id+" Successfully Updated!")
+			return redirect('role_view')
 	else:
 		form = RoleForm(instance=role)
-	return render(request, 'admin_interface/role_form.html', {'form': form})
+	return render(request, 'admin_interface/pages/roles/form.html', {'form': form})
 
 def role_delete(request, id=None):
 	role = get_object_or_404(Role, id=id)
 	role.delete()
-	return redirect('roles')
+	MESSAGE_TAGS = {
+		messages.error: 'danger'
+	}
+	messages.error(request, "Role #"+id+" has been deleted!")
+	return redirect('role_view')
+#---- Role END ----#
 
-def party(request):
-	parties = Party.objects.all().order_by('id')
-	if not parties:
-		are_parties = False
-	else:
-		are_parties = True
-	return render(request, 'admin_interface/parties.html', {'parties': parties, 'are_parties': are_parties})
+#---- Party START---#
+def party_homepage(request):
+	return render(request, 'admin_interface/pages/parties/index.html', {'title': "Party Homepage"})
+
+def party_view(request):
+	party_list = Party.objects.all().order_by('id')
+	paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
+
+	try:
+		parties = paginator.page(1)
+	except PageNotAnInteger:
+		parties = paginator.page(1)
+	except EmptyPage:
+		parties = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
+def party_view_page(request, page_id=None):
+	party_list = Party.objects.all().order_by('id')
+	paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
+	try:
+		parties = paginator.page(page_id)
+	except PageNotAnInteger:
+		parties = paginator.page(1)
+	except EmptyPage:
+		parties = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
 
 def party_create(request):
 	if request.method == "POST":
@@ -305,15 +457,17 @@ def party_create(request):
 			party = form.save(commit=False)
 			party.id = getNextID('parties')
 			party.save()
-			return redirect('party')
+			messages.success(request, "Successfully added 1 new party!")
+			return redirect('party_view')
 	else:
 		form = PartyForm()
-	return render(request, 'admin_interface/party_form.html', {'form': form})
+	return render(request, 'admin_interface/pages/parties/form.html', {'form': form})
 def party_delete(request, id=None):
 
 	party = get_object_or_404(Party, id=id)
 	party.delete()
-	return redirect('parties')
+	messages.error(request, "Party #"+id+" has been deleted!")
+	return redirect('party_view')
 
 def party_edit(request, id=None):
 	party = get_object_or_404(Party, id=id)
@@ -323,10 +477,89 @@ def party_edit(request, id=None):
 			party = form.save(commit=False)
 			
 			party.save()
-			return redirect('party')
+			return redirect('party_view')
 	else:
 		form = PartyForm(instance=party)
-	return render(request, 'admin_interface/role_form.html', {'form': form})
+	return render(request, 'admin_interface/pages/parties/form.html', {'form': form})
+def party_view_page(request, page_id=None):
+	party_list = Party.objects.all().order_by('id')
+	paginator = Paginator(party_list, 25)
+	try:
+		parties = paginator.page(page_id)
+	except PageNotAnInteger:
+		parties = paginator.page(1)
+	except EmptyPage:
+		parties = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
+#---- Party  END---#
+
+# -----  Region -----#
+def region_homepage(request):
+	return render(request, 'admin_interface/pages/regions/index.html', {"title": "Regions Homepage", 'first_name': request.session['forename']})
+def region_view(request):
+	
+	regions_list = Region.objects.all().order_by('id')
+	paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
+
+	try:
+		regions = paginator.page(1)
+	except PageNotAnInteger:
+		regions = paginator.page(1)
+	except EmptyPage:
+		regions = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/regions/view.html', {'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']})
+
+def region_view_page(request, page_id=None):
+	regions_list = Region.objects.all().order_by('id')
+	paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
+
+	try:
+		regions = paginator.page(page_id)
+	except PageNotAnInteger:
+		regions = paginator.page(1)
+	except EmptyPage:
+		regions = paginator.page(paginator.num_pages)
+	return render(request, 'admin_interface/pages/regions/view.html', {'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']})
+def region_create(request):
+	if request.method == "POST":
+		form = RegionForm(request.POST)
+		if form.is_valid():
+			region = form.save(commit=False)
+			region.id = getNextID('region')
+			region.save()
+			return redirect('region_view')
+	else:
+		form = RegionForm()
+	return render(request, 'admin_interface/pages/regions/form.html', {'form': form})
+def region_edit(request, id=None):
+	region = get_object_or_404(Region, id=id)
+	if request.method == "POST":
+		form = RegionForm(request.POST, instance=region)
+		if form.is_valid():
+			region = form.save(commit=False)
+			region.save()
+			messages.success(request, 'Region #'+id+' Has been Update')
+			return redirect('region_view')
+	else:
+		form = RegionForm(instance=region)
+	return render(request, 'admin_interface/pages/regions/form.html', {'form': form})
+def region_populate(request):
+	if not Region.objects.all():
+		Region.populate_regions()
+		messages.success(request, "Regions successfuly populate!")
+		return redirect('regions_view')
+	else :
+		messages.error(request, "Regions could not be populated")
+		return redirect( 'regions_view', { 'first_name': request.session['forename']})
+
+def region_delete(request, id=None):
+
+	region = get_object_or_404(Region, id=id)
+	region.delete()
+	messages.error(request, "Region #"+id+" successfuly deleted!")
+	return redirect('region_view')
+#---- Region END ---#
+
 def getNextID(tblName):
 	cursor = connection.cursor()
 	cursor.execute( "select nextval('"+tblName+"_id_seq')")

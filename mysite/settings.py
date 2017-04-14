@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from django.contrib.messages import constants as message_constants
+
+MESSAGE_TAGS = {message_constants.ERROR: 'danger'}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,7 +27,7 @@ SECRET_KEY = '!(%e(7zo4+kan(h!eb%yt3&r_2#p&jf=43&$m1xfqrd0n591(v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+PAGINATION_LENGTH = 25
 ALLOWED_HOSTS = []
 
 

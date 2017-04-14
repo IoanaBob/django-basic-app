@@ -1,7 +1,7 @@
 {% include 'admin_interface/components/header.html' %}
-
-{% block content %}
-{% endblock %}
-
-
+<div class="container">
+    {% include 'admin_interface/components/toast.html' %}
+    {% block content %}
+    {% endblock %}
+</div>
 {% include 'voter_interface/components/footer.html' %}
