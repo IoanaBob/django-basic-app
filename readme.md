@@ -36,3 +36,25 @@ messages.info(request, message)
 ### Error
 ```python
 messages.error(request, message)
+```
+
+## Templates
+### Extend
+> Extend the base.html in the chosen directory
+```python
+{% extends 'voter_interface/base.html' %}
+```
+```python
+{% extends 'admin_interface/base.html' %}
+```
+### Container
+> The main container (.container) is defined within base.html, therefore does not require to be repeated unless needed.
+
+### Content
+> All content of a template should be contained with the content block
+
+```python
+{% block content %}
+    # Template Content Goes Here
+{% endblock %}
+```
