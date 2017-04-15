@@ -197,19 +197,6 @@ def voter_code_view_page(request, page_id=None):
 #---- MISC START (TO SORTT) ----#
 
 # DEPRECATED
-def populate_voter_codes(request):
-	if request.method == "POST":
-		form = VoterCodeForm(request.POST)
-		if form.is_valid():
-			election = form.instance.election
-			form.save(commit=False)
-			print(election)
-			VoterCode.populate_voter_codes(election)
-			return redirect('elections')
-	else:
-		form = VoterCodeForm()
-	return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
-
 
 #---- Candidates START ----#
 
@@ -543,14 +530,6 @@ def region_edit(request, id=None):
 	else:
 		form = RegionForm(instance=region)
 	return render(request, 'admin_interface/pages/regions/form.html', {'form': form})
-def region_populate(request):
-	if not Region.objects.all():
-		Region.populate_regions()
-		messages.success(request, "Regions successfuly populate!")
-		return redirect('regions_view')
-	else :
-		messages.error(request, "Regions could not be populated")
-		return redirect( 'regions_view', { 'first_name': request.session['forename']})
 
 def region_delete(request, id=None):
 
@@ -573,3 +552,28 @@ def isEmpty(elements):
 	for element in elements:
 		count += 1
 	return {0: True}.get(count, False)
+
+
+# don't move these functions or change their names. I am working on them.
+
+def populate_voter_codes(request):
+	if request.method == "POST":
+		form = VoterCodeForm(request.POST)
+		if form.is_valid():
+			election = form.instance.election
+			form.save(commit=False)
+			print(election)
+			VoterCode.populate_voter_codes(election)
+			return redirect('elections')
+	else:
+		form = VoterCodeForm()
+	return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
+
+def region_populate(request):
+	if not Region.objects.all():
+		Region.populate_regions()
+		messages.success(request, "Regions successfuly populated!")
+		return redirect('region_view')
+	else :
+		messages.error(request, "Regions are already populated.")
+		return redirect( 'region_view', { 'first_name': request.session['forename']})

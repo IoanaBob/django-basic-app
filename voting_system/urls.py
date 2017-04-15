@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from voting_system import views
+from .models import Voter
 
 urlpatterns = [
 
@@ -85,3 +86,7 @@ urlpatterns = [
     url(r'^voting/place/$', views.public_vote_place, name='public_vote__place_vote')
 
 ]
+
+# Startup Functions
+if not Voter.objects.all():
+    Voter.populate_voters()

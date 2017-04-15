@@ -14,7 +14,7 @@ class VoterCode(models.Model):
     #default false
     sent_status = models.BooleanField(default=False)
     #NEEDS TO CHNAGE TO FOREIGN KEY -- CA ADDED TO TEST VOTER CODES
-    voter_id = models.IntegerField(max_length=64)
+    voter_id = models.CharField(max_length=20)
     # TODO: modify in the DB too!!
     #vote_status = models.BooleanField(default=False)
     # foreign keys
