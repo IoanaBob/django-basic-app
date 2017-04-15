@@ -39,6 +39,27 @@ messages.error(request, message)
 ```
 
 ## Templates
+### New template
+``` python
+{% extends 'voter_interface/base.html' %}
+
+{% block content %}
+    # Template Content Goes Here
+{% endblock %}
+{% block js %}
+    # Javascript files and inline javascript should be placed here
+{% endblock %}
+```
+``` python
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+    # Template Content Goes Here
+{% endblock %}
+{% block js %}
+    # Javascript files and inline javascript should be placed here
+{% endblock %}
+```
 ### Extend
 > Extend the base.html in the chosen directory
 ```python
