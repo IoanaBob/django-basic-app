@@ -14,3 +14,4 @@ from .role import *
 from .test import *
 from .voter_auth import *
 from .voter_code import *
+from .voters import *

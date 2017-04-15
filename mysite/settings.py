@@ -111,6 +111,14 @@ DATABASES = {
         'PASSWORD': 'region2',
         'HOST': '5.179.102.239',
         'PORT': '20004',
+    },
+    'people': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'people',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': '5.179.102.239',
+        'PORT': '20004',
     }
 }
 
@@ -146,6 +154,14 @@ DATABASES = {
         'NAME': 'region2',
         'USER': 'region2',
         'PASSWORD': 'region2',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+    'people': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'people',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
     }

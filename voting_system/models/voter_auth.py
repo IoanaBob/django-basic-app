@@ -6,6 +6,7 @@ class VoterAuth(models.Model):
     id = models.IntegerField(primary_key=True)
     voter_code_number = models.IntegerField()
     password_hash = models.CharField(max_length=300)
+    voter_id = models.CharField(max_length=20)
 
     # Did not do encryption!!
     def generate_password():
