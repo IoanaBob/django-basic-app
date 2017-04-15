@@ -1,0 +1,18 @@
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+<table class="index">
+	<tr>
+		<td><a href="{% url 'candidate_view' %}"><u><b><p>View Candidates</p></b></u></a></td>
+		<td><a href="{% url 'candidate_create' %}"><u><b><p>Create Candidate</p></b></u></a></td>
+		<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
+		<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
+	</tr>
+	<tr>
+		<td><p>View all candidates</p></td>
+
+		<td><p>Create a new candidate</p></td>
+	</tr>
+	
+</table>
+{% endblock %}

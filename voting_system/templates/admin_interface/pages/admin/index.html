@@ -1,10 +1,10 @@
 {% extends 'admin_interface/base.html' %}
 
 {% block content %}
-<table>
+<table class="index">
 	<tr>
-		<td><a href="{% url 'election_view' %}"><u><b><p>View Election</p></b></u></a></td>
-		<td><a href="{% url 'election_create' %}"><u><b><p>Create Election</p></b></u></a></td>
+		<td><a href="{% url 'admin_view' %}"><u><b><p>View Admins</p></b></u></a></td>
+		<td><a href="{% url 'admin_create' %}"><u><b><p>Create Admin</p></b></u></a></td>
 		<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
 		<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
 	</tr>
@@ -15,4 +15,5 @@
 	</tr>
 	
 </table>
+
 {% endblock %}

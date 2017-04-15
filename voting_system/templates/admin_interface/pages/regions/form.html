@@ -1,0 +1,14 @@
+{% extends 'admin_interface/base.html' %}
+{% block content %}
+
+{% if form.instance.id %}
+    <h1>Edit Region</h1>
+{% else %}
+    <h1>New Region</h1>
+{% endif %}
+<form method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save" class="btn btn-success">
+</form>
+
+{% endblock %}

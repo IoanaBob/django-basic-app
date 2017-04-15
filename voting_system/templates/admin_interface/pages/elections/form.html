@@ -1,0 +1,67 @@
+
+{% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+{% if election %}
+	<h1>New Election</h1>
+{% else %}
+	<h1>Edit Election</h1>
+{% endif %}
+{% if candidates %}
+<form method="POST">{% csrf_token %}
+	{{ form.as_p }}
+	
+
+	<div class="div">
+		<h2>Add Candidates</h2>
+		
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Add</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Party ID</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				{% for candidate in candidates %}
+					<tr>
+						<td><input type="checkbox" name="candidates" value="{{ candidate.id }}"></td>
+						<td><span>{{ candidate.first_name }}</span></td>
+						<td><span>{{ candidate.last_name }}</span></td>
+						<td><span>{{ candidate.party_id }}</span></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="div">
+		<h2>Add Regions</h2>
+		<a href="#" class="btn btn-success" id="region_selectAll" data-clicked="false">Select All Regions</a>
+		
+		
+		<select name="regions[]" id="regions_dropdown" class="js-example-placeholder-multiple" multiple="multiple">
+		{% for region in regions %}
+
+			<option value="{{ region.id }}">{{ region.name }}</option>
+
+		{% endfor %}
+		</select>
+				
+	</div>
+	<input type="submit" class="btn btn-success" value="Save">
+</form>
+{% else %}
+	<h2>Please add Candidates before continuing</h2>
+	<a href="{% url 'candidate_create' %}" class="btn btn-success">Add Candidates</a>
+{% endif %}
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script type="text/javascript">$(document).ready(function(){$(".js-example-placeholder-multiple").select2({width:500}),$("#region_selectAll").click(function(a){a.preventDefault(),"false"==$("#region_selectAll").attr("data-clicked")?($("select#regions_dropdown option").attr("selected",!0).parent().trigger("change"),$("#region_selectAll").attr("data-clicked","true")):($("select#regions_dropdown option").attr("selected",!1).parent().trigger("change"),$("#region_selectAll").attr("data-clicked","false"))})});</script>
+{% endblock %}
