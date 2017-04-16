@@ -1,31 +1,36 @@
 {% extends 'admin_interface/base.html' %}
 
 {% block content %}
-<div class="container">
-	<style>
-		table 
-		{
-			width: 100%;
-		}
+<table class="index">
+	<tr>
+		<td><a href="{% url 'admin_homepage' %}"><u><b><p>Admin Dashboard</p></b></u></a></td>
+		<td><a href="{% url 'election_homepage' %}"><u><b><p>Elections</p></b></u></a></td>
+		<td><a href="{% url 'candidate_homepage' %}"><u><b><p>Candidates</p></b></u></a></td>
 
-		tr, td
-		{
-			width: 39%;
-			vertical-align: top;
-		}
-	</style>
-	<table>
-		<tr>
-			<td><a href="{% url 'admin_users' %}"><u><b><p>Admin Dashboard</p></b></u></a></td>
-            <td><a href="{% url 'elections_homepage' %}"><u><b><p>View Election</p></b></u></a></td>
-			<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
-			<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
-		</tr>
-		<tr>
-			<td><p>Create new admins who will have access to specific admin privilages</p></td>
-			<td><p>Edit the homepage for non-admin users</p></td>
-		</tr>
+	</tr>
+	<tr>
+		<td><p>Create new admins who will have access to specific admin privilages</p></td>
+		<td><p>View and modify election information/p></td>
+	</tr>
+	<tr>
+		<td><a href="{% url 'region_homepage' %}"><u><b><p>Regions</p></b></u></a></td>
+		<td><a href="{% url 'role_homepage' %}"><u><b><p>Roles</p></b></u></a></td>
+		<td><a href="{% url 'party_homepage' %}"><u><b><p>Parties</p></b></u></a></td>
+
+	</tr>
+	<tr>
+		<td><p>View and modify region information</p></td>
+		<td><p>View and modify role information</p></td>
+		<td><p>View and modify party information</p></td>
+	</tr>
+	<tr>
+		<td><a href="{% url 'voter_code_homepage' %}"><u><b><p>Voter Codes</p></b></u></a></td>
+
+	</tr>
+	<tr>
+		<td><p>View and reissue voter codes</p></td>
 		
-	</table>
-</div>
+	</tr>
+</table>
+
 {% endblock %}

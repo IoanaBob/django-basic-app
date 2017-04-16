@@ -12,8 +12,11 @@ class VoterCode(models.Model):
     # should set up minumum = maximum length here 
     code = models.CharField(max_length=15, unique = True, editable=True)
     #default false
+    sent_status = models.BooleanField(default=False)
+    #NEEDS TO CHNAGE TO FOREIGN KEY -- CA ADDED TO TEST VOTER CODES
+    voter_id = models.CharField(max_length=20)
     # TODO: modify in the DB too!!
-    vote_status = models.BooleanField(default=False)
+    #vote_status = models.BooleanField(default=False)
     # foreign keys
     election = models.ForeignKey(Election, on_delete=models.CASCADE, db_column='election_id')
     region = models.ForeignKey(Region, on_delete=models.CASCADE, db_column='region_id')

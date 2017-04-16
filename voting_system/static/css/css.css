@@ -10,7 +10,36 @@ p {
 h1 {
 	font-size: 50px;
 }
-
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+	display: inline-block;
+    max-width: 250px;
+	width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	float:right;
+}
+input[type="text"]:after,
+input[type="email"]:after,
+input[type="password"]:after {
+	clear: both;float:none
+}
+.form_container {
+	max-width: 600px;
+}
 /*Aligns all the content within .container, which is set to a defined width*/
 .container {
 	width: 51%;
@@ -186,7 +215,7 @@ h1 {
 /*PULL COPYRIGHT LOGO WHEN CERTAIN WIDTH*/
 @media (max-width: 667px) {
 	#Copyright {
-		margin-left: auto:
+		margin-left: auto;
 		margin-right: auto;
 		float: none;
 		width: 70%;
@@ -265,9 +294,9 @@ h1 {
     padding-right: 5px;
     text-align: left;
     text-decoration: none;
-=======
+}
 html {
-	font-family: arial
+	font-family: arial;
 }
 
 p {
@@ -452,7 +481,7 @@ h1 {
 /*PULL COPYRIGHT LOGO WHEN CERTAIN WIDTH*/
 @media (max-width: 667px) {
 	#Copyright {
-		margin-left: auto:
+		margin-left: auto;
 		margin-right: auto;
 		float: none;
 		width: 70%;
@@ -531,5 +560,15 @@ h1 {
     padding-right: 5px;
     text-align: left;
     text-decoration: none;
->>>>>>> a298022602096b5a19bc28da018ca3acb9a1d7e2
+
+}
+
+
+table.index{
+	width: 100%;
+}
+table.index tr,
+table.index  td {
+	width: 39%;
+	vertical-align: top;
 }

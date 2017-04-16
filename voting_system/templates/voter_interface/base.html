@@ -1,9 +1,12 @@
 {% include "voter_interface/components/header.html" %}
 
+<div class="container">
+    
+    {% include 'admin_interface/components/toast.html' %}    
 
-{% block content %}
-{% endblock %}
-
+    {% block content %}
+    {% endblock %}
+</div>
 {% include "voter_interface/components/footer.html" %}
 {% block js %}
 {% endblock %}

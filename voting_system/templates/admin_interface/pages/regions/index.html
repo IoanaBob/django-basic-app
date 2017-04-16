@@ -1,0 +1,20 @@
+
+{% extends 'admin_interface/base.html' %}
+{% block content %}
+
+<table class="index">
+	<tr>
+		<td><a href="{% url 'region_view' %}"><u><b><p>View Region</p></b></u></a></td>
+		<td><a href="{% url 'region_create' %}"><u><b><p>Create Region</p></b></u></a></td>
+		<td><a href="{% url 'region_populate' %}"><u><b><p>Populate Region</p></b></u></a></td>
+		
+	</tr>
+	<tr>
+		<td><p>View all regions</p></td>
+		<td><p>Create a new region</p></td>
+		<td><p>Populate regions database</p></td>
+	</tr>
+	
+</table>
+
+{% endblock %}

@@ -15,6 +15,8 @@ class dbRouter(object):
             return 'region1'
         elif model._meta.app_label == 'reg2':
             return 'region2'
+        elif model._meta.app_label == 'people':
+            return 'people'
         return None
 
     def db_for_write(self, model, **hints):
@@ -29,6 +31,8 @@ class dbRouter(object):
             return 'region1'
         elif model._meta.app_label == 'reg2':
             return 'region2'
+        elif model._meta.app_label == 'people':
+            return 'people'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -47,6 +51,9 @@ class dbRouter(object):
         if obj1._meta.app_label == 'reg2' or \
            obj2._meta.app_label == 'reg2':
            return True
+        if obj1._meta.app_label == 'people' or \
+           obj2._meta.app_label == 'people':
+           return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
@@ -62,4 +69,6 @@ class dbRouter(object):
             return db == 'region1'
         if app_label == 'reg2':
             return db == 'region2'
+        if app_label == 'people':
+            return db == 'people'
         return None
