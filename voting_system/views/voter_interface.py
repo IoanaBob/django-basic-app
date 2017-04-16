@@ -39,7 +39,7 @@ def public_vote_request(request):
 
 		#if checks passed
 		return render(request, 'voter_interface/pages/voting/request.html', {"title": "Request to Vote", "sent": True,'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') ), ('Request Code', reverse('public_vote__request_code') ),("Sent", "#")]})
-	else:\
+	else:
 		#FRONT END GUYS, LOOK AT THE STRUCTURE,  breadcrumb is the menu, title is the page title, header_messages are the welcome message
 		return render(request, 'voter_interface/pages/voting/request.html', {
 			"title": "Request to Vote",
@@ -94,7 +94,7 @@ def public_vote_place(request):
 
 		# test data TODO: get this from DB
 		election_id = 1
-		election_vote_method = "fptp"
+		election_vote_method = "fptp" #"stv"
 		region_id = 1
 
 		candidates = [(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
