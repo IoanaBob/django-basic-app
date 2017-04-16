@@ -94,11 +94,7 @@ def public_vote_place(request):
 
 		# test data TODO: get this from DB
 		election_id = 1
-<<<<<<< HEAD
 		election_vote_method = "fptp" #"stv"
-=======
-		election_vote_method = "stv"
->>>>>>> 7e598ed2716744789c64d5d91904fe7bfd512596
 		region_id = 1
 
 		candidates = [(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
