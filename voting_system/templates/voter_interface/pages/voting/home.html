@@ -1,10 +1,8 @@
 {% extends 'voter_interface/base.html' %}
 
 {% block content %}
-
 <ul class="list-inline home-nav">
 	<li><a href="{% url 'public_vote__ballot' %}">Proceed to Ballot</a></li>
 	<li><a href="{% url 'public_vote__request_code' %}">Request a Voter Code</a></li>
 </ul>
-
 {% endblock %}
