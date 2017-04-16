@@ -41,7 +41,7 @@
                 </div>
                 
                 <div class="ballot_candidate_vote_container">
-                    <div id="candidate_box_1" class="ballot_vote_box" onclick="ToggleVoteX(this)">
+                    <div id="candidate_box_{{ candidate.0 }}" class="ballot_vote_box" onclick="ToggleVoteX(this)">
                         <input id="candidate_rank_{{ candidate.0 }}" class="ballot_rank" type="hidden" value=0 />
                         <img id="candidate_x_{{ candidate.0 }}" class="vote_x_img" src="{% static '/images/vote_x.jpg' %}" />
                     </div>                  
