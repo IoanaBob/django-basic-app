@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^administration/elections/delete/(?P<id>\d+)/$', views.election_delete, name='election_delete'),
     
     #Regions
-    url(r'^administration/regions/$', views.region_homepage, name='region_homepage'),
+    url(r'^administration/regions/$', views.region_view, name='region_homepage'),
     url(r'^administration/regions/populate$', views.region_populate, name='region_populate'),
     url(r'^administration/regions/view/$', views.region_view, name='region_view'),
     url(r'^administration/regions/view/(?P<page_id>\d+)$', views.region_view_page, name='region_view_page'),

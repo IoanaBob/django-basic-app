@@ -192,7 +192,7 @@ def voter_code_view_page(request, page_id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('voter_code_homepage')
-		
+
 #---- Voter Code END ----#
 	
 #---- MISC START (TO SORTT) ----#
@@ -534,34 +534,19 @@ def party_edit(request, id=None):
 #---- Party  END---#
 
 # -----  Region -----#
-def region_homepage(request):
-<<<<<<< HEAD
-	return render(request, 'admin_interface/pages/regions/index.html') #HAS BUGSSS  , {"title": "Regions Homepage", 'first_name': request.session['forename']})
 def region_view(request):
-=======
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		return render(request, 'admin_interface/pages/regions/index.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage'))], 'first_name':request.session['forename']})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
->>>>>>> dc94bd15e4113f90cdd15a8a89f904f8d39f71d4
 	
 def region_view(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		regions_list = Region.objects.all().order_by('id')
 		paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
-
-<<<<<<< HEAD
-	try:
-		regions = paginator.page(1)
-	except PageNotAnInteger:
-		regions = paginator.page(1)
-	except EmptyPage:
-		regions = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/regions/view.html', {'regions': regions})  # 'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']
-=======
 		try:
 			regions = paginator.page(1)
 		except PageNotAnInteger:
@@ -573,7 +558,6 @@ def region_view(request):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('region_homepage')
->>>>>>> dc94bd15e4113f90cdd15a8a89f904f8d39f71d4
 
 def region_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
