@@ -175,7 +175,7 @@ def voter_code_view(request):
 			voter_codes = paginator.page(paginator.num_pages)
 		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'voter_codes': voter_codes,  'first_name':request.session['forename']})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
 def voter_code_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
@@ -482,7 +482,7 @@ def party_view_page(request, page_id=None):
 
 # -----  Region -----#
 def region_homepage(request):
-	return render(request, 'admin_interface/pages/regions/index.html', {"title": "Regions Homepage", 'first_name': request.session['forename']})
+	return render(request, 'admin_interface/pages/regions/index.html') #HAS BUGSSS  , {"title": "Regions Homepage", 'first_name': request.session['forename']})
 def region_view(request):
 	
 	regions_list = Region.objects.all().order_by('id')
@@ -494,7 +494,7 @@ def region_view(request):
 		regions = paginator.page(1)
 	except EmptyPage:
 		regions = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/regions/view.html', {'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']})
+	return render(request, 'admin_interface/pages/regions/view.html', {'regions': regions})  # 'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']
 
 def region_view_page(request, page_id=None):
 	regions_list = Region.objects.all().order_by('id')

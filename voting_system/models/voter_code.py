@@ -1,5 +1,6 @@
 from django.db import models
 from . import Election, Region, VoterAuth
+from . import Voter
 import random
 import string
 import requests
@@ -46,16 +47,15 @@ class VoterCode(models.Model):
 
 
     def populate_voter_codes(the_election):
-        data = requests.get(url = "http://t2a.co/rest/?output=json&method=person_search&api_key=test").json()
-        data = data["person_list"]
+        people = Voter.objects.all()
         if VoterCode.objects.exists():
             i = VoterCode.objects.latest('id').id + 1
         else:
             i = 1
-        for person in data:
+        for person in people:
             voter_code = VoterCode.generate_voter_code()
-            region = VoterCode.postcode_to_region(person["postcode"])
-            VoterAuth.save_password(i)
-            entry = VoterCode(id=i, code=voter_code, election = the_election, region = region)
+            region = VoterCode.postcode_to_region(person.postcode)
+            #VoterAuth.save_password(i)
+            entry = VoterCode(id=i, voter_id= person.voter_id, code=voter_code, election = the_election, region = region)
             entry.save()
             i += 1

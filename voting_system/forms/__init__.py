@@ -5,6 +5,7 @@ from .party import *
 from .election import *
 from .check_code import *
 from .check_password import *
+from .register_vote import *
 from .role import *
 from .admin import *
 from .region import *

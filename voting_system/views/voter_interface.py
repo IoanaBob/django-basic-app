@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from voting_system.models import VoterCode, VoterAuth, RegionVote
-from voting_system.forms import CheckPasswordForm, CheckCodeForm
+from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
@@ -165,3 +165,16 @@ def CastVote(request):
 	# - switch template based on voting system. 
 
 	return render(request, 'voter_interface/ballot_paper_fptp.html')
+
+
+def register_to_vote(request):
+	if request.method == "POST":
+		form = RegisterVoteForm(request.POST)
+		# find out how to encrypt the password
+		if form.is_valid():
+			voter_authentihication = form.save(commit=False)
+			voter_authentihication.save(using='voterauth')
+			return redirect('public_homepage')
+	else:
+		form = RegisterVoteForm()
+	return render(request, 'voter_interface/register_to_vote.html', {'form': form})

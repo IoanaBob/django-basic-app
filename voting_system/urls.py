@@ -67,6 +67,9 @@ urlpatterns = [
 
     #voter interface
 
+    # voter registration
+    url(r'^register_to_vote/$', views.register_to_vote, name='register_to_vote'),
+
     # voter identity check
     url(r'^check_voter_code/$', views.check_code, name='check_code'),
     url(r'^check_voter_password/$', views.check_password, name='check_password'),
@@ -78,7 +81,7 @@ urlpatterns = [
 
     #cast_vote
     #url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
-    
+    url(r'^administration/codes/view/$', views.populate_voter_codes, name='voter_code_populate'),
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
     url(r'^voting/ballot/$', views.public_vote_ballot, name='public_vote__ballot'),
