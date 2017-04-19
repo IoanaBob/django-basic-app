@@ -62,6 +62,7 @@ urlpatterns = [
     # Voter Code CRUD
     url(r'^administration/codes/$', views.voter_code_homepage, name='voter_code_homepage'),
     url(r'^administration/codes/view/$', views.voter_code_view, name='voter_code_view'),
+    url(r'^administration/codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
      url(r'^administration/codes/view/(?P<page_id>\d+)$', views.voter_code_view_page, name='voter_code_view_page'),
   
 
