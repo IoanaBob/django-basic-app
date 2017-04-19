@@ -9,3 +9,4 @@ from .register_vote import *
 from .role import *
 from .admin import *
 from .region import *
+from .test_form import *
