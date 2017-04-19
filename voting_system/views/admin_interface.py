@@ -175,7 +175,7 @@ def voter_code_view(request):
 		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes  })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('voter_codes_homepage')
+		return redirect('voter_code_homepage')
 
 def voter_code_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
