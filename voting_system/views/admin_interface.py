@@ -7,8 +7,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from voting_system.forms import *
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
 from django.contrib import messages
-
-from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 from django.conf import settings
 
@@ -16,7 +16,7 @@ from django.conf import settings
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/index.html', {'admin': username})
+		return render(request, 'admin_interface/pages/index.html', {'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
 #---- Authentication START ----#
@@ -36,14 +36,14 @@ def admin_login(request):
 					else:
 						form = LoginForm()
 						messages.error(request, "Your credentials does not match our records.")
-						return render(request, 'admin_interface/pages/authentication/login.html',{'form': form, 'title': "Login",'header_messages': {'welcome': "Admin Login"}})
+						return render(request, 'admin_interface/pages/authentication/login.html',{'title': "Login",'breadcrumb': [("Home", reverse('admin_master_homepage')), ('Login', reverse('admin_login'))], 'form': form, 'welcome': "Admin Login"})
 			except Admin.DoesNotExist:
 				form = LoginForm()
 				messages.error(request, "Your credentials does not match our records.")
-				return render(request, 'admin_interface/pages/authentication/login.html',{'form': form, 'title': "Login",})
+				return render(request, 'admin_interface/pages/authentication/login.html',{ 'title': "Login",'breadcrumb': [("Home", reverse('admin_master_homepage')), ('Login', reverse('admin_login'))], 'form': form})
 	else:
 		form = LoginForm()
-		return render(request, 'admin_interface/pages/authentication/login.html',{'form': form,'message': "", 'title': "Login", 'header_messages': {'welcome': "Admin Login"}})
+		return render(request, 'admin_interface/pages/authentication/login.html',{'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ('Login', reverse('admin_login'))], 'welcome': "Admin Login", 'form': form})
 
 def admin_logout(request):
 	try:
@@ -53,10 +53,9 @@ def admin_logout(request):
 		pass
 	
 	messages.success(request, "You have been successfully logged out")
-	return render(request, 'voter_interface/pages/homepage.html',{})
+	return redirect ('public_vote__home')
 
 #---- Authentication END ----#
-
 
 #---- Admin START ----#
 def admin_view(request):
@@ -70,10 +69,10 @@ def admin_view(request):
 			admins = paginator.page(1)
 		except EmptyPage:
 			admins = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'admins': admins,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Admin Homepage", reverse('admin_homepage')), ('View',  reverse('admin_view'))],  'first_name':request.session['forename'], 'admins': admins})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_homepage')
 def admin_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
@@ -85,14 +84,14 @@ def admin_view_page(request, page_id=None):
 			admins = paginator.page(1)
 		except EmptyPage:
 			admins = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'admins': admins,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Admin Homepage", reverse('admin_homepage')), ('View',  reverse('admin_view'))],  'first_name':request.session['forename'], 'admins': admins})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_homepage')
 def admins_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/admin/index.html', {'first_name': request.session['forename']})
+		return render(request, 'admin_interface/pages/admin/index.html', {'title': 'Admin Homepage','breadcrumb': [("Home", reverse('admin_master_homepage')), ("Admin Homepage", reverse('admin_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
 def admin_edit(request, id =None):
@@ -150,7 +149,7 @@ def admin_create(request):
 	else:
 		form = AdminForm()
 		
-		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'roles': roles})
+		return render(request, 'admin_interface/pages/admin/form.html', {'title': 'Create new Admin', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Admin Homepage", reverse('admin_homepage')), ("Create new Admin", reverse('admin_create'))], 'first_name': request.session['forename'], 'form': form, 'roles': roles})
 
 def admin_delete(request, id=None):
 	admin = get_object_or_404(Admin, id=id)
@@ -160,8 +159,8 @@ def admin_delete(request, id=None):
 #---- Admin END ----#
 
 #---- Voter Code START ----#
-def voter_code_homepage(requests):
-	return render(request, 'admin_interface/pages/codes/index.html')
+def voter_code_homepage(request):
+	return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage'))], 'first_name': request.session['forename']})
 def voter_code_view(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
@@ -173,10 +172,11 @@ def voter_code_view(request):
 			voter_codes = paginator.page(1)
 		except EmptyPage:
 			voter_codes = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'voter_codes': voter_codes,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes  })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		return redirect('voter_codes_homepage')
+
 def voter_code_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -188,20 +188,18 @@ def voter_code_view_page(request, page_id=None):
 			voter_codes = paginator.page(1)
 		except EmptyPage:
 			voter_codes = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'voter_codes': voter_codes,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('voter_code_homepage')
+		
 #---- Voter Code END ----#
 	
 #---- MISC START (TO SORTT) ----#
 
-# DEPRECATED
-
 #---- Candidates START ----#
-
 def candidate_homepage(request):
-	return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'first_name':request.session['forename']})
+	return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage'))], 'first_name':request.session['forename']})
 def candidate_view(request):
 	candidate_list = Candidate.objects.all().order_by('id')
 	paginator = Paginator(candidate_list, settings.PAGINATION_LENGTH)
@@ -212,7 +210,8 @@ def candidate_view(request):
 		candidates = paginator.page(1)
 	except EmptyPage:
 		candidates = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'candidates':candidates,  'first_name':request.session['forename']})
+
+	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("View Candidates", reverse('candidate_view'))], 'candidates':candidates,  'first_name':request.session['forename']})
 def candidate_view_page(request, page_id=None):
 	candidate_list = Candidate.objects.all().order_by('id')
 	paginator = Paginator(candidate_list, settings.PAGINATION_LENGTH)
@@ -222,7 +221,8 @@ def candidate_view_page(request, page_id=None):
 		candidates = paginator.page(1)
 	except EmptyPage:
 		candidates = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'candidates': candidates,  'first_name':request.session['forename']})
+	
+	return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("View Candidates", reverse('candidate_view'))], 'candidates':candidates,  'first_name':request.session['forename']})
 
 def candidate_create(request):
 	if request.method == "POST":
@@ -239,7 +239,7 @@ def candidate_create(request):
 		return redirect('candidate_view')
 	else:
 		form = CandidateForm()
-		return render(request, 'admin_interface/pages/candidates/form.html', {'form': form,  "title": "New Candidate", 'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form })
 
 def candidate_edit(request, id=None):
 	candidate = get_object_or_404(Candidate, id=id)
@@ -254,7 +254,7 @@ def candidate_edit(request, id=None):
 		form = CandidateForm(instance=candidate)
 		form.fields['party_id'].initial = candidate.party_id
 
-	return render(request, 'admin_interface/pages/candidates/form.html', {'form': form, "title": "Edit Candidate", 'first_name':request.session['forename']})
+	return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}))], 'first_name':request.session['forename'], 'form': form})
 
 def candidate_delete(request, id=None):
 	candidate = get_object_or_404(Candidate, id=id)
@@ -271,10 +271,10 @@ def election_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		elections = Election.objects.all()
-		return render(request, 'admin_interface/pages/elections/index.html', {'elections': elections,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/elections/index.html', {"title": 'Election Homepage', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage'))],'first_name':request.session['forename'], 'elections': elections })
 	else:
 		message = "You are not authorised to view this page."
-		return render(request, 'admin_interface/pages/login/not_authorised.html', {'message': message,  'first_name':request.session['forename']})
+		return redirect('election_homepage')
 
 
 
@@ -291,10 +291,10 @@ def election_view(request):
 			elections = paginator.page(1)
 		except EmptyPage:
 			elections = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'elections': elections,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("View Elections", reverse('election_view'))],'first_name':request.session['forename'], 'elections': elections})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('election_homepage')
 def election_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -306,188 +306,254 @@ def election_view_page(request, page_id=None):
 			elections = paginator.page(1)
 		except EmptyPage:
 			elections = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'elections': elections,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("View Elections", reverse('election_view'))],'first_name':request.session['forename'], 'elections': elections})
 	else:
-		message.error(request, "Access Denied. You do not have sufficient privileges.")
-		return render(request, 'admin_interface/pages/index.html', {  'first_name':request.session['forename']})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('election_homepage')
 def election_create(request):
-	candidates = Candidate.objects.all()
-	if request.method == "POST":
-		form = ElectionForm(request.POST)
-		if form.is_valid():
-			election = form.save(commit=False)
-			election.id = getNextID('elections')
-			election.save()
-			messages.success(request, "Successfully added new Election!")
-			return redirect('election_view')
-	else:
-		form = ElectionForm()
-		regions = Region.objects.all()
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		candidates = Candidate.objects.all()
+		if request.method == "POST":
+			form = ElectionForm(request.POST)
+			if form.is_valid():
+				election = form.save(commit=False)
+				election.id = getNextID('elections')
+				election.save()
+				messages.success(request, "Successfully added new Election!")
+				return redirect('election_view')
+		else:
+			form = ElectionForm()
+			regions = Region.objects.all()
 	
-	return render(request, 'admin_interface/pages/elections/form.html', {'form': form, 'candidates': candidates, 'title': 'Create Election','regions': regions, 'first_name':request.session['forename']})
-
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Create new Election", reverse('election_create'))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('election_homepage')
 
 def election_edit(request, id=None):
-	election = get_object_or_404(Election, id=id)
-	if request.method == "POST":
-		form = ElectionForm(request.POST, instance=election)
-		if form.is_valid():
-			election = form.save(commit=False)
-			election.save()
-			return redirect('elections')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		election = get_object_or_404(Election, id=id)
+		if request.method == "POST":
+			form = ElectionForm(request.POST, instance=election)
+			if form.is_valid():
+				election = form.save(commit=False)
+				election.save()
+				return redirect('elections')
+		else:
+			form = ElectionForm(instance=election)
+			candidates = Candidate.objects.all()
+			regions = Region.objects.all()
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates})
 	else:
-		form = ElectionForm(instance=election)
-		candidates = Candidate.objects.all()
-		regions = Region.objects.all()
-	return render(request, 'admin_interface/pages/elections/form.html', {'form': form, 'candidates': candidates, 'title': 'Edit Election','regions': regions, 'first_name':request.session['forename']})
-
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('election_homepage')
 
 def election_delete(request, id=None):
-	election = get_object_or_404(Election, id=id)
-	election.delete()
-	messages.error(request, "Election #"+id+" has been Deleted")
-	return redirect('election_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		election = get_object_or_404(Election, id=id)
+		election.delete()
+		messages.error(request, "Election #"+id+" has been Deleted")
+		return redirect('election_view')
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('election_homepage')
 #---- Election END ----#
 
 #---- Role START ----#
 def role_homepage(request):
-	return render(request, 'admin_interface/pages/roles/index.html')
+	return render(request, 'admin_interface/pages/roles/index.html', {'title': "Roles Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], 'first_name':request.session['forename'] })
 def role_view(request):
-	roles_list = Role.objects.all().order_by('id')
-	paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		roles_list = Role.objects.all().order_by('id')
+		paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
 
-	try:
-		roles = paginator.page(1)
-	except PageNotAnInteger:
-		roles = paginator.page(1)
-	except EmptyPage:
-		roles = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'roles': roles,  'first_name':request.session['forename']})
+		try:
+			roles = paginator.page(1)
+		except PageNotAnInteger:
+			roles = paginator.page(1)
+		except EmptyPage:
+			roles = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("View Role", reverse('role_view'))], 'first_name':request.session['forename'], 'roles': roles})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('role_homepage')
 def role_view_page(request, page_id=None):
-	roles_list = Role.objects.all().order_by('id')
-	paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
-	try:
-		roles = paginator.page(page_id)
-	except PageNotAnInteger:
-		roles = paginator.page(1)
-	except EmptyPage:
-		roles = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'roles': roles,  'first_name':request.session['forename']})
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		roles_list = Role.objects.all().order_by('id')
+		paginator = Paginator(roles_list, settings.PAGINATION_LENGTH)
+		try:
+			roles = paginator.page(page_id)
+		except PageNotAnInteger:
+			roles = paginator.page(1)
+		except EmptyPage:
+			roles = paginator.page(paginator.num_pages)
+		
+		return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("View Role", reverse('role_view'))], 'first_name':request.session['forename'], 'roles': roles})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('role_homepage')
 def role_create(request):
-	if request.method == "POST":
-		form = RoleForm(request.POST)
-		if form.is_valid():
-			role = form.save(commit=False)
-			role.id = getNextID('roles')
-			role.save()
-			messages.success(request, "Successfully added 1 new role")
-			return redirect('role_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	if(authorised):
+		if request.method == "POST":
+			form = RoleForm(request.POST)
+			if form.is_valid():
+				role = form.save(commit=False)
+				role.id = getNextID('roles')
+				role.save()
+				messages.success(request, "Successfully added 1 new role")
+				return redirect('role_view')
+		else:
+			form = RoleForm()
+		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Create new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Create new Role", reverse('role_create'))], 'first_name':request.session['forename'], 'form': form})
 	else:
-		form = RoleForm()
-	return render(request, 'admin_interface/pages/roles/form.html', {'form': form})
-
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('role_homepage')
 def role_edit(request, id=None):
-	role = get_object_or_404(Role, id=id)
-	if request.method == "POST":
-		form = RoleForm(request.POST, instance=role)
-		if form.is_valid():
-			role = form.save(commit=False)
-			#role.id = request.user
-			#role.name = request.user
-			role.save()
-			messages.success(request, "Role #"+id+" Successfully Updated!")
-			return redirect('role_view')
-	else:
-		form = RoleForm(instance=role)
-	return render(request, 'admin_interface/pages/roles/form.html', {'form': form})
+	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	if(authorised):
+		role = get_object_or_404(Role, id=id)
+		if request.method == "POST":
+			form = RoleForm(request.POST, instance=role)
+			if form.is_valid():
+				role = form.save(commit=False)
+				role.save()
+				messages.success(request, "Role #"+id+" Successfully Updated!")
+				return redirect('role_view')
+		else:
+			form = RoleForm(instance=role)
+			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
+		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
+	else :
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('role_view')
 
 def role_delete(request, id=None):
-	role = get_object_or_404(Role, id=id)
-	role.delete()
-	MESSAGE_TAGS = {
-		messages.error: 'danger'
-	}
-	messages.error(request, "Role #"+id+" has been deleted!")
-	return redirect('role_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		role = get_object_or_404(Role, id=id)
+		role.delete()
+		messages.error(request, "Role #"+id+" has been deleted!")
+		return redirect('role_view')
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('role_view')
 #---- Role END ----#
 
 #---- Party START---#
 def party_homepage(request):
-	return render(request, 'admin_interface/pages/parties/index.html', {'title': "Party Homepage"})
-
-def party_view(request):
-	party_list = Party.objects.all().order_by('id')
-	paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
-
-	try:
-		parties = paginator.page(1)
-	except PageNotAnInteger:
-		parties = paginator.page(1)
-	except EmptyPage:
-		parties = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
-def party_view_page(request, page_id=None):
-	party_list = Party.objects.all().order_by('id')
-	paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
-	try:
-		parties = paginator.page(page_id)
-	except PageNotAnInteger:
-		parties = paginator.page(1)
-	except EmptyPage:
-		parties = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
-
-def party_create(request):
-	if request.method == "POST":
-		form = PartyForm(request.POST)
-		if form.is_valid():
-			party = form.save(commit=False)
-			party.id = getNextID('parties')
-			party.save()
-			messages.success(request, "Successfully added 1 new party!")
-			return redirect('party_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		return render(request, 'admin_interface/pages/parties/index.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage'))], 'first_name':request.session['forename']})
 	else:
-		form = PartyForm()
-	return render(request, 'admin_interface/pages/parties/form.html', {'form': form})
-def party_delete(request, id=None):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_master_homepage')
+def party_view(request):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		party_list = Party.objects.all().order_by('id')
+		paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
 
-	party = get_object_or_404(Party, id=id)
-	party.delete()
-	messages.error(request, "Party #"+id+" has been deleted!")
-	return redirect('party_view')
+		try:
+			parties = paginator.page(1)
+		except PageNotAnInteger:
+			parties = paginator.page(1)
+		except EmptyPage:
+			parties = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/parties/view.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage'))], 'first_name':request.session['forename'], 'parties': parties,})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('party_homepage')
+def party_view_page(request, page_id=None):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		party_list = Party.objects.all().order_by('id')
+		paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
+		try:
+			parties = paginator.page(page_id)
+		except PageNotAnInteger:
+			parties = paginator.page(1)
+		except EmptyPage:
+			parties = paginator.page(paginator.num_pages)
+		return render(request, 'admin_interface/pages/parties/view.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage'))], 'first_name':request.session['forename'], 'parties': parties,})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('party_homepage')
+def party_create(request):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		if request.method == "POST":
+			form = PartyForm(request.POST)
+			if form.is_valid():
+				party = form.save(commit=False)
+				party.id = getNextID('parties')
+				party.save()
+				messages.success(request, "Successfully added 1 new party!")
+				return redirect('party_view')
+		else:
+			form = PartyForm()
+		return render(request, 'admin_interface/pages/parties/form.html', {'title': "Create new Party", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage')), ("Create new Party", reverse('party_create'))], 'first_name':request.session['forename'], 'form': form})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('party_homepage')
+def party_delete(request, id=None):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		party = get_object_or_404(Party, id=id)
+		party.delete()
+		messages.error(request, "Party #"+id+" has been deleted!")
+		return redirect('party_view')
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('party_homepage')
 
 def party_edit(request, id=None):
-	party = get_object_or_404(Party, id=id)
-	if request.method == "POST":
-		form = PartyForm(request.POST, instance=party)
-		if form.is_valid():
-			party = form.save(commit=False)
-			
-			party.save()
-			return redirect('party_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		party = get_object_or_404(Party, id=id)
+		if request.method == "POST":
+			form = PartyForm(request.POST, instance=party)
+			if form.is_valid():
+				party = form.save(commit=False)
+				
+				party.save()
+				messages.success(request, "Party #"+id+" has been modifed!")
+				return redirect('party_view')
+		else:
+			form = PartyForm(instance=party)
+		return render(request, 'admin_interface/pages/parties/form.html', {'title': "Create new Party", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage')), ("Create new Party", reverse('party_create'))], 'first_name':request.session['forename'], 'form': form})
 	else:
-		form = PartyForm(instance=party)
-	return render(request, 'admin_interface/pages/parties/form.html', {'form': form})
-def party_view_page(request, page_id=None):
-	party_list = Party.objects.all().order_by('id')
-	paginator = Paginator(party_list, 25)
-	try:
-		parties = paginator.page(page_id)
-	except PageNotAnInteger:
-		parties = paginator.page(1)
-	except EmptyPage:
-		parties = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/parties/view.html', {'parties': parties,  'first_name':request.session['forename']})	
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('party_view')
+
 #---- Party  END---#
 
 # -----  Region -----#
 def region_homepage(request):
+<<<<<<< HEAD
 	return render(request, 'admin_interface/pages/regions/index.html') #HAS BUGSSS  , {"title": "Regions Homepage", 'first_name': request.session['forename']})
 def region_view(request):
+=======
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		return render(request, 'admin_interface/pages/regions/index.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage'))], 'first_name':request.session['forename']})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_master_homepage')
+>>>>>>> dc94bd15e4113f90cdd15a8a89f904f8d39f71d4
 	
-	regions_list = Region.objects.all().order_by('id')
-	paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
+def region_view(request):
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		regions_list = Region.objects.all().order_by('id')
+		paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
 
+<<<<<<< HEAD
 	try:
 		regions = paginator.page(1)
 	except PageNotAnInteger:
@@ -495,48 +561,82 @@ def region_view(request):
 	except EmptyPage:
 		regions = paginator.page(paginator.num_pages)
 	return render(request, 'admin_interface/pages/regions/view.html', {'regions': regions})  # 'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']
+=======
+		try:
+			regions = paginator.page(1)
+		except PageNotAnInteger:
+			regions = paginator.page(1)
+		except EmptyPage:
+			regions = paginator.page(paginator.num_pages)
+
+		return render(request, 'admin_interface/pages/regions/view.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("View Regions", reverse('region_view'))], 'first_name':request.session['forename'], 'regions': regions})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('region_homepage')
+>>>>>>> dc94bd15e4113f90cdd15a8a89f904f8d39f71d4
 
 def region_view_page(request, page_id=None):
-	regions_list = Region.objects.all().order_by('id')
-	paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		regions_list = Region.objects.all().order_by('id')
+		paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
 
-	try:
-		regions = paginator.page(page_id)
-	except PageNotAnInteger:
-		regions = paginator.page(1)
-	except EmptyPage:
-		regions = paginator.page(paginator.num_pages)
-	return render(request, 'admin_interface/pages/regions/view.html', {'title': "View Regions", 'regions': regions,  'first_name':request.session['forename']})
+		try:
+			regions = paginator.page(page_id)
+		except PageNotAnInteger:
+			regions = paginator.page(1)
+		except EmptyPage:
+			regions = paginator.page(paginator.num_pages)
+
+		return render(request, 'admin_interface/pages/regions/view.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("View Regions", reverse('region_view'))], 'first_name':request.session['forename'], 'regions': regions})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('region_homepage')
 def region_create(request):
-	if request.method == "POST":
-		form = RegionForm(request.POST)
-		if form.is_valid():
-			region = form.save(commit=False)
-			region.id = getNextID('region')
-			region.save()
-			return redirect('region_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		if request.method == "POST":
+			form = RegionForm(request.POST)
+			if form.is_valid():
+				region = form.save(commit=False)
+				region.id = getNextID('regions')
+				region.save()
+				messages.success(request, "Successfully added a new region!")
+				return redirect('region_view')
+		else:
+			form = RegionForm()
+		return render(request, 'admin_interface/pages/regions/form.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("Create new region", reverse('region_create'))], 'first_name':request.session['forename'], 'form': form})
 	else:
-		form = RegionForm()
-	return render(request, 'admin_interface/pages/regions/form.html', {'form': form})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('region_homepage')
 def region_edit(request, id=None):
-	region = get_object_or_404(Region, id=id)
-	if request.method == "POST":
-		form = RegionForm(request.POST, instance=region)
-		if form.is_valid():
-			region = form.save(commit=False)
-			region.save()
-			messages.success(request, 'Region #'+id+' Has been Update')
-			return redirect('region_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		region = get_object_or_404(Region, id=id)
+		if request.method == "POST":
+			form = RegionForm(request.POST, instance=region)
+			if form.is_valid():
+				region = form.save(commit=False)
+				region.save()
+				messages.success(request, 'Region #'+id+' Has been Update')
+				return redirect('region_view')
+		else:
+			form = RegionForm(instance=region)
+		return render(request, 'admin_interface/pages/regions/form.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("Edit Region", reverse('region_edit'))], 'first_name':request.session['forename'], 'form': form})
 	else:
-		form = RegionForm(instance=region)
-	return render(request, 'admin_interface/pages/regions/form.html', {'form': form})
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('region_homepage')
 
 def region_delete(request, id=None):
-
-	region = get_object_or_404(Region, id=id)
-	region.delete()
-	messages.error(request, "Region #"+id+" successfuly deleted!")
-	return redirect('region_view')
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
+	if(authorised):
+		region = get_object_or_404(Region, id=id)
+		region.delete()
+		messages.error(request, "Region #"+id+" successfuly deleted!")
+		return redirect('region_view')
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('region_homepage')
 #---- Region END ---#
 
 def getNextID(tblName):
@@ -546,15 +646,8 @@ def getNextID(tblName):
 	cursor.close()
 	return row[0]
 
-def isEmpty(elements):
-	count = 0
-
-	for element in elements:
-		count += 1
-	return {0: True}.get(count, False)
-
-
 # don't move these functions or change their names. I am working on them.
+# -- okay -- I've changed the region popuate to generated correct ID with sequences - CA
 
 def populate_voter_codes(request):
 	if request.method == "POST":

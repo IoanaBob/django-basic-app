@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import connection
 import requests
 import json
 
@@ -16,11 +17,18 @@ class Region(models.Model):
     def populate_regions():
         region0 = requests.get(url='http://lda.data.parliament.uk/constituencies.json?exists-endedDate=false&_pageSize=400&_page=0').json()
         region1 = requests.get(url='http://lda.data.parliament.uk/constituencies.json?exists-endedDate=false&_pageSize=400&_page=1').json()
+        
+        cursor = connection.cursor()
+        cursor.execute( "select nextval('regions_id_seq')")
+        region_id = cursor.fetchone()[0] - 1
+        cursor.close()
         for i in range(1,651):
-            if i<400:
+           
+            
+            if i < 400:
                 region_name = region0["result"]["items"][i-1]["label"]["_value"]
             else:
                 region_name = region1["result"]["items"][i-401]["label"]["_value"]
-            region = Region(id=i, name=region_name)
+            region = Region(id=region_id + i, name=region_name)
             region.save()
-
+        

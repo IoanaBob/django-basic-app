@@ -2,34 +2,33 @@
 {% block content %}
 
 {% if not acknowledgement %}
-<div class="container">
-	<h1>Vote Code</h1>
-	<div class="row">
-	    <p class="col-md-8">Enter your online vote code to continue. You can't continue without a valid code. This code can only be used once and must be associated with your Voter ID.</p>
-	</div>
-	<div class="row">
-		<div class="form-group col-md-4">
- 			<label class="control-label" for="votecode">Online Code:</label>
- 			<div class="input-group">
-  				<form method="POST">
-                    {% csrf_token %}
-  					<input class="form-control" placeholder="Enter your votecode here" type="text" name="votecode" >
-                    <input type="submit" class="btn btn-primary" value="Submit">
-				</form>
-			</div>
+
+<h1>Vote Code</h1>
+<div class="row">
+	<p class="col-md-8">Enter your online vote code to continue. You can't continue without a valid code. This code can only be used once and must be associated with your Voter ID.</p>
+</div>
+<div class="row">
+	<div class="form-group col-md-4">
+		<label class="control-label" for="votecode">Online Code:</label>
+		<div class="input-group">
+			<form method="POST">
+				{% csrf_token %}
+				<input class="form-control" placeholder="Enter your votecode here" type="text" name="votecode" >
+				<input type="submit" class="btn btn-primary" value="Submit">
+			</form>
 		</div>
 	</div>
-    {% if errors %}
-    <div class="errors">
-        {% for error in erros %}
-            <p class="error">{{ error }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
-		
 </div>
+{% if errors %}
+<div class="errors">
+	{% for error in erros %}
+		<p class="error">{{ error }}</p>
+	{% endfor %}
+</div>
+{% endif %}
+
 {% else %}
-<div class="container">
+
 	<h1>Acknowledgement</h1>
 	<hr/>
 	<div class="row">
@@ -41,9 +40,6 @@
 	
 	<a href="{% url 'public_vote__place_vote' %}" class="btn btn-success" role="button">Agree - Continue</a>
 	<a href="{% url 'public_vote__home' %}" class="btn btn-danger" role="button">Decline - Return</a>
-	
-	
-</div>
 {% endif %}
 
 {% endblock %}

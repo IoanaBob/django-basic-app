@@ -1,13 +1,12 @@
 {% extends 'admin_interface/base.html' %}
-
 {% block content %}
 
 <h1>Roles</h1>
-    {% if roles %}
-        <table class="table table-striped table-hover">
+{% if roles %}
+    <table class="table table-striped table-hover">
         <thead>
-            <th>Region ID</th>
-            <th>Region Name</th>
+            <th>Role ID</th>
+            <th>Role Name</th>
             <th>Edit</th>
             <th>Delete</th>
         </thead>
