@@ -13,7 +13,7 @@ urlpatterns = [
     # candidates pages CRUD
    
     url(r'^administration/candidates/$', views.candidate_homepage, name='candidate_homepage'),
-    url(r'^administration/candidates/view/$', views.candidate_view, name='candidate_view'),
+    url(r'^administration/candidates/view/$', views.candidate_view_page, name='candidate_view'),
     url(r'^administration/candidates/view/(?P<page_id>\d+)$', views.candidate_view_page, name='candidate_view_page'),
     url(r'^administration/candidates/create/$', views.candidate_create, name='candidate_create'),
     url(r'^administration/candidates/edit/(?P<id>\d+)/$', views.candidate_edit, name='candidate_edit'),
@@ -21,7 +21,7 @@ urlpatterns = [
     
     # elections pages CRUD
     url(r'^administration/elections/$', views.election_homepage, name='election_homepage'),
-    url(r'^administration/elections/view/$', views.election_view, name='election_view'),
+    url(r'^administration/elections/view/$', views.election_view_page, name='election_view'),
     url(r'^administration/elections/view/(?P<page_id>\d+)$', views.election_view_page, name='election_view_page'),
     url(r'^administration/elections/create/$', views.election_create, name='election_create'),
     url(r'^administration/elections/edit/(?P<id>\d+)/$', views.election_edit, name='election_edit'),
@@ -38,7 +38,7 @@ urlpatterns = [
     
     #admins
     url(r'^administration/admins/$', views.admins_homepage, name='admin_homepage'),
-    url(r'^administration/admins/view/$', views.admin_view, name='admin_view'),
+    url(r'^administration/admins/view/$', views.admin_view_page, name='admin_view'),
      url(r'^administration/admins/view/(?P<page_id>\d+)$', views.admin_view_page, name='admin_view_page'),
     url(r'^administration/admins/edit/(?P<id>\d+)/$', views.admin_edit, name='admin_edit'),
     url(r'^administration/admins/create/$', views.admin_create, name='admin_create'),
@@ -46,7 +46,7 @@ urlpatterns = [
 
     # roles pages CRUD
     url(r'^administration/roles/$', views.role_homepage, name='role_homepage'),
-    url(r'^administration/roles/view/$', views.role_view, name='role_view'),
+    url(r'^administration/roles/view/$', views.role_view_page, name='role_view'),
     url(r'^administration/roles/view/(?P<page_id>\d+)$', views.role_view_page, name='role_view_page'),
     url(r'^administration/roles/create/$', views.role_create, name='role_create'),
     url(r'^administration/roles/edit/(?P<id>\d+)/$', views.role_edit, name='role_edit'),
@@ -62,7 +62,7 @@ urlpatterns = [
 
     # Voter Code CRUD
     url(r'^administration/codes/$', views.voter_code_homepage, name='voter_code_homepage'),
-    url(r'^administration/codes/view/$', views.voter_code_view, name='voter_code_view'),
+    url(r'^administration/codes/view/$', views.voter_code_view_page, name='voter_code_view'),
     url(r'^administration/codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
      url(r'^administration/codes/view/(?P<page_id>\d+)$', views.voter_code_view_page, name='voter_code_view_page'),
   

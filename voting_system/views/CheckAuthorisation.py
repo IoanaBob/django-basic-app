@@ -1,4 +1,4 @@
-
+from voting_system.models import *
 #required_roles in the form of a list of tuples. 
 #Each tuple has one or more roles.
 #To return true, a user must be in at least one of the role in each tuple
@@ -13,11 +13,11 @@ def CheckAuthorisation(request, require_login=True, required_roles = []):
 		if request.session.has_key('username'):
 			username = request.session['username']
 
-			user_roles = GetUserRoles(username)
+			current_user_roles = GetUserRoles(username)
 			for role_tuple in required_roles:
 				role_match = False
 				for role in role_tuple:
-					if(role in user_roles):
+					if(role in current_user_roles):
 						role_match = True
 						break
 				if(not role_match):
@@ -29,4 +29,9 @@ def CheckAuthorisation(request, require_login=True, required_roles = []):
 
 
 def GetUserRoles(username):
-	return ["test_role"]
+	admin = Admin.objects.get(user_name = username)
+	role_current = AdminRole.objects.filter(admin_id = admin.id).values_list("role_id", flat=True)
+	roles = [role.name for role in Role.objects.all()]
+	print(roles)
+
+	return roles
