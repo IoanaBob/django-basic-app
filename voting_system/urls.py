@@ -30,7 +30,7 @@ urlpatterns = [
     #Regions
     url(r'^administration/regions/$', views.region_view, name='region_homepage'),
     url(r'^administration/regions/populate$', views.region_populate, name='region_populate'),
-    url(r'^administration/regions/view/$', views.region_view, name='region_view'),
+    url(r'^administration/regions/view/$', views.region_view_page, name='region_view'),
     url(r'^administration/regions/view/(?P<page_id>\d+)$', views.region_view_page, name='region_view_page'),
     url(r'^administration/regions/edit/(?P<id>\d+)/$', views.region_edit, name='region_edit'),
     url(r'^administration/regions/create/$', views.region_create, name='region_create'),
@@ -54,7 +54,7 @@ urlpatterns = [
 
     # party pages CRUD
     url(r'^administration/parties/$', views.party_homepage, name='party_homepage'),
-    url(r'^administration/parties/view/$', views.party_view, name='party_view'),
+    url(r'^administration/parties/view/$', views.party_view_page, name='party_view'),
     url(r'^administration/parties/view/(?P<page_id>\d+)$', views.party_view_page, name='party_view_page'),
     url(r'^administration/parties/create/$', views.party_create, name='party_create'),
     url(r'^administration/parties/edit/(?P<id>\d+)/$', views.party_edit, name='party_edit'),

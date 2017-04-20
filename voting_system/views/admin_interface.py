@@ -248,7 +248,7 @@ def candidate_create(request):
 				candidate.party_id = party
 				candidate.save()
 				messages.success(request, "Successfully added a new candidiate!")
-			return redirect('candidate_view')
+			return redirect('candidate_view_page')
 		else:
 			form = CandidateForm()
 			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form })
@@ -267,7 +267,7 @@ def candidate_edit(request, id=None):
 				candidate = form.save(commit=False)
 				candidate.save()
 				messages.success(request, "Candidate #"+id+" successfully update!")
-				return redirect('candidate_view')
+				return redirect('candidate_view_page')
 		else:
 			form = CandidateForm(instance=candidate)
 			form.fields['party_id'].initial = candidate.party_id
@@ -283,7 +283,7 @@ def candidate_delete(request, id=None):
 		candidate = get_object_or_404(Candidate, id=id)
 		candidate.delete()
 		messages.error(request, "Candidate #"+id+" has been deleted!")
-		return redirect('candidate_view')
+		return redirect('candidate_view_page')
 
 
 # ---- Candidates END ---- #
@@ -365,7 +365,7 @@ def election_create(request):
 					new_region.save()
 
 				messages.success(request, "Successfully added new Election!")
-				return redirect('election_view')
+				return redirect('election_view_page')
 		else:
 			form = ElectionForm()
 			regions = Region.objects.all()
@@ -466,7 +466,7 @@ def election_delete(request, id=None):
 		election = get_object_or_404(Election, id=id)
 		election.delete()
 		messages.error(request, "Election #"+id+" has been Deleted")
-		return redirect('election_view')
+		return redirect('election_view_page')
 	
 # ---- Election END ---- #
 
@@ -511,7 +511,7 @@ def role_create(request):
 				role.id = getNextID('roles')
 				role.save()
 				messages.success(request, "Successfully added 1 new role")
-				return redirect('role_view')
+				return redirect('role_view_page')
 		else:
 			form = RoleForm()
 		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Create new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Create new Role", reverse('role_create'))], 'first_name':request.session['forename'], 'form': form})
@@ -531,7 +531,7 @@ def role_edit(request, id=None):
 				role = form.save(commit=False)
 				role.save()
 				messages.success(request, "Role #"+id+" Successfully Updated!")
-				return redirect('role_view')
+				return redirect('role_view_page')
 		else:
 			form = RoleForm(instance=role)
 			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role")], 'first_name':request.session['forename'], 'form': form})
@@ -547,7 +547,7 @@ def role_delete(request, id=None):
 		role = get_object_or_404(Role, id=id)
 		role.delete()
 		messages.error(request, "Role #"+id+" has been deleted!")
-		return redirect('role_view')
+		return redirect('role_view_page')
 	
 
 # ---- Role END ---- #
@@ -560,22 +560,6 @@ def party_homepage(request):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
-def party_view(request):
-	authorised,username = CheckAuthorisation(request,True,[("party__view",)])
-	if(authorised):
-		party_list = Party.objects.all().order_by('id')
-		paginator = Paginator(party_list, settings.PAGINATION_LENGTH)
-
-		try:
-			parties = paginator.page(1)
-		except PageNotAnInteger:
-			parties = paginator.page(1)
-		except EmptyPage:
-			parties = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/parties/view.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage'))], 'first_name':request.session['forename'], 'parties': parties,})
-	else:
-		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('party_homepage')
 
 
 def party_view_page(request, page_id=None):
@@ -605,7 +589,7 @@ def party_create(request):
 				party.id = getNextID('parties')
 				party.save()
 				messages.success(request, "Successfully added 1 new party!")
-				return redirect('party_view')
+				return redirect('party_view_page')
 		else:
 			form = PartyForm()
 		return render(request, 'admin_interface/pages/parties/form.html', {'title': "Create new Party", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage')), ("Create new Party", reverse('party_create'))], 'first_name':request.session['forename'], 'form': form})
@@ -620,7 +604,7 @@ def party_delete(request, id=None):
 		party = get_object_or_404(Party, id=id)
 		party.delete()
 		messages.error(request, "Party #"+id+" has been deleted!")
-		return redirect('party_view')
+		return redirect('party_view_page')
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('party_homepage')
@@ -637,13 +621,13 @@ def party_edit(request, id=None):
 				
 				party.save()
 				messages.success(request, "Party #"+id+" has been modifed!")
-				return redirect('party_view')
+				return redirect('party_view_page')
 		else:
 			form = PartyForm(instance=party)
 		return render(request, 'admin_interface/pages/parties/form.html', {'title': "Create new Party", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Parties Homepage", reverse('party_homepage')), ("Create new Party", reverse('party_create'))], 'first_name':request.session['forename'], 'form': form})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('party_view')
+		return redirect('party_view_page')
 
 # ---- Party  END--- #
 
@@ -655,24 +639,6 @@ def region_homepage(request):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
-
-	
-def region_view(request):
-	authorised,username = CheckAuthorisation(request,True,[("region__view",)])
-	if(authorised):
-		regions_list = Region.objects.all().order_by('id')
-		paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
-		try:
-			regions = paginator.page(1)
-		except PageNotAnInteger:
-			regions = paginator.page(1)
-		except EmptyPage:
-			regions = paginator.page(paginator.num_pages)
-
-		return render(request, 'admin_interface/pages/regions/view.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("View Regions", reverse('region_view'))], 'first_name':request.session['forename'], 'regions': regions})
-	else:
-		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('region_homepage')
 
 
 def region_view_page(request, page_id=None):
@@ -704,7 +670,7 @@ def region_create(request):
 				region.id = getNextID('regions')
 				region.save()
 				messages.success(request, "Successfully added a new region!")
-				return redirect('region_view')
+				return redirect('region_view_page')
 		else:
 			form = RegionForm()
 		return render(request, 'admin_interface/pages/regions/form.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("Create new region", reverse('region_create'))], 'first_name':request.session['forename'], 'form': form})
@@ -723,7 +689,7 @@ def region_edit(request, id=None):
 				region = form.save(commit=False)
 				region.save()
 				messages.success(request, 'Region #'+id+' Has been Update')
-				return redirect('region_view')
+				return redirect('region_view_page')
 		else:
 			form = RegionForm(instance=region)
 		return render(request, 'admin_interface/pages/regions/form.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage')), ("Edit Region", reverse('region_edit'))], 'first_name':request.session['forename'], 'form': form})
@@ -738,7 +704,7 @@ def region_delete(request, id=None):
 		region = get_object_or_404(Region, id=id)
 		region.delete()
 		messages.error(request, "Region #"+id+" successfuly deleted!")
-		return redirect('region_view')
+		return redirect('region_view_page')
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('region_homepage')
