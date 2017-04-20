@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password, check_password as admin_password_check
 from voting_system.forms import *
 from voting_system.views.CheckAuthorisation import CheckAuthorisation
 from django.contrib import messages
@@ -28,7 +28,7 @@ def admin_login(request):
 				user = Admin.objects.get(user_name = request.POST.get('username'))
 				if user is not None:
 					#remove this check SAM ADD encryption ;P
-					if request.POST.get('password') == user.password_hash:
+					if  admin_password_check(request.POST.get('password'),user.password_hash):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
@@ -145,7 +145,7 @@ def admin_create(request):
 					new_role.role_id = role
 					new_role.save()
 			
-				return redirect('admin_users')
+				return redirect('admin_view')
 	else:
 		form = AdminForm()
 		
