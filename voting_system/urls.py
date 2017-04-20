@@ -3,7 +3,8 @@ from voting_system import views
 from .models import Voter
 
 urlpatterns = [
-
+    #tets
+    # url(r'^test/$', views.test, name='test'),
     #Home & login/logout
     url(r'^administration/$', views.admin_master_homepage, name='admin_master_homepage'),
     url(r'^administration/login/', views.admin_login, name='admin_login'),

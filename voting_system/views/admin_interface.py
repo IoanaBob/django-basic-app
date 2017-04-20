@@ -19,7 +19,7 @@ def admin_master_homepage(request):
 		return render(request, 'admin_interface/pages/index.html', {'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
-#---- Authentication START ----#
+# ---- Authentication START ---- #
 def admin_login(request):
 	if request.method == "POST":
 		form = LoginForm(request.POST)
@@ -55,9 +55,9 @@ def admin_logout(request):
 	messages.success(request, "You have been successfully logged out")
 	return redirect ('public_vote__home')
 
-#---- Authentication END ----#
+# ---- Authentication END ---- #
 
-#---- Admin START ----#
+# ---- Admin START ---- #
 def admin_view(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
@@ -156,9 +156,9 @@ def admin_delete(request, id=None):
 	admin.delete()
 	messages.error(request, "Admin #"+id+" has been deleted!")
 	return redirect('admin_view')
-#---- Admin END ----#
+# ---- Admin END ---- #
 
-#---- Voter Code START ----#
+# ---- Voter Code START ---- #
 def voter_code_homepage(request):
 	return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage'))], 'first_name': request.session['forename']})
 def voter_code_view(request):
@@ -193,11 +193,11 @@ def voter_code_view_page(request, page_id=None):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('voter_code_homepage')
 
-#---- Voter Code END ----#
+# ---- Voter Code END ---- #
 	
-#---- MISC START (TO SORTT) ----#
+# ---- MISC START (TO SORTT) ---- #
 
-#---- Candidates START ----#
+# ---- Candidates START ---- #
 def candidate_homepage(request):
 	return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage'))], 'first_name':request.session['forename']})
 def candidate_view(request):
@@ -263,9 +263,9 @@ def candidate_delete(request, id=None):
 	return redirect('candidate_view')
 
 
-#---- Candidates END ----#
+# ---- Candidates END ---- #
 
-#---- Election START ----#
+# ---- Election START ---- #
 def election_homepage(request):
 
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
@@ -360,9 +360,9 @@ def election_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('election_homepage')
-#---- Election END ----#
+# ---- Election END ---- #
 
-#---- Role START ----#
+# ---- Role START ---- #
 def role_homepage(request):
 	return render(request, 'admin_interface/pages/roles/index.html', {'title': "Roles Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], 'first_name':request.session['forename'] })
 def role_view(request):
@@ -398,7 +398,7 @@ def role_view_page(request, page_id=None):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_homepage')
 def role_create(request):
-	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		if request.method == "POST":
 			form = RoleForm(request.POST)
@@ -415,7 +415,7 @@ def role_create(request):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_homepage')
 def role_edit(request, id=None):
-	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		role = get_object_or_404(Role, id=id)
 		if request.method == "POST":
@@ -427,8 +427,8 @@ def role_edit(request, id=None):
 				return redirect('role_view')
 		else:
 			form = RoleForm(instance=role)
-			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
-		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
+			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role")], 'first_name':request.session['forename'], 'form': form})
+		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role")], 'first_name':request.session['forename'], 'form': form})
 	else :
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_view')
@@ -443,9 +443,9 @@ def role_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_view')
-#---- Role END ----#
+# ---- Role END ---- #
 
-#---- Party START---#
+# ---- Party START--- #
 def party_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -531,9 +531,9 @@ def party_edit(request, id=None):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('party_view')
 
-#---- Party  END---#
+# ---- Party  END--- #
 
-# -----  Region -----#
+# -----  Region ----- #
 def region_view(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -621,7 +621,7 @@ def region_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('region_homepage')
-#---- Region END ---#
+# ---- Region END --- #
 
 def getNextID(tblName):
 	cursor = connection.cursor()
@@ -629,6 +629,36 @@ def getNextID(tblName):
 	row = cursor.fetchone()
 	cursor.close()
 	return row[0]
+
+# ---- Misc Functions START --- #
+'''def generate_buttons_page_menu(page_name):
+
+	allowed_pages = {'admin_master_homepage' : [('asd', 'asd')],
+					'admin_homepage': [('asd','asd')],
+					'election_homepage',
+					'voter_code_homepage',
+					'party_homepage',
+					'region_homepage',
+					'candidate_homepage'}
+	# Check if menu is in allowed_list
+
+	buttons = []
+	if page_name in allowed_pages:
+		#probably better from stratch 
+		# get list of roles
+		#GetUserRoles(rquest.session['username'])
+
+		#for role in roles:
+
+			#if page_name conains role:
+			
+				#add into buttons using ('button name', button reverse(url_name)
+
+
+	#else:
+		#return False
+'''
+# ---- Misc Functions END --- #
 
 # don't move these functions or change their names. I am working on them.
 # -- okay -- I've changed the region popuate to generated correct ID with sequences - CA
