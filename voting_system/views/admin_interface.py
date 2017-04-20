@@ -317,9 +317,44 @@ def election_create(request):
 		if request.method == "POST":
 			form = ElectionForm(request.POST)
 			if form.is_valid():
+				election_id = getNextID('elections')
 				election = form.save(commit=False)
-				election.id = getNextID('elections')
+				election.id = election_id
 				election.save()
+				
+				#list of party_ids
+				party_ids = []
+				# Add Candidates
+				selected_candidates = request.POST.getlist('candidates[]')
+				for candidate in selected_candidates:
+					new_candidate = ElectionCandidate()
+					new_candidate.id = getNextID("election_candidates")
+					new_candidate.election_id = election_id
+					new_candidate.candidate_id = candidate
+					new_candidate.save()
+					
+					candidate_data = Candidate.objects.get(id = candidate)
+					if candidate_data.party_id not in party_ids:
+						party_ids.append(candidate_data.party_id)
+
+				# Add parties
+				
+				for party in party_ids:
+					new_party = ElectionParty()
+					new_party.id = getNextID("election_parties")
+					new_party.election_id = election_id
+					new_party.party_id = party
+					new_party.save()
+				
+				# Add parties
+				selected_regions = request.POST.getlist('regions[]')
+				for region in selected_regions:
+					new_region = ElectionRegion()
+					new_region.id = getNextID("election_regions")
+					new_region.election_id = election_id
+					new_region.region_id = region
+					new_region.save()
+
 				messages.success(request, "Successfully added new Election!")
 				return redirect('election_view')
 		else:
@@ -335,6 +370,8 @@ def election_edit(request, id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		election = get_object_or_404(Election, id=id)
+		candidates_current = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
+		region_current = ElectionRegion.objects.filter(election_id = id).values_list("region_id", flat=True)
 		if request.method == "POST":
 			form = ElectionForm(request.POST, instance=election)
 			if form.is_valid():
@@ -345,7 +382,7 @@ def election_edit(request, id=None):
 			form = ElectionForm(instance=election)
 			candidates = Candidate.objects.all()
 			regions = Region.objects.all()
-		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates})
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('election_homepage')
@@ -650,7 +687,7 @@ def getNextID(tblName):
 
 		#for role in roles:
 
-			#if page_name conains role:
+			#if page_name contains role:
 			
 				#add into buttons using ('button name', button reverse(url_name)
 
