@@ -19,7 +19,7 @@ def admin_master_homepage(request):
 		return render(request, 'admin_interface/pages/index.html', {'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
-#---- Authentication START ----#
+# ---- Authentication START ---- #
 def admin_login(request):
 	if request.method == "POST":
 		form = LoginForm(request.POST)
@@ -55,9 +55,9 @@ def admin_logout(request):
 	messages.success(request, "You have been successfully logged out")
 	return redirect ('public_vote__home')
 
-#---- Authentication END ----#
+# ---- Authentication END ---- #
 
-#---- Admin START ----#
+# ---- Admin START ---- #
 def admin_view(request):
 	authorised,username = CheckAuthorisation(request,True,[('test_role',)])
 	if(authorised):
@@ -156,9 +156,9 @@ def admin_delete(request, id=None):
 	admin.delete()
 	messages.error(request, "Admin #"+id+" has been deleted!")
 	return redirect('admin_view')
-#---- Admin END ----#
+# ---- Admin END ---- #
 
-#---- Voter Code START ----#
+# ---- Voter Code START ---- #
 def voter_code_homepage(request):
 	return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage'))], 'first_name': request.session['forename']})
 def voter_code_view(request):
@@ -175,7 +175,8 @@ def voter_code_view(request):
 		return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes  })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('voter_codes_homepage')
+		return redirect('voter_code_homepage')
+
 def voter_code_view_page(request, page_id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -191,11 +192,12 @@ def voter_code_view_page(request, page_id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('voter_code_homepage')
-#---- Voter Code END ----#
-	
-#---- MISC START (TO SORTT) ----#
 
-#---- Candidates START ----#
+# ---- Voter Code END ---- #
+	
+# ---- MISC START (TO SORTT) ---- #
+
+# ---- Candidates START ---- #
 def candidate_homepage(request):
 	return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage'))], 'first_name':request.session['forename']})
 def candidate_view(request):
@@ -261,9 +263,9 @@ def candidate_delete(request, id=None):
 	return redirect('candidate_view')
 
 
-#---- Candidates END ----#
+# ---- Candidates END ---- #
 
-#---- Election START ----#
+# ---- Election START ---- #
 def election_homepage(request):
 
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
@@ -315,9 +317,44 @@ def election_create(request):
 		if request.method == "POST":
 			form = ElectionForm(request.POST)
 			if form.is_valid():
+				election_id = getNextID('elections')
 				election = form.save(commit=False)
-				election.id = getNextID('elections')
+				election.id = election_id
 				election.save()
+				
+				#list of party_ids
+				party_ids = []
+				# Add Candidates
+				selected_candidates = request.POST.getlist('candidates[]')
+				for candidate in selected_candidates:
+					new_candidate = ElectionCandidate()
+					new_candidate.id = getNextID("election_candidates")
+					new_candidate.election_id = election_id
+					new_candidate.candidate_id = candidate
+					new_candidate.save()
+					
+					candidate_data = Candidate.objects.get(id = candidate)
+					if candidate_data.party_id not in party_ids:
+						party_ids.append(candidate_data.party_id)
+
+				# Add parties
+				
+				for party in party_ids:
+					new_party = ElectionParty()
+					new_party.id = getNextID("election_parties")
+					new_party.election_id = election_id
+					new_party.party_id = party
+					new_party.save()
+				
+				# Add parties
+				selected_regions = request.POST.getlist('regions[]')
+				for region in selected_regions:
+					new_region = ElectionRegion()
+					new_region.id = getNextID("election_regions")
+					new_region.election_id = election_id
+					new_region.region_id = region
+					new_region.save()
+
 				messages.success(request, "Successfully added new Election!")
 				return redirect('election_view')
 		else:
@@ -333,17 +370,82 @@ def election_edit(request, id=None):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		election = get_object_or_404(Election, id=id)
+		candidates_current = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
+		region_current = ElectionRegion.objects.filter(election_id = id).values_list("region_id", flat=True)
+		
 		if request.method == "POST":
 			form = ElectionForm(request.POST, instance=election)
-			if form.is_valid():
-				election = form.save(commit=False)
-				election.save()
-				return redirect('elections')
+			if "candidates[]" not in request.POST:
+				messages.error(request, 'Please select candidate(s)')
+			else:
+				if form.is_valid():
+
+
+					election = form.save(commit=False)
+					election.save()
+
+					'''#check if th
+
+					party_ids = []
+					party_ids_remove = []
+					# Add Candidates
+					selected_candidates = request.POST.getlist('candidates[]')
+					print(candidates_current)
+					cur_cand = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
+					for candidate in selected_candidates:
+						#check if this candidate is in current
+						if candidate not in cur_cand:
+							new_candidate = ElectionCandidate()
+							new_candidate.id = getNextID("election_candidates")
+							new_candidate.election_id = id
+							new_candidate.candidate_id = candidate
+							new_candidate.save()
+
+						
+							candidate_data = Candidate.objects.get(id = candidate)
+							if candidate_data.party_id not in party_ids:
+								party_ids.append(candidate_data.party_id)
+						else:
+							del candidates_current[candidate]
+					
+					
+					for cur in cur_cand:
+						#delete any candidates which not be reused from previous
+						# get party id then append to party_ids_remove
+						ElectionCandidate.objects.filter(candidate_id = cur).delete()
+					
+					
+					for party in party_ids:
+						new_party = ElectionParty()
+						new_party.id = getNextID("election_parties")
+						new_party.election_id = id
+						new_party.party_id = party
+						new_party.save()
+
+					for party in party_ids_remove:
+						#remove any not used
+						ElectionParties.objects.filter(party_id = party).delete()
+					# Add parties
+					selected_regions = request.POST.getlist('regions[]')
+					for region in selected_regions:
+						if region not in region_current:
+							new_region = ElectionRegion()
+							new_region.id = getNextID("election_regions")
+							new_region.election_id = id
+							new_region.region_id = region
+							new_region.save()
+						else:
+							regions_current.pop(region)
+					for cur in region_current:
+						#delete any regions which not be reused from previous
+						ElectionRegion.objects.filter(region_id = cur).delete()'''
+					messages.success(request, candidates_current)
+					return redirect('election_view')
 		else:
 			form = ElectionForm(instance=election)
 			candidates = Candidate.objects.all()
 			regions = Region.objects.all()
-		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates})
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Edit Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('election_homepage')
@@ -358,9 +460,9 @@ def election_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('election_homepage')
-#---- Election END ----#
+# ---- Election END ---- #
 
-#---- Role START ----#
+# ---- Role START ---- #
 def role_homepage(request):
 	return render(request, 'admin_interface/pages/roles/index.html', {'title': "Roles Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], 'first_name':request.session['forename'] })
 def role_view(request):
@@ -396,7 +498,7 @@ def role_view_page(request, page_id=None):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_homepage')
 def role_create(request):
-	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		if request.method == "POST":
 			form = RoleForm(request.POST)
@@ -413,7 +515,7 @@ def role_create(request):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_homepage')
 def role_edit(request, id=None):
-	authorised,username = CheckAuthorisation(request,True,[("test_rolea",)])
+	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		role = get_object_or_404(Role, id=id)
 		if request.method == "POST":
@@ -425,8 +527,8 @@ def role_edit(request, id=None):
 				return redirect('role_view')
 		else:
 			form = RoleForm(instance=role)
-			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
-		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role", reverse('role_edit'))], 'first_name':request.session['forename'], 'form': form})
+			return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role")], 'first_name':request.session['forename'], 'form': form})
+		return render(request, 'admin_interface/pages/roles/form.html', {'title': "Edit new Role",  'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage')), ("Edit Role")], 'first_name':request.session['forename'], 'form': form})
 	else :
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_view')
@@ -441,9 +543,9 @@ def role_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('role_view')
-#---- Role END ----#
+# ---- Role END ---- #
 
-#---- Party START---#
+# ---- Party START--- #
 def party_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
@@ -529,10 +631,10 @@ def party_edit(request, id=None):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('party_view')
 
-#---- Party  END---#
+# ---- Party  END--- #
 
-# -----  Region -----#
-def region_homepage(request):
+# -----  Region ----- #
+def region_view(request):
 	authorised,username = CheckAuthorisation(request,True,[("test_role",)])
 	if(authorised):
 		return render(request, 'admin_interface/pages/regions/index.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Region Homepage", reverse('region_homepage'))], 'first_name':request.session['forename']})
@@ -545,7 +647,6 @@ def region_view(request):
 	if(authorised):
 		regions_list = Region.objects.all().order_by('id')
 		paginator = Paginator(regions_list, settings.PAGINATION_LENGTH)
-
 		try:
 			regions = paginator.page(1)
 		except PageNotAnInteger:
@@ -620,7 +721,7 @@ def region_delete(request, id=None):
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('region_homepage')
-#---- Region END ---#
+# ---- Region END --- #
 
 def getNextID(tblName):
 	cursor = connection.cursor()
@@ -628,6 +729,36 @@ def getNextID(tblName):
 	row = cursor.fetchone()
 	cursor.close()
 	return row[0]
+
+# ---- Misc Functions START --- #
+'''def generate_buttons_page_menu(page_name):
+
+	allowed_pages = {'admin_master_homepage' : [('asd', 'asd')],
+					'admin_homepage': [('asd','asd')],
+					'election_homepage',
+					'voter_code_homepage',
+					'party_homepage',
+					'region_homepage',
+					'candidate_homepage'}
+	# Check if menu is in allowed_list
+
+	buttons = []
+	if page_name in allowed_pages:
+		#probably better from stratch 
+		# get list of roles
+		#GetUserRoles(rquest.session['username'])
+
+		#for role in roles:
+
+			#if page_name contains role:
+			
+				#add into buttons using ('button name', button reverse(url_name)
+
+
+	#else:
+		#return False
+'''
+# ---- Misc Functions END --- #
 
 # don't move these functions or change their names. I am working on them.
 # -- okay -- I've changed the region popuate to generated correct ID with sequences - CA

@@ -3,7 +3,8 @@ from voting_system import views
 from .models import Voter
 
 urlpatterns = [
-
+    #tets
+    # url(r'^test/$', views.test, name='test'),
     #Home & login/logout
     url(r'^administration/$', views.admin_master_homepage, name='admin_master_homepage'),
     url(r'^administration/login/', views.admin_login, name='admin_login'),
@@ -27,7 +28,7 @@ urlpatterns = [
     url(r'^administration/elections/delete/(?P<id>\d+)/$', views.election_delete, name='election_delete'),
     
     #Regions
-    url(r'^administration/regions/$', views.region_homepage, name='region_homepage'),
+    url(r'^administration/regions/$', views.region_view, name='region_homepage'),
     url(r'^administration/regions/populate$', views.region_populate, name='region_populate'),
     url(r'^administration/regions/view/$', views.region_view, name='region_view'),
     url(r'^administration/regions/view/(?P<page_id>\d+)$', views.region_view_page, name='region_view_page'),
@@ -62,10 +63,14 @@ urlpatterns = [
     # Voter Code CRUD
     url(r'^administration/codes/$', views.voter_code_homepage, name='voter_code_homepage'),
     url(r'^administration/codes/view/$', views.voter_code_view, name='voter_code_view'),
+    url(r'^administration/codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
      url(r'^administration/codes/view/(?P<page_id>\d+)$', views.voter_code_view_page, name='voter_code_view_page'),
   
 
     #voter interface
+
+    # voter registration
+    url(r'^register_to_vote/$', views.register_to_vote, name='register_to_vote'),
 
     # voter identity check
     url(r'^check_voter_code/$', views.check_code, name='check_code'),
@@ -78,7 +83,7 @@ urlpatterns = [
 
     #cast_vote
     #url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
-    
+    url(r'^administration/codes/view/$', views.populate_voter_codes, name='voter_code_populate'),
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
     url(r'^voting/ballot/$', views.public_vote_ballot, name='public_vote__ballot'),
