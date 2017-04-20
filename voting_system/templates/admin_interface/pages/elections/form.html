@@ -13,9 +13,9 @@
 	{{ form.as_p }}
 	
 
-	<div class="div">
+	<section class="election_sec">
 		<h2>Add Candidates</h2>
-		<select name="candidates[]" id="candidates_dropdown" class="js-example-placeholder-multiple" multiple="multiple">
+		<select name="candidates[]" id="candidates_dropdown" class="js-example-placeholder-multiple" multiple="multiple" required>
 		{% for candidate in candidates %}
 
 			<option value="{{ candidate.id }}" {% if candidate.id in current_candidates %} selected {% endif %} >{{ candidate.first_name }} {{ candidate.last_name }} </option>
@@ -23,13 +23,14 @@
 		{% endfor %}
 		</select>
 		
-	</div>
-	<div class="div">
+	</section>
+	<section class="election_sec">
 		<h2>Add Regions</h2>
-		<a href="#" class="btn btn-success" id="region_selectAll" data-clicked="false">Select All Regions</a>
+
+		<a href="#" class="btn btn-success" id="region_selectAll" data-clicked="false" style="display:block;width: 200px">Select All Regions</a>
 		
 		
-		<select name="regions[]" id="regions_dropdown" class="js-example-placeholder-multiple" multiple="multiple">
+		<select name="regions[]" id="regions_dropdown" class="js-example-placeholder-multiple" multiple="multiple" required>
 		{% for region in regions %}
 
 			<option value="{{ region.id }}" {% if region.id in current_regions %} selected {% endif %}>{{ region.name }}</option>
@@ -37,7 +38,8 @@
 		{% endfor %}
 		</select>
 				
-	</div>
+	</section>
+	<h2>Actions</h2>
 	<input type="submit" class="btn btn-success" value="Save">
 </form>
 {% else %}

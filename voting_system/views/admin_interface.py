@@ -372,17 +372,26 @@ def election_edit(request, id=None):
 		election = get_object_or_404(Election, id=id)
 		candidates_current = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
 		region_current = ElectionRegion.objects.filter(election_id = id).values_list("region_id", flat=True)
+		
 		if request.method == "POST":
 			form = ElectionForm(request.POST, instance=election)
-			if form.is_valid():
-				election = form.save(commit=False)
-				election.save()
-				return redirect('elections')
+			if "candidates[]" not in request.POST:
+				messages.error(request, 'Please select candidate(s)')
+			else:
+				if form.is_valid():
+
+
+					election = form.save(commit=False)
+					election.save()
+
+					
+					messages.success(request, candidates_current)
+					return redirect('election_view')
 		else:
 			form = ElectionForm(instance=election)
 			candidates = Candidate.objects.all()
 			regions = Region.objects.all()
-		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Edit Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('election_homepage')
