@@ -384,7 +384,61 @@ def election_edit(request, id=None):
 					election = form.save(commit=False)
 					election.save()
 
+					'''#check if th
+
+					party_ids = []
+					party_ids_remove = []
+					# Add Candidates
+					selected_candidates = request.POST.getlist('candidates[]')
+					print(candidates_current)
+					cur_cand = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
+					for candidate in selected_candidates:
+						#check if this candidate is in current
+						if candidate not in cur_cand:
+							new_candidate = ElectionCandidate()
+							new_candidate.id = getNextID("election_candidates")
+							new_candidate.election_id = id
+							new_candidate.candidate_id = candidate
+							new_candidate.save()
+
+						
+							candidate_data = Candidate.objects.get(id = candidate)
+							if candidate_data.party_id not in party_ids:
+								party_ids.append(candidate_data.party_id)
+						else:
+							del candidates_current[candidate]
 					
+					
+					for cur in cur_cand:
+						#delete any candidates which not be reused from previous
+						# get party id then append to party_ids_remove
+						ElectionCandidate.objects.filter(candidate_id = cur).delete()
+					
+					
+					for party in party_ids:
+						new_party = ElectionParty()
+						new_party.id = getNextID("election_parties")
+						new_party.election_id = id
+						new_party.party_id = party
+						new_party.save()
+
+					for party in party_ids_remove:
+						#remove any not used
+						ElectionParties.objects.filter(party_id = party).delete()
+					# Add parties
+					selected_regions = request.POST.getlist('regions[]')
+					for region in selected_regions:
+						if region not in region_current:
+							new_region = ElectionRegion()
+							new_region.id = getNextID("election_regions")
+							new_region.election_id = id
+							new_region.region_id = region
+							new_region.save()
+						else:
+							regions_current.pop(region)
+					for cur in region_current:
+						#delete any regions which not be reused from previous
+						ElectionRegion.objects.filter(region_id = cur).delete()'''
 					messages.success(request, candidates_current)
 					return redirect('election_view')
 		else:
