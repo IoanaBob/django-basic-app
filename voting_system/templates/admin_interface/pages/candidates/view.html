@@ -40,7 +40,7 @@
     {% if candidates.has_other_pages %}
         <ul class="pagination">
             {% if candidates.has_previous %}
-            <li><a href="{% url 'candidate_view_page' page_id=candidates.previous_page_number %}">&laquo;</a></li>
+            <li><a href="{% url 'candidate_view' page_id=candidates.previous_page_number %}">&laquo;</a></li>
             {% else %}
             <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -48,11 +48,11 @@
             {% if candidates.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
             {% else %}
-                <li><a href="{% url 'candidate_view_page' page_id=i %}">{{ i }}</a></li>
+                <li><a href="{% url 'candidate_view' page_id=i %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
             {% if candidates.has_next %}
-            <li><a href="{% url 'candidate_view_page' page_id=candidates.next_page_number %}">&raquo;</a></li>
+            <li><a href="{% url 'candidate_view' page_id=candidates.next_page_number %}">&raquo;</a></li>
             {% else %}
             <li class="disabled"><span>&raquo;</span></li>
             {% endif %}

@@ -46,7 +46,7 @@
     {% if voter_codes.has_other_pages %}
         <ul class="pagination">
             {% if voter_codes.has_previous %}
-            <li><a href="{% url 'voter_code_view_page' page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+            <li><a href="{% url 'voter_code_view' page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
             {% else %}
             <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -54,11 +54,11 @@
             {% if voter_codes.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
             {% else %}
-                <li><a href="{% url 'voter_code_view_page' page_id=i %}">{{ i }}</a></li>
+                <li><a href="{% url 'voter_code_view' page_id=i %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
             {% if voter_codes.has_next %}
-            <li><a href="{% url 'voter_code_view_page' page_id=voter_codes.next_page_number %}">&raquo;</a></li>
+            <li><a href="{% url 'voter_code_view' page_id=voter_codes.next_page_number %}">&raquo;</a></li>
             {% else %}
             <li class="disabled"><span>&raquo;</span></li>
             {% endif %}

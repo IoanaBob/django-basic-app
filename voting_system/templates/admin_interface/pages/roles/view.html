@@ -32,7 +32,7 @@
     {% if roles.has_other_pages %}
         <ul class="pagination">
             {% if roles.has_previous %}
-            <li><a href="{% url 'role_view_page' page_id=roles.previous_page_number %}">&laquo;</a></li>
+            <li><a href="{% url 'role_view' page_id=roles.previous_page_number %}">&laquo;</a></li>
             {% else %}
             <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -40,11 +40,11 @@
             {% if roles.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
             {% else %}
-                <li><a href="{% url 'role_view_page' page_id=i %}">{{ i }}</a></li>
+                <li><a href="{% url 'role_view' page_id=i %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
             {% if roles.has_next %}
-            <li><a href="{% url 'role_view_page' page_id=roles.next_page_number %}">&raquo;</a></li>
+            <li><a href="{% url 'role_view' page_id=roles.next_page_number %}">&raquo;</a></li>
             {% else %}
             <li class="disabled"><span>&raquo;</span></li>
             {% endif %}

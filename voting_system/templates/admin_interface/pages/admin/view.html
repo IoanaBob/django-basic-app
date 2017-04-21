@@ -47,7 +47,7 @@
   {% if admins.has_other_pages %}
       <ul class="pagination">
           {% if admins.has_previous %}
-          <li><a href="{% url 'admin_view_page' page_id=admins.previous_page_number %}">&laquo;</a></li>
+          <li><a href="{% url 'admin_view' page_id=admins.previous_page_number %}">&laquo;</a></li>
           {% else %}
           <li class="disabled"><span>&laquo;</span></li>
           {% endif %}
@@ -55,11 +55,11 @@
           {% if admins.number == i %}
               <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
           {% else %}
-              <li><a href="{% url 'admin_view_page' page_id=i %}">{{ i }}</a></li>
+              <li><a href="{% url 'admin_view' page_id=i %}">{{ i }}</a></li>
           {% endif %}
           {% endfor %}
           {% if admins.has_next %}
-          <li><a href="{% url 'admin_view_page' page_id=admins.next_page_number %}">&raquo;</a></li>
+          <li><a href="{% url 'admin_view' page_id=admins.next_page_number %}">&raquo;</a></li>
           {% else %}
           <li class="disabled"><span>&raquo;</span></li>
           {% endif %}

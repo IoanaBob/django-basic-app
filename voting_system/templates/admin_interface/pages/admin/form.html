@@ -9,6 +9,9 @@
     <h2>Personal Information</h2>
     {{ form.as_p }}
     <h2>Change Password</h2>
+    {% if current_roles %}
+        <p><label for="id_cur_password">Current Password</label><input type="password" id="id_cur_password" name="current_password"></p>
+    {% endif %}
     <p><label for="id_password">Password</label><input type="password" name="password" id="id_password"></p>
     <p><label for="id_password_repeat">Repeat Password</label><input type="password" name="repeatPassword" id="id_password_repeat"></p>
     <h2>Roles</h2>

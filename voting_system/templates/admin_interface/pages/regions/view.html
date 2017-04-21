@@ -32,7 +32,7 @@
     {% if regions.has_other_pages %}
         <ul class="pagination">
             {% if regions.has_previous %}
-            <li><a href="{% url 'region_view_page' page_id=regions.previous_page_number %}">&laquo;</a></li>
+            <li><a href="{% url 'region_view' page_id=regions.previous_page_number %}">&laquo;</a></li>
             {% else %}
             <li class="disabled"><span>&laquo;</span></li>
             {% endif %}
@@ -40,11 +40,11 @@
             {% if regions.number == i %}
                 <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
             {% else %}
-                <li><a href="{% url 'region_view_page' page_id=i %}">{{ i }}</a></li>
+                <li><a href="{% url 'region_view' page_id=i %}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
             {% if regions.has_next %}
-            <li><a href="{% url 'region_view_page' page_id=regions.next_page_number %}">&raquo;</a></li>
+            <li><a href="{% url 'region_view' page_id=regions.next_page_number %}">&raquo;</a></li>
             {% else %}
             <li class="disabled"><span>&raquo;</span></li>
             {% endif %}

@@ -26,8 +26,6 @@ def CheckAuthorisation(request, require_login=True, required_roles = []):
 			return True, username
 		else:
 			return False, None
-
-
 def GetUserRoles(username):
 	admin = Admin.objects.get(user_name = username)
 	role_current = AdminRole.objects.filter(admin_id = admin.id).values_list("role_id", flat=True)
