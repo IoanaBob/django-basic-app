@@ -8,8 +8,9 @@
             <th>Sent Status</th>
             <th>Verified Date</th>
             <th>Unvalidate Date</th>
-            <th>Election ID</th>
-            <th>Reissue</th>
+            <th>Election ID/th>
+            <th>Reissue (Print)</th>
+            
         </thead>
         <tbody>
             {% for code in voter_codes %}
@@ -35,7 +36,7 @@
                     {{ code.election_id }}
                 </td>
                 <td>
-                    <a href="" class="btn btn-warning">Reissue</a>
+                    <a href="{% url 'voter_code_print' id=code.id%}" class="btn btn-warning">Reissue</a>
                 </td>
                 
             </tr>
@@ -68,5 +69,8 @@
     <h3>No Voter Codes Available</h3>
 {% endif %}
 
+
+{% endblock %}
+{% block javascript %}
 
 {% endblock %}

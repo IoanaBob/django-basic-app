@@ -29,6 +29,7 @@ class VoterCode(models.Model):
         return '%s %s %s %s %s %s %s' % (self.id, self.verified_date, self.invalidated_date, self.code, self.vote_status, self.election, self.region)
 
     def generate_voter_code():
+        #DB field is 20 characters? Shouldn't this be 20?---------------------------------------------\/
         generated_code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(15))
         if not VoterCode.objects.filter(code = generated_code).exists():
             return generated_code

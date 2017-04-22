@@ -11,7 +11,10 @@ from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connection
 from django.conf import settings
-
+from random import choice
+from random import randint
+import datetime
+from django.http import JsonResponse
 
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
@@ -139,7 +142,7 @@ def admin_edit(request, id =None): #editing a specific admin
 		else:
 			form = AdminForm(instance=admin_init)
 			
-		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Admin Edit", 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 
 
 def admin_create(request):#creates an admin
@@ -222,9 +225,62 @@ def voter_code_view(request, page_id=1):
 		else:
 			messages.error(request, "Access Denied. You do not have sufficient privileges.")
 			return redirect('voter_code_homepage')
-def voter_code_print(request):
+def voter_code_print(request, id=None, election_id=None, sort=None, pageLim=25):
+	authorised,username = CheckAuthorisation(request,True,[('voter_codes__print',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('voter_code_homepage')
+	else:
+		election = election_id
+		sort = sort
+		if election_id != None:
+			if sort != None:
+				
+				codes = VoterCode.objects.all().filter(election_id=election_id).order_by(sort)
+			else:
+				codes = VoterCode.objects.all().filter(election_id=election_id)
+		elif id != None:
+			codes = VoterCode.objects.all().filter(id = id)
+			
+		else:
+			if sort != None:
+				codes = VoterCode.objects.all().order_by(sort)
+			else:
+				codes = VoterCode.objects.all()
 
-	return False
+		if request.POST:
+
+			voter_code_ids = json.loads(request.POST.get('voter_codes'))
+			print(voter_code_ids)
+
+			#get code + address
+			for code in voter_code_ids:
+				
+				details = VoterCode.objects.all().filter(id = code)
+				#hardcoder... lol.. change later -- off to work
+				voter = Voter.objects.all().filter(voter_id = "JZG7QIJPVJSN40N")
+
+
+			return render(request, 'admin_interface/pages/codes/print.html')
+		else:
+			return render(request, 'admin_interface/pages/codes/print.html', {'title': 'Print voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("Print", reverse('voter_code_print'))], 'first_name': request.session['forename'], "codes": codes, "election": election,"Sort": sort})
+def voter_code_create_rand(request):
+
+	for i in range(0, 30):
+		code = VoterCode()
+		code.id = getNextID("voter_codes")
+		code.election_id = randint(16, 23)
+		code.voter_id = randint(1000, 88888)
+		code.sent_status = choice([True, False])
+		code.verified_date = get_random_date(2016)
+		code.invalidated_date = get_random_date(2017)
+		code.save()
+
+	return render(request, 'admin_interface/pages/codes/index.html')
+
+def voter_code_print_process(request):
+
+	return True
 # ---- Voter Code END ---- #
 	
 # ---- MISC START (TO SORTT) ---- #
@@ -787,6 +843,16 @@ def getNextID(tblName):
 	#else:
 		#return False'''
 
+
+def get_random_date(year):
+
+    # try to get a date
+    try:
+        return datetime.datetime.strptime('{} {}'.format(random.randint(1, 366), year), '%j %Y')
+
+    # if the value happens to be in the leap year range, try again
+    except ValueError:
+        get_random_date(year)
 # ---- Misc Functions END --- #
 
 # don't move these functions or change their names. I am working on them.

@@ -584,3 +584,21 @@ section.election_sec a {
 	vertical-align: top;
 	margin-top: 5px;
 }
+.voter_codes_to_print {
+	width: 200px;
+	position: fixed;
+	right: 15px;
+	top: 20%;
+	left: inherit;
+	opacity: 0;
+	display: block !important;
+}
+.totalPrint{
+	font-size: 24px;
+	color:#005EAC;
+	text-align: center;
+	display: block;
+}
+.center {
+	text-align: center;
+}
