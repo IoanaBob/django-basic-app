@@ -17,6 +17,8 @@ class dbRouter(object):
             return 'region2'
         elif model._meta.app_label == 'people':
             return 'people'
+        elif model._meta.app_label == 'gov_verify':
+            return 'gov_verify'
         return None
 
     def db_for_write(self, model, **hints):
@@ -33,6 +35,8 @@ class dbRouter(object):
             return 'region2'
         elif model._meta.app_label == 'people':
             return 'people'
+        elif model._meta.app_label == 'gov_verify':
+            return 'gov_verify'
         return None
 
     def allow_relation(self, obj1, obj2, **hints):

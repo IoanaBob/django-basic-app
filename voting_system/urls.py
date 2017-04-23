@@ -81,6 +81,8 @@ urlpatterns = [
     #voter interface
 
     # voter registration
+    url(r'^register_summary/$', views.RegisterSummary, name='register_summary'),
+    url(r'^register_voter_id/$', views.RegisterVoterId, name='register_voter_id'),
     url(r'^register_to_vote/$', views.register_to_vote, name='register_to_vote'),
 
     # voter identity check

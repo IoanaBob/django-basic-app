@@ -1,0 +1,13 @@
+#verify_logo_container
+{
+	
+	
+	vertical-align:top;
+	padding:0px;
+}
+
+#verify_logo
+{
+	max-width:100px;
+	float:right;
+}

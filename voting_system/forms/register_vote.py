@@ -28,3 +28,4 @@ class RegisterVoteForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Voter ID is not valid."
             )
+

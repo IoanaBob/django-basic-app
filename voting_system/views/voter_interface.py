@@ -1,21 +1,55 @@
 from django.shortcuts import render
-from voting_system.models import VoterCode, VoterAuth, RegionVote
-from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm
+from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify
+from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm, VerifyLoginForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
 import json
 import uuid
 from django.db import connections
+from django.contrib.auth.hashers import make_password, check_password as password_check
+from django.contrib import messages
 
 def public_homepage(request):
 
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
+def RegisterSummary(request): #CHRIS PLEASE CHECK
+	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+
+def RegisterVoterId(request): #Chris Please Check
+
+	return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+
 
 def public_verify(request):
+	if request.method == "POST":
+		form = VerifyLoginForm(request.POST)
+		if form.is_valid():
+			try:
+				user = Verify.objects.get(email = request.POST.get('email'))
+				if user is not None:
+					# WE NEED TO REMOVE THIS SESSION AFTER TIME and WE NEED TO OFFER LOGOUT
+					if  password_check(request.POST.get('password'),user.password_hash):
+						request.session['verify_username'] = user.email
+						request.session['verify_forename'] = user.first_name.capitalize()
+						request.session['verify_surname'] = user.last_name.capitalize()
+						messages.success(request, "Welcome! You have been successfully logged in!")
+						return redirect (request.POST.get('destination'))
+					else:
+						messages.error(request, "Your credentials does not match our records.")
+						form = VerifyLoginForm()
+						return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
+			except Verify.DoesNotExist:
+					messages.error(request, "Your credentials does not match our records.")
+					form = VerifyLoginForm()
+					return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
+		#COPIED CODE HAD NO 'ELSE' HERE - WHAT DO WE WANT TO DO
 
-	return render(request, 'voter_interface/pages/verify.html', {"title": "Verify", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))]})
+	else:
+		form = VerifyLoginForm()
+		destination = request.GET.get('destination')
+		return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
 
 
 def public_vote_home(request):
@@ -30,6 +64,7 @@ def public_vote_ballot(request):
 
 	else:
 		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+
 
 
 def public_vote_request(request):
@@ -180,3 +215,27 @@ def register_to_vote(request):
 	else:
 		form = RegisterVoteForm()
 	return render(request, 'voter_interface/register_to_vote.html', {'form': form})
+
+
+
+def PostcodeToConstituency(post_code):
+	api_key = "HC5M9UCFwzLeEFNEguDWKe4V"
+	api_url = 'https://www.theyworkforyou.com/api/getConstituency?postcode={0}&key={1}'
+	constituency_json = requests.get(url=api_url.format(post_code,api_key)).json()
+	
+	if("name" in constituency_json):
+		return constituency_json["name"]
+	else:
+		return None
+
+
+def PostcodeToRegion(post_code,region_type="parliamentary_constituency"):
+	api_url = 'https://api.postcodes.io/postcodes/{1}'
+	postcode_json = requests.get(url=api_url.format(post_code)).json()
+	
+	if(region_type in postcode_json):
+		return postcode_json[region_type]
+	else:
+		return None
+
+		

@@ -15,3 +15,4 @@ from .test import *
 from .voters import *
 from .voter_auth import *
 from .voter_code import *
+from .verify import *

@@ -119,6 +119,14 @@ DATABASES = {
         'PASSWORD': 'admin',
         'HOST': '5.179.102.239',
         'PORT': '20004',
+    },
+       'gov_verify': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gov_verify',
+        'USER': 'voterauth',
+        'PASSWORD': 'voterauth',
+        'HOST': '5.179.102.239',
+        'PORT': '20002',
     }
 }
 
