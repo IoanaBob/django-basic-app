@@ -1,0 +1,33 @@
+{% extends 'voter_interface/base.html' %}
+{% load staticfiles%}
+{% block content %}
+<div class="row">
+<h1 class="col-md-8 col-sm-8 col-xs-8" style="font-size: 40px;"><b>Enter your voter ID</b> </h1> 
+<div class="col-md-4 col-sm-4 col-xs-4" id="verify_logo_conteiner">
+<img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
+</div>
+</div>
+<p>You are verified as: {{first_name}} {{last_name}}</p>
+<p>TODO: Entering the voter id and hitting "Submit" makes an ajax call to verify the voterid and returns a list of available elections for the user. The container with a multiselect then is display:block. They make a selection and then submit that form. At which point they will be verified, voterid confirmed, selected the elections which they want to register for. they just need to create a password. REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
+</br>
+ <form method="POST" class="form-horizontal">
+<div class="row">
+	<div class="col-md-12">
+      <label class="col-md-2" for="voter_id">Voter Id:</label>  <input class="col-md-10 form-control" type="text" name="voter_id" />
+        </div>
+        <button class="btn btn-success">Submit</button>
+    
+</div>
+
+
+<div id="election_selection_container" class="row">
+	    {% csrf_token %}
+        <select name="registering_elections">
+        </select>
+        
+        <button type="submit" class="btn btn-success">Confirm Election Selection</button>
+ 
+</div>
+   </form>
+
+{% endblock %}

@@ -51,6 +51,15 @@ def public_verify(request):
 		destination = request.GET.get('destination')
 		return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
 
+#CAST VOTE
+def CastVoteSummary(request): #CHRIS PLEASE CHECK
+	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote- Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+
+def CastVoteId(request): #Chris Please Check
+
+	return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+
+
 
 def public_vote_home(request):
 

@@ -96,6 +96,9 @@ urlpatterns = [
 
     #cast_vote
     #url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
+    url(r'^cast_vote_summary/$', views.CastVoteSummary, name='cast_vote_summary'),
+    url(r'^cast_vote_id/$', views.CastVoteId, name='cast_vote_id'),
+    
     url(r'^administration/codes/view/$', views.populate_voter_codes, name='voter_code_populate'),
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
