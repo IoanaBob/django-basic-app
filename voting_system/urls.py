@@ -83,8 +83,15 @@ urlpatterns = [
     # voter registration
     url(r'^register_summary/$', views.RegisterSummary, name='register_summary'),
     url(r'^register_voter_id/$', views.RegisterVoterId, name='register_voter_id'),
+    url(r'^register_election_select/$', views.RegisterElectionSelect, name='register_election_select'),
+    url(r'^register_create_password/$', views.RegisterPasswordCreation, name='register_create_password'),
+    url(r'^register_complete/$', views.RegisterComplete, name='register_complete'),
+    
+
     url(r'^register_to_vote/$', views.register_to_vote, name='register_to_vote'),
 
+
+    
     # voter identity check
     url(r'^check_voter_code/$', views.check_code, name='check_code'),
     url(r'^check_voter_password/$', views.check_password, name='check_password'),

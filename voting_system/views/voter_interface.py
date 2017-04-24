@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify
+from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify, Region, Election, Voter
 from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm, VerifyLoginForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -9,19 +9,77 @@ import uuid
 from django.db import connections
 from django.contrib.auth.hashers import make_password, check_password as password_check
 from django.contrib import messages
+import requests
 
 def public_homepage(request):
-
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
+
 
 def RegisterSummary(request): #CHRIS PLEASE CHECK
 	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
 
+
 def RegisterVoterId(request): #Chris Please Check
+	#TODO check if voter is logged in via verify and redirect if not. 
+	if request.method == "POST":
+		verify_username = request.session['verify_username']
 
-	return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
+		if user is not None:
+			request.session['voter_id_check_passed'] = True
+			return redirect('register_election_select')
+		else:
+			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
+			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+
+	else:
+		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 
+def RegisterElectionSelect(request):
+	#TODO check if the user has passed the voter_id check.
+	user = Verify.objects.get(email = request.session['verify_username'])
+
+	elections = GetAvailableElectionsForUser(user.voter_id)
+
+	return render(request, 'voter_interface/pages/voting/register_election_select.html', {"title": "Register to Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
+
+
+def RegisterPasswordCreation(request):
+	if request.method == "POST":
+		verify_username = request.session['verify_username']
+		user = Verify.objects.get(email = verify_username)	
+		#TODO check if voter id check has been passed ..... request.session['voter_id_check_passed'] == True
+		#TODO check if the passwords match 
+		if user is not None:
+			new_auth = VoterAuth()
+			new_auth.password_hash = make_password(request.POST.get('password'))
+			new_auth.voter_id = user.voter_id
+			new_auth.election_id = request.POST.get('election_id')
+			new_auth.save(using='voterauth')
+
+			#TODO create code
+
+
+			election_id = request.GET.get('election_id')
+			election = Election.objects.get(id = election_id)
+
+			return redirect('register_complete')
+		else:
+			messages.error(request, "Something went wrong while registering. Please try again") #TODO improve error handling
+			return redirect('register_summary')
+
+	else:
+		election_id = request.GET.get('election_id')
+		election = Election.objects.get(id = election_id)
+		return render(request, 'voter_interface/pages/voting/register_create_password.html', {"title": "Register to Vote Online - Create Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+
+
+def RegisterComplete(request): #CHRIS PLEASE CHECK
+	#election_name = request.POST.get('election_name')
+	election_name = ""
+	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ], "election_name": election_name })
+	
 def public_verify(request):
 	if request.method == "POST":
 		form = VerifyLoginForm(request.POST)
@@ -239,12 +297,32 @@ def PostcodeToConstituency(post_code):
 
 
 def PostcodeToRegion(post_code,region_type="parliamentary_constituency"):
-	api_url = 'https://api.postcodes.io/postcodes/{1}'
+	api_url = 'https://api.postcodes.io/postcodes/{0}'
 	postcode_json = requests.get(url=api_url.format(post_code)).json()
-	
-	if(region_type in postcode_json):
-		return postcode_json[region_type]
+	if(region_type in postcode_json["result"]):
+		return postcode_json["result"][region_type]
 	else:
 		return None
 
-		
+
+def GetAvailableElectionsForUser(voter_id,registering=True):
+	#Get Voters Regions
+	voter = Voter.objects.get(voter_id= voter_id)
+	region_name_list = []
+	check_region_types = ["parliamentary_constituency"]
+
+	for region_type in check_region_types:
+		region_name_list.append( PostcodeToRegion(voter.address_postcode.replace(" ",""),region_type) )
+
+	#Get all registration open elections for those regions
+	#Aberconwy
+
+	elections = []
+
+	for region_name in region_name_list:
+		if(not region_name == None):
+			region = Region.objects.get(name = region_name)
+			
+			if(not region == None):
+				elections += Election.objects.filter(regions__in=[region])
+	return elections
