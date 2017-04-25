@@ -889,3 +889,8 @@ def region_populate(request):
 		else :
 			messages.error(request, "Regions are already populated.")
 			return redirect( 'region_view', { 'first_name': request.session['forename']})
+
+
+
+
+

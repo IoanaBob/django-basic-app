@@ -172,7 +172,7 @@ def public_vote_home(request):
 	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') )]})
 
 
-def public_vote_ballot(request):
+def public_vote_ballot(request): #TODO this should be two seperate functions and should be named something like "check voter code" (which is a function that already exists so check if it can be used) and "terms and conditions" (or simialr)
 	if request.method == "POST":
 		#if checks passed
 		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "acknowledgement": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
@@ -262,7 +262,7 @@ def public_vote_place(request):
 
 # This should not be allowed to be accessed in any other way than from check_password (POST)
 # when it's working
-def check_code(request):
+def check_code(request): 
 	if request.method == "POST":
 		form = CheckCodeForm(request.POST)
 		# SHOULD BE CHANGED TO voter id!! (when it exists)
@@ -386,3 +386,20 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 							elections.append(election)
 
 	return elections
+
+
+#REMOVE - ONLY FOR TESTING #TODO remove this section once testing is finished
+
+#GOV.UK Verify Details for A Fiction:
+#afiction@gmail.com
+#GROUP2
+
+#Voter id:
+#I3GJ2ZDUMTHT9T9
+
+def DeleteAFictionPasswords(request):
+	VoterAuth.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
+
+	messages.error(request, "A Fiction's passwords for elections deleted.") 
+	return redirect('register_summary')
+	
