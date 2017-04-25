@@ -8,26 +8,23 @@
 </div>
 </div>
 <p>You are verified as: {{first_name}} {{last_name}}</p>
-<p>TODO: Entering the voter id and hitting "Submit" makes an ajax call to verify the voterid and returns a list of available elections for the user. The container with a multiselect then is display:block. They make a selection and then submit that form. At which point they will be verified, voterid confirmed, selected the elections which they want to register for. they just need to create a password. REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
+<p>TODO:  REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY (enter voter id to see list of elections available to you .... )</p>
 </br>
- <form method="POST" class="form-horizontal">
+
+
 <div class="row">
-	<div class="col-md-12">
-      <label class="col-md-2" for="voter_id">Voter Id:</label>  <input class="col-md-10 form-control" type="text" name="voter_id" />
+	<form method="POST" class="form-horizontal">
+		{% csrf_token %}
+
+		<div class="col-md-12">
+      		<label class="col-md-2" for="voter_id">Voter Id:</label>  <input class="col-md-10 form-control" type="text" name="voter_id" />
         </div>
-        <button class="btn btn-success">Submit</button>
-    
-</div>
-
-
-<div id="election_selection_container" class="row">
-	    {% csrf_token %}
-        <select name="registering_elections">
-        </select>
         
-        <button type="submit" class="btn btn-success">Confirm Election Selection</button>
- 
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+
 </div>
-   </form>
+
+
 
 {% endblock %}

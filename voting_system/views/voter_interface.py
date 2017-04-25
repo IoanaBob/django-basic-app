@@ -52,12 +52,8 @@ def RegisterPasswordCreation(request):
 		#TODO check if voter id check has been passed ..... request.session['voter_id_check_passed'] == True
 		#TODO check if the passwords match 
 		if user is not None:
-			new_auth = VoterAuth()
-			new_auth.password_hash = make_password(request.POST.get('password'))
-			new_auth.voter_id = user.voter_id
-			new_auth.election_id = request.POST.get('election_id')
-			new_auth.save(using='voterauth')
-
+			VoterAuth.objects.create(password_hash=make_password(request.POST.get('password')), voter_id=user.voter_id,election_id=request.POST.get('election_id'))
+			
 			#TODO create code
 
 
@@ -80,6 +76,7 @@ def RegisterComplete(request): #CHRIS PLEASE CHECK
 	election_name = ""
 	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ], "election_name": election_name })
 	
+
 def public_verify(request):
 	if request.method == "POST":
 		form = VerifyLoginForm(request.POST)
@@ -109,13 +106,64 @@ def public_verify(request):
 		destination = request.GET.get('destination')
 		return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
 
+
 #CAST VOTE
 def CastVoteSummary(request): #CHRIS PLEASE CHECK
-	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote- Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+
 
 def CastVoteId(request): #Chris Please Check
+	#TODO check if voter is logged in via verify and redirect if not. 
+	if request.method == "POST":
+		verify_username = request.session['verify_username']
 
-	return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
+		if user is not None:
+			request.session['voter_id_check_passed'] = True
+			return redirect('cast_election_select')
+		else:
+			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
+			return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+
+	else:
+		return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+
+
+def CastElectionSelect(request):
+	#TODO check if the user has passed the voter_id check.
+	user = Verify.objects.get(email = request.session['verify_username'])
+
+	elections = GetAvailableElectionsForUser(user.voter_id, False)
+
+	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
+
+
+def CastEnterPassword(request):
+	#TODO check if the required previous steps have been taken to get here
+	if request.method == "POST":
+		verify_username = request.session['verify_username']
+		user = Verify.objects.get(email = verify_username)	
+		#TODO check if voter id check has been passed ..... request.session['voter_id_check_passed'] == True
+		#TODO check if the passwords match 
+		if user is not None:
+			election_id = request.GET.get('election_id')
+
+			if(password_check(request.POST.get('password'), VoterAuth.objects.get(voter_id=user.voter_id,election_id= election_id).password_hash)):
+				return redirect('public_vote__ballot')
+			else:
+				messages.error(request, "The password you entered did not match the one you registered for this election") 
+				election = Election.objects.get(id = election_id)
+				return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+
+		else:
+			messages.error(request, "Something went wrong while registering. Please try again") #TODO improve error handling
+			return redirect('cast_summary')
+
+	else:
+		election_id = request.GET.get('election_id')
+		election = Election.objects.get(id = election_id)
+		return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+
 
 
 
@@ -136,9 +184,7 @@ def public_vote_ballot(request):
 
 def public_vote_request(request):
 	if request.method == "POST":
-
 		#checks
-
 		#if checks passed
 		return render(request, 'voter_interface/pages/voting/request.html', {"title": "Request to Vote", "sent": True,'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') ), ('Request Code', reverse('public_vote__request_code') ),("Sent", "#")]})
 	else:
@@ -234,7 +280,7 @@ def check_code(request):
 	return render(request, 'voter_interface/check_code.html', {'form': form})
 
 
-def check_password(request):
+def check_password(request): #This function names conflicts with the function written to check passwords
 	if request.method == "POST":
 		form = CheckPasswordForm(request.POST)
 		# SHOULD BE CHANGED TO voter id!! (when it exists)
@@ -253,12 +299,14 @@ def check_password(request):
 		form = CheckPasswordForm()
 	return render(request, 'voter_interface/check_password.html', {'form': form})
 
+
+
 # This should not be allowed to be accessed in any other way than from check_for_code (POST)
 # when it's working
-def cast_vote(request):
+def cast_vote(request): #DEPRICATED
 	return render(request, 'voter_interface/cast_vote.html')
 
-def CastVote(request):
+def CastVote(request): #DEPRICATED
 	#TO DO
 	# - pass election details
 	# - validate request 
@@ -271,7 +319,7 @@ def CastVote(request):
 	return render(request, 'voter_interface/ballot_paper_fptp.html')
 
 
-def register_to_vote(request):
+def register_to_vote(request): #DEPRICATRED
 	if request.method == "POST":
 		form = RegisterVoteForm(request.POST)
 		# find out how to encrypt the password
@@ -319,10 +367,22 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 
 	elections = []
 
-	for region_name in region_name_list:
-		if(not region_name == None):
-			region = Region.objects.get(name = region_name)
-			
-			if(not region == None):
-				elections += Election.objects.filter(regions__in=[region])
+	if(registering):
+		for region_name in region_name_list:
+			if(not region_name == None):
+				region = Region.objects.get(name = region_name)
+				
+				if(not region == None):
+					elections += Election.objects.filter(regions__in=[region]) #TODO Add open date checking
+	else:
+		for region_name in region_name_list:
+			if(not region_name == None):
+				region = Region.objects.get(name = region_name)
+				
+				if(not region == None):
+					open_elections = Election.objects.filter(regions__in=[region])  #TODO Add open date checking
+					for election in open_elections:
+						if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
+							elections.append(election)
+
 	return elections

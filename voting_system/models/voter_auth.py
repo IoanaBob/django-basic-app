@@ -3,7 +3,7 @@ import random
 import string
 
 class VoterAuth(models.Model):
-    id = models.IntegerField(primary_key=True)
+    #id = models.IntegerField(primary_key=True)
     password_hash = models.CharField(max_length=300)
     voter_id = models.CharField(max_length=20)
     election_id = models.CharField(max_length=20)
@@ -11,6 +11,7 @@ class VoterAuth(models.Model):
     class Meta:
         db_table = 'voter_auth'
         app_label = 'auth'
+
 
 '''
     # Did not do encryption!!

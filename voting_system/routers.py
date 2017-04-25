@@ -10,7 +10,7 @@ class dbRouter(object):
         if model._meta.app_label == 'admin':
             return 'default'
         elif model._meta.app_label == 'auth':
-            return 'voterauth'
+            return 'voter_auth'
         elif model._meta.app_label == 'reg1':
             return 'region1'
         elif model._meta.app_label == 'reg2':
@@ -28,7 +28,7 @@ class dbRouter(object):
         if model._meta.app_label == 'admin':
             return 'default'
         elif model._meta.app_label == 'auth':
-            return 'voterauth'
+            return 'voter_auth'
         elif model._meta.app_label == 'reg1':
             return 'region1'
         elif model._meta.app_label == 'reg2':

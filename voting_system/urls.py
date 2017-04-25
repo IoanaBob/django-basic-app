@@ -105,6 +105,10 @@ urlpatterns = [
     #url(r'^cast_vote/$', views.CastVote, name='cast_vote'),
     url(r'^cast_vote_summary/$', views.CastVoteSummary, name='cast_vote_summary'),
     url(r'^cast_vote_id/$', views.CastVoteId, name='cast_vote_id'),
+    url(r'^cast_election_select/$', views.CastElectionSelect, name='cast_election_select'),
+    url(r'^cast_enter_password/$', views.CastEnterPassword, name='cast_enter_password'),
+            
+
     
     url(r'^administration/codes/view/$', views.populate_voter_codes, name='voter_code_populate'),
 

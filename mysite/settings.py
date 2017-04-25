@@ -88,7 +88,7 @@ DATABASES = {
         'HOST': '5.179.102.239',
         'PORT': '20001',
     },
-    'voterauth': {
+    'voter_auth': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'voterauth',
         'USER': 'voterauth',

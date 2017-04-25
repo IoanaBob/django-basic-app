@@ -1,0 +1,32 @@
+{% extends 'voter_interface/base.html' %}
+{% load staticfiles%}
+{% block content %}
+<div class="row">
+<h1 class="col-md-8 col-sm-8 col-xs-8" style="font-size: 40px;"><b>Select an Election to Register For</b> </h1> 
+<div class="col-md-4 col-sm-4 col-xs-4" id="verify_logo_conteiner">
+<img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
+</div>
+</div>
+<p>You are verified as: {{first_name}} {{last_name}}</p>
+<p>TODO: REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
+</br>
+
+
+<div class="row">
+	<h2>The following elections are open for online voting and you have completed their registeration process:</h2>
+	<ul id="election_list">
+		{% if elections %}
+            {% for election in elections %}
+            	<li class="election_list_item">
+					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name }}</span></a>
+				</li>
+               
+            {% endfor %} 
+    {% endif %}
+	</ul>
+
+</div>
+
+
+
+{% endblock %}
