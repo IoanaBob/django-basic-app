@@ -28,7 +28,7 @@ SECRET_KEY = '!(%e(7zo4+kan(h!eb%yt3&r_2#p&jf=43&$m1xfqrd0n591(v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 PAGINATION_LENGTH = 25
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # SSL
 SECURE_SSL_REDIRECT = True
