@@ -7,7 +7,7 @@ import requests
 import json
 
 class VoterCode(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    #id = models.IntegerField(primary_key=True, editable=True)
     verified_date = models.DateTimeField(editable=False)
     invalidated_date = models.DateTimeField(editable=False)
     # should set up minumum = maximum length here 
@@ -55,7 +55,7 @@ class VoterCode(models.Model):
             i = 1
         for person in people:
             voter_code = VoterCode.generate_voter_code()
-            region = VoterCode.postcode_to_region(person.postcode)
+            region = VoterCode.postcode_to_region(person.address_postcode)
             #VoterAuth.save_password(i)
             entry = VoterCode(id=i, voter_id= person.voter_id, code=voter_code, election = the_election, region = region)
             entry.save()

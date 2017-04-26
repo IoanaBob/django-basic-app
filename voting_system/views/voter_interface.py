@@ -53,12 +53,15 @@ def RegisterPasswordCreation(request):
 		#TODO check if the passwords match 
 		if user is not None:
 			VoterAuth.objects.create(password_hash=make_password(request.POST.get('password')), voter_id=user.voter_id,election_id=request.POST.get('election_id'))
-			
-			#TODO create code
-
 
 			election_id = request.GET.get('election_id')
 			election = Election.objects.get(id = election_id)
+
+			person = Voter.objects.get(voter_id = user.voter_id)
+			voter_id_region = VoterCode.postcode_to_region(person.address_postcode)
+			voter_code = VoterCode.generate_voter_code()
+			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = voter_id_region)
+			entry.save()
 
 			return redirect('register_complete')
 		else:
@@ -87,6 +90,7 @@ def public_verify(request):
 					# WE NEED TO REMOVE THIS SESSION AFTER TIME and WE NEED TO OFFER LOGOUT
 					if  password_check(request.POST.get('password'),user.password_hash):
 						request.session['verify_username'] = user.email
+						request.session['verify_voter_id'] = user.voter_id
 						request.session['verify_forename'] = user.first_name.capitalize()
 						request.session['verify_surname'] = user.last_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
@@ -174,11 +178,23 @@ def public_vote_home(request):
 
 def public_vote_ballot(request): #TODO this should be two seperate functions and should be named something like "check voter code" (which is a function that already exists so check if it can be used) and "terms and conditions" (or simialr)
 	if request.method == "POST":
-		#if checks passed
-		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "acknowledgement": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
-
+		form = CheckCodeForm(request.POST)
+		# SHOULD BE CHANGED TO voter id!! (when it exists)
+		voter_id = form.data['voter_id']
+		code = form.data['code']
+		try:
+			#id should be changed to voter_id - the query - when it exists
+			if code == VoterCode.objects.get(id= voter_id).code :
+				return redirect('cast_vote')
+		except VoterCode.DoesNotExist:
+			# error message should be added here
+			return redirect('public_homepage')	
 	else:
-		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		form = CheckCodeForm()
+	return render(request, 'voter_interface/pages/voting/ballot.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+
+def public_vote_ballot_acknowledgement(request):
+	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
 
 
 

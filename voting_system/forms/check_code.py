@@ -7,4 +7,4 @@ class CheckCodeForm(forms.ModelForm):
 
     class Meta:
         model = VoterCode
-        fields = ('id','code')
+        fields = ('code',)
