@@ -30,6 +30,18 @@ DEBUG = True
 PAGINATION_LENGTH = 25
 ALLOWED_HOSTS = []
 
+# SSL
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 100000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_FRAME_DENY = True #Prevents clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True # Stop browser predicting asset content types
+SECURE_BROWSER_XSS_FILTER = True # XXS Protection
+
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
 
 # Application definition
 
@@ -42,6 +54,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'voting_system',
+    'djangosecure',
+    'sslserver',
+    
 ]
 
 MIDDLEWARE_CLASSES = [
