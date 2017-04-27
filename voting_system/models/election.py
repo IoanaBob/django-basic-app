@@ -14,6 +14,7 @@ class Election(models.Model):
     uninominal_voting = models.BooleanField()
     # if secret voting, is true
     #secret_voting = models.BooleanField()
+    election_method = models.CharField(max_length=20)
     #foreign keys
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')

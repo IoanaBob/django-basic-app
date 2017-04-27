@@ -186,6 +186,7 @@ def public_vote_ballot(request): #TODO this should be two seperate functions and
 		try:
 			#id should be changed to voter_id - the query - when it exists
 			if code in VoterCode.objects.filter(voter_id= voter_id).values_list('code',flat=True) :
+				request.session['code_input'] = code
 				return redirect('public_vote__acknowledgement')
 		except VoterCode.DoesNotExist:
 			# error message should be added here
@@ -263,13 +264,18 @@ def public_vote_place(request):
 	else:
 
 		# test data TODO: get this from DB
-		election_id = 1
-		
-		election_vote_method = "stv" #"stv"
-		
-		region_id = 1
+		checked_code = request.session['code_input']
+		#request.session['checked_code'] = ''
 
-		candidates = [(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
+		election_id = VoterCode.objects.get(code= checked_code).election_id
+		election = Election.objects.get(id = election_id)
+		
+		election_vote_method = election.election_method
+		
+		region_id = VoterCode.objects.get(code= checked_code).region_id
+
+		candidates = election.candidates.all()
+		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
 
 		if(election_vote_method == "fptp"):
 			return render(request, 'voter_interface/pages/voting/place.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Ballot', reverse('public_vote__ballot')), ('Place Vote', reverse('public_vote__place_vote')) ]})
