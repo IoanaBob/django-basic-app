@@ -244,18 +244,22 @@ def public_vote_place(request):
 		ballot_id = str(uuid.uuid4().hex)
 
 		votes = []
+		total_ranks = 0
 		for key,rank in voter_dict.items():
 			new_vote = RegionVote()
 			new_vote.election_id = election_id
 			new_vote.candidate_id = key
 			new_vote.ballot_id = ballot_id
 			new_vote.rank = rank
-
-			SecureVoteToDatabse(new_vote,region_id)
+			if rank is not None:
+				total_ranks += 1
+				SecureVoteToDatabse(new_vote,region_id)
 		
-		
-		return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
-
+		if total_ranks > 0:
+			return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		else:
+			messages.error(request, "Please choose at least one option.")
+			return redirect('public_vote__place_vote');
 	else:
 
 		# test data TODO: get this from DB
