@@ -2,15 +2,34 @@
 {% block content %}
 <h1>Voter Codes</h1>
 {% if voter_codes %}
+     <div class="sort">
+        <label for="id_sort">Sort By:</label>
+        <select name="sort_query" id="id_sort">
+            <option disabled>-- Sent Status --</option>
+            <option value="sent_status" {% ifequal sort "sent_status" %}  selected disabled {% endifequal %}>Sent Status ASC</option>
+            <option value="-sent_status" {% ifequal sort "-sent_status" %}  selected disabled {% endifequal %}>Sent Status DESC</option>
+            <option disabled>-- Verified Date --</option>
+            <option value="verified_date" {% ifequal sort "verified_date" %}  selected disabled {% endifequal %}>Verified Date ASC</option>
+            <option value="-verified_date" {% ifequal sort "-verified_date" %}  selected disabled {% endifequal %}>Verified Date DESC</option>
+            <option disabled>-- Invalidated Date --</option>
+            <option value="invalidated_date" {% ifequal sort "invalidated_date" %}  selected disabled {% endifequal %}>Invalidated Date ASC</option>
+            <option value="-invalidated_date" {% ifequal sort "-invalidated_date" %}  selected disabled {% endifequal %}>Invalidated Date DESC</option>
+             <option disabled>-- Invalidated Date --</option>
+            <option value="election_id" {% ifequal sort "election_id" %}  selected disabled {% endifequal %}>Election ASC</option>
+            <option value="-election_id" {% ifequal sort "-election_id" %}  selected disabled {% endifequal %}>Election DESC</option>
+            <option disabled>-- Voter --</option>
+            <option value="voter_id" {% ifequal sort "voter_id" %}  selected disabled {% endifequal %}>Voter ASC</option>
+            <option value="-voter_id" {% ifequal sort "-voter_id" %}  selected disabled {% endifequal %} >Voter DESC</option>
+        </select>
+     </div>
     <table class="table table-striped table-hover">
         <thead>
             <th>Voter ID</th>
             <th>Sent Status</th>
             <th>Verified Date</th>
-            <th>Unvalidate Date</th>
-            <th>Election ID/th>
-            <th>Reissue (Print)</th>
-            
+            <th>Invalidated Date</th>
+            <th>Election ID</th>
+
         </thead>
         <tbody>
             {% for code in voter_codes %}
@@ -35,9 +54,7 @@
                 <td>
                     {{ code.election_id }}
                 </td>
-                <td>
-                    <a href="{% url 'voter_code_print' id=code.id%}" class="btn btn-warning">Reissue</a>
-                </td>
+                
                 
             </tr>
             {% endfor %}
@@ -46,31 +63,121 @@
     </table>
     {% if voter_codes.has_other_pages %}
         <ul class="pagination">
-            {% if voter_codes.has_previous %}
-            <li><a href="{% url 'voter_code_view' page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+            {% if election != None %}
+                {% if sort != None %}
+                    {% if voter_codes.has_previous %}
+                        <li><a href="{% url 'voter_code_view_election_sort' election=election sort=sort page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in voter_codes.paginator.page_range %}
+                        {% if voter_codes.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="{% url 'voter_code_view_election_sort' election=election sort=sort page_id=i %}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if voter_codes.has_next %}
+                        <li><a href="{% url 'voter_code_view_election_sort' election=election sort=sort page_id=voter_codes.next_page_number %}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                {% else %}
+                    {% if voter_codes.has_previous %}
+                        <li><a href="{% url 'voter_code_view_election' election=elction page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in voter_codes.paginator.page_range %}
+                        {% if voter_codes.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="{% url 'voter_code_view_election' election=election page_id=i %}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if voter_codes.has_next %}
+                        <li><a href="{% url 'voter_code_view_election' election=election page_id=voter_codes.next_page_number %}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                {% endif %}
             {% else %}
-            <li class="disabled"><span>&laquo;</span></li>
+                  {% if sort != None %}
+                    {% if voter_codes.has_previous %}
+                        <li><a href="{% url 'voter_code_view_sort' sort=sort page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in voter_codes.paginator.page_range %}
+                        {% if voter_codes.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="{% url 'voter_code_view_sort' sort=sort page_id=i %}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if voter_codes.has_next %}
+                        <li><a href="{% url 'voter_code_view_sort' sort=sort page_id=voter_codes.next_page_number %}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                {% else %}
+                    {% if voter_codes.has_previous %}
+                        <li><a href="{% url 'voter_code_view' page_id=voter_codes.previous_page_number %}">&laquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in voter_codes.paginator.page_range %}
+                        {% if voter_codes.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="{% url 'voter_code_view' page_id=i %}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if voter_codes.has_next %}
+                        <li><a href="{% url 'voter_code_view' page_id=voter_codes.next_page_number %}">&raquo;</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                {% endif %}
             {% endif %}
-            {% for i in voter_codes.paginator.page_range %}
-            {% if voter_codes.number == i %}
-                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-            {% else %}
-                <li><a href="{% url 'voter_code_view' page_id=i %}">{{ i }}</a></li>
-            {% endif %}
-            {% endfor %}
-            {% if voter_codes.has_next %}
-            <li><a href="{% url 'voter_code_view' page_id=voter_codes.next_page_number %}">&raquo;</a></li>
-            {% else %}
-            <li class="disabled"><span>&raquo;</span></li>
-            {% endif %}
+            
         </ul>
     {% endif %}
 {% else %}
     <h3>No Voter Codes Available</h3>
 {% endif %}
 
+{% endblock %}
+{% block js %}
+<script>
+    $('document').ready(function(e) {
+        $('#id_sort').change( function(e) {
+
+            var url;
+            {% if election != None %}
+                {% if sort != None %}
+        
+                    var sort = $('#id_sort').val();
+                    url = "{% url 'voter_code_view_sort_election' election_id=election sort='sortToReplace' %}".replace('sortToReplace', sort);
+                    
+                    window.location = url;
+                {% else %}
+                    url = "{% url 'voter_code_view_sort_election' election_id=election %}";
+                {% endif %}
+            {% else %}
+                
+                var sort = $('#id_sort').val();
+                url = "{% url 'voter_code_view_sort' sort='sortToReplace' page_id=1%}".replace('sortToReplace', sort);
+            {% endif %}
+            
+            console.log(url)
+            window.location = url;
+        });
+
+    });
+</script>
+
 
 {% endblock %}
-{% block javascript %}
 
-{% endblock %}
+    
