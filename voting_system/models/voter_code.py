@@ -26,7 +26,7 @@ class VoterCode(models.Model):
         app_label = 'admin'
 
     def __str__(self):
-        return '%s %s %s %s %s %s %s' % (self.id, self.verified_date, self.invalidated_date, self.code, self.vote_status, self.election, self.region)
+        return '%s %s %s %s %s %s' % (self.id, self.verified_date, self.invalidated_date, self.code, self.election, self.region)
 
     def generate_voter_code():
         #DB field is 20 characters? Shouldn't this be 20?---------------------------------------------\/

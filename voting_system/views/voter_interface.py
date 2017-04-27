@@ -10,6 +10,8 @@ from django.db import connections
 from django.contrib.auth.hashers import make_password, check_password as password_check
 from django.contrib import messages
 import requests
+import datetime
+
 
 def public_homepage(request):
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
@@ -179,16 +181,16 @@ def public_vote_home(request):
 def public_vote_ballot(request): #TODO this should be two seperate functions and should be named something like "check voter code" (which is a function that already exists so check if it can be used) and "terms and conditions" (or simialr)
 	if request.method == "POST":
 		form = CheckCodeForm(request.POST)
-		# SHOULD BE CHANGED TO voter id!! (when it exists)
-		voter_id = form.data['voter_id']
 		code = form.data['code']
+		voter_id = request.session['verify_voter_id'] 
 		try:
 			#id should be changed to voter_id - the query - when it exists
-			if code == VoterCode.objects.get(id= voter_id).code :
-				return redirect('cast_vote')
+			if code in VoterCode.objects.filter(voter_id= voter_id).values_list('code',flat=True) :
+				return redirect('public_vote__acknowledgement')
 		except VoterCode.DoesNotExist:
 			# error message should be added here
-			return redirect('public_homepage')	
+			messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
+			return redirect('public_vote__ballot')	
 	else:
 		form = CheckCodeForm()
 	return render(request, 'voter_interface/pages/voting/ballot.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
@@ -389,14 +391,18 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 				region = Region.objects.get(name = region_name)
 				
 				if(not region == None):
-					elections += Election.objects.filter(regions__in=[region]) #TODO Add open date checking
+					# date checking
+					for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
+						# check if voter registered for the election
+						if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
+							elections.append(election)
 	else:
 		for region_name in region_name_list:
 			if(not region_name == None):
 				region = Region.objects.get(name = region_name)
 				
 				if(not region == None):
-					open_elections = Election.objects.filter(regions__in=[region])  #TODO Add open date checking
+					open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
 					for election in open_elections:
 						if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
 							elections.append(election)
@@ -415,6 +421,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 
 def DeleteAFictionPasswords(request):
 	VoterAuth.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
+	VoterCode.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 
 	messages.error(request, "A Fiction's passwords for elections deleted.") 
 	return redirect('register_summary')
