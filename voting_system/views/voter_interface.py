@@ -261,7 +261,7 @@ def public_vote_place(request):
 		# test data TODO: get this from DB
 		election_id = 1
 		
-		election_vote_method = "fptp" #"stv"
+		election_vote_method = "stv" #"stv"
 		
 		region_id = 1
 
@@ -298,7 +298,7 @@ def check_code(request):
 	return render(request, 'voter_interface/check_code.html', {'form': form})
 
 
-def check_password(request): #This function names conflicts with the function written to check passwords
+def check_password(request): #This function names conflicts with the function written to check passwords #DEPRICATED
 	if request.method == "POST":
 		form = CheckPasswordForm(request.POST)
 		# SHOULD BE CHANGED TO voter id!! (when it exists)
@@ -375,7 +375,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Get Voters Regions
 	voter = Voter.objects.get(voter_id= voter_id)
 	region_name_list = []
-	check_region_types = ["parliamentary_constituency"]
+	check_region_types = ["parliamentary_constituency"] # TODO add other region types e.g. local
 
 	for region_type in check_region_types:
 		region_name_list.append( PostcodeToRegion(voter.address_postcode.replace(" ",""),region_type) )
