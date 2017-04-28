@@ -63,8 +63,9 @@ urlpatterns = [
     # Voter Code CRUD
     url(r'^administration/codes/$', views.voter_code_homepage, name='voter_code_homepage'),
     url(r'^administration/codes/view/$', views.voter_code_view, name='voter_code_view'),
-    url(r'^administration/codes/populate/$', views.populate_voter_codes, name='populate_voter_codes'),
-
+    #CHANGES from populate_voter_codes to -> voter_code_populate
+    #url(r'^administration/codes/populate/$', views.populate_voter_codes, name='vopopulate_voter_codes'),
+    url(r'^administration/codes/populate/$', views.voter_code_populate, name='voter_code_populate'),
     url(r'^administration/codes/print/unissued/$', views.voter_code_print_unissued, name='voter_code_print_unissued'),
     url(r'^administration/codes/view/(?P<page_id>\d+)$', views.voter_code_view, name='voter_code_view'),
     url(r'^administration/codes/view/(?P<sort>[-_a-zA-Z]+)/(?P<page_id>\d+)$', views.voter_code_view, name='voter_code_view_sort'),
@@ -109,9 +110,6 @@ urlpatterns = [
     url(r'^cast_election_select/$', views.CastElectionSelect, name='cast_election_select'),
     url(r'^cast_enter_password/$', views.CastEnterPassword, name='cast_enter_password'),
             
-
-    
-    url(r'^administration/codes/view/$', views.populate_voter_codes, name='voter_code_populate'),
 
     url(r'^voting/home/$', views.public_vote_home, name='public_vote__home'),
     url(r'^voting/ballot/$', views.public_vote_ballot, name='public_vote__ballot'),

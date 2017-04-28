@@ -316,7 +316,26 @@ def voter_code_print_unissued(request):
 
 
 	return True
-# ---- Voter Code END ---- #
+
+def voter_code_populate(request):
+	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('voter_code_homepage')
+	else:
+		if request.method == "POST":
+			form = VoterCodeForm(request.POST)
+			if form.is_valid():
+				election = form.instance.election
+				form.save(commit=False)
+				print(election)
+				VoterCode.populate_voter_codes(election)
+				messages.success(request, "Successfully added voter codes for "+ election.name)
+				return redirect('voter_code_populate')
+		else:
+			form = VoterCodeForm()
+		return render(request, 'admin_interface/pages/codes/form.html', {"title": "Populate Voter Codes", 'breadcrumb': [("Home", reverse('voter_code_homepage')), ("Populate Voter Codes", reverse('voter_code_populate'))], 'first_name':request.session['forename'], 'form': form})
+		# ---- Voter Code END ---- #
 	
 # ---- MISC START (TO SORTT) ---- #
 
@@ -873,24 +892,8 @@ def get_random_date(year):
 
 # don't move these functions or change their names. I am working on them.
 # -- okay -- I've changed the region popuate to generated correct ID with sequences - CA
+# MOVED populate_voter_codes into the voter code section LINE:
 
-def populate_voter_codes(request):
-	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])
-	if(not authorised):
-		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('voter_code_homepage')
-	else:
-		if request.method == "POST":
-			form = VoterCodeForm(request.POST)
-			if form.is_valid():
-				election = form.instance.election
-				form.save(commit=False)
-				print(election)
-				VoterCode.populate_voter_codes(election)
-				return redirect('elections')
-		else:
-			form = VoterCodeForm()
-		return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
 
 def region_populate(request):
 	authorised,username = CheckAuthorisation(request,True,[('region',)])
