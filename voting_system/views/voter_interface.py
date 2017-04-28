@@ -81,6 +81,7 @@ def public_verify(request):
 	if request.method == "POST":
 		form = VerifyLoginForm(request.POST)
 		if form.is_valid():
+			destination = request.GET.get('destination')
 			try:
 				user = Verify.objects.get(email = request.POST.get('email'))
 				if user is not None:
