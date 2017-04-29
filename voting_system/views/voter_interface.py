@@ -16,6 +16,17 @@ import datetime
 def public_homepage(request):
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
+def public_homepage(request):
+
+	votes = [(1,1,1,"jyfasdosa"),(1,2,1,"ergf"),(1,3,1,"asd"),(1,1,1,"rge")]
+
+	vote_count = {}
+
+	vote_count[1] = 0
+
+	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
+
+
 
 def RegisterSummary(request): #CHRIS PLEASE CHECK
 	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
