@@ -42,7 +42,8 @@ def admin_login(request):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
-						admin_master_homepage
+						return redirect ('admin_master_homepage')
+
 					else:
 						form = LoginForm()
 						messages.error(request, "Your credentials does not match our records.")

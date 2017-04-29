@@ -13,6 +13,9 @@
 + Sam Mantle
 >
 # Usage
+
+python manage.py runsslserver --certificate server.crt --key server.key 
+
 ## Voting Integration render (default) - additonal arugments should be past at the end of the list.
 ```python
 return render(request, template_path, {"title": page_title_name, "breadcrumb": [(breadcrumb_title, reverse(url_name)), ]})

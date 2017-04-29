@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify, Region, Election, Voter
+from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify, Region, Election, Voter, Candidate
 from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm, VerifyLoginForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -10,9 +10,22 @@ from django.db import connections
 from django.contrib.auth.hashers import make_password, check_password as password_check
 from django.contrib import messages
 import requests
+import datetime
+
 
 def public_homepage(request):
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
+
+def public_homepage(request):
+
+	votes = [(1,1,1,"jyfasdosa"),(1,2,1,"ergf"),(1,3,1,"asd"),(1,1,1,"rge")]
+
+	vote_count = {}
+
+	vote_count[1] = 0
+
+	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
+
 
 
 def RegisterSummary(request): #CHRIS PLEASE CHECK
@@ -54,12 +67,15 @@ def RegisterPasswordCreation(request):
 		#TODO check if the passwords match 
 		if user is not None:
 			VoterAuth.objects.create(password_hash=make_password(request.POST.get('password')), voter_id=user.voter_id,election_id=request.POST.get('election_id'))
-			
-			#TODO create code
-
 
 			election_id = request.GET.get('election_id')
 			election = Election.objects.get(id = election_id)
+
+			person = Voter.objects.get(voter_id = user.voter_id)
+			voter_id_region = VoterCode.postcode_to_region(person.address_postcode)
+			voter_code = VoterCode.generate_voter_code()
+			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = voter_id_region)
+			entry.save()
 
 			return redirect('register_complete')
 		else:
@@ -90,6 +106,7 @@ def public_verify(request):
 					# WE NEED TO REMOVE THIS SESSION AFTER TIME and WE NEED TO OFFER LOGOUT
 					if  password_check(request.POST.get('password'),user.password_hash):
 						request.session['verify_username'] = user.email
+						request.session['verify_voter_id'] = user.voter_id
 						request.session['verify_forename'] = user.first_name.capitalize()
 						request.session['verify_surname'] = user.last_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
@@ -152,7 +169,7 @@ def CastEnterPassword(request):
 		#TODO check if the passwords match 
 		if user is not None:
 			election_id = request.GET.get('election_id')
-
+			request.session['election_id'] = election_id
 			if(password_check(request.POST.get('password'), VoterAuth.objects.get(voter_id=user.voter_id,election_id= election_id).password_hash)):
 				return redirect('public_vote__ballot')
 			else:
@@ -177,13 +194,34 @@ def public_vote_home(request):
 	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') )]})
 
 
-def public_vote_ballot(request): #TODO this should be two seperate functions and should be named something like "check voter code" (which is a function that already exists so check if it can be used) and "terms and conditions" (or simialr)
+def public_vote_ballot(request): #TODO rename cast_check_code
 	if request.method == "POST":
-		#if checks passed
-		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "acknowledgement": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		form = CheckCodeForm(request.POST)
+		code = form.data['code']
+		voter_id = request.session['verify_voter_id'] 
+		try:
 
+			#id should be changed to voter_id - the query - when it exists
+			if code in VoterCode.objects.filter(voter_id= voter_id, election_id = request.session['election_id']).values_list('code',flat=True) :
+				print("Goes here try")
+			
+				request.session['code_input'] = code
+				return redirect('public_vote__acknowledgement')
+			else:
+				print(election_id)
+				print(voter_id)
+				messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
+				return redirect('public_vote__ballot')	
+		except VoterCode.DoesNotExist:
+			# error message should be added here
+			messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
+			return redirect('public_vote__ballot')	
 	else:
-		return render(request, 'voter_interface/pages/voting/ballot.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		form = CheckCodeForm()
+		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+
+def public_vote_ballot_acknowledgement(request):
+	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
 
 
 
@@ -231,28 +269,38 @@ def public_vote_place(request):
 		ballot_id = str(uuid.uuid4().hex)
 
 		votes = []
+		total_ranks = 0
 		for key,rank in voter_dict.items():
 			new_vote = RegionVote()
 			new_vote.election_id = election_id
 			new_vote.candidate_id = key
 			new_vote.ballot_id = ballot_id
 			new_vote.rank = rank
-
-			SecureVoteToDatabse(new_vote,region_id)
+			if rank is not None:
+				total_ranks += 1
+				SecureVoteToDatabse(new_vote,region_id)
 		
-		
-		return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
-
+		if total_ranks > 0:
+			return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		else:
+			messages.error(request, "Please choose at least one option.")
+			return redirect('public_vote__place_vote');
 	else:
 
 		# test data TODO: get this from DB
-		election_id = 1
-		
-		election_vote_method = "stv" #"stv"
-		
-		region_id = 1
+		checked_code = request.session['code_input']
+		#request.session['checked_code'] = ''
 
-		candidates = [(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
+		election_id = VoterCode.objects.get(code= checked_code).election_id
+		election = Election.objects.get(id = election_id)
+		
+		election_vote_method = election.election_method
+		
+		region_id = VoterCode.objects.get(code= checked_code).region_id
+
+		candidates = Candidate.objects.filter(region_id = region_id)
+		print(candidates[0].first_name)
+		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
 
 		if(election_vote_method == "fptp"):
 			return render(request, 'voter_interface/pages/voting/place.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Ballot', reverse('public_vote__ballot')), ('Place Vote', reverse('public_vote__place_vote')) ]})
@@ -268,7 +316,7 @@ def public_vote_place(request):
 
 # This should not be allowed to be accessed in any other way than from check_password (POST)
 # when it's working
-def check_code(request): 
+def check_code(request): #Depreciated
 	if request.method == "POST":
 		form = CheckCodeForm(request.POST)
 		# SHOULD BE CHANGED TO voter id!! (when it exists)
@@ -379,14 +427,18 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 				region = Region.objects.get(name = region_name)
 				
 				if(not region == None):
-					elections += Election.objects.filter(regions__in=[region]) #TODO Add open date checking
+					# date checking
+					for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
+						# check if voter registered for the election
+						if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
+							elections.append(election)
 	else:
 		for region_name in region_name_list:
 			if(not region_name == None):
 				region = Region.objects.get(name = region_name)
 				
 				if(not region == None):
-					open_elections = Election.objects.filter(regions__in=[region])  #TODO Add open date checking
+					open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
 					for election in open_elections:
 						if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
 							elections.append(election)
@@ -405,6 +457,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 
 def DeleteAFictionPasswords(request):
 	VoterAuth.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
+	VoterCode.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 
 	messages.error(request, "A Fiction's passwords for elections deleted.") 
 	return redirect('register_summary')
