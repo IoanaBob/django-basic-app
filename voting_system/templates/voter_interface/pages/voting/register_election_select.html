@@ -10,15 +10,19 @@
 <p>You are verified as: {{first_name}} {{last_name}}</p>
 <p>TODO: List the available elections below. When the voter clicks on the election they will be sent to a page to create a password fo rthe election.  REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
 </br>
-
+<ul class="list-group">
+	<li class="list-group-item">a</li>
+	<li class="list-group-item"></li>
+	<li class="list-group-item"></li>
+</ul>
 
 <div class="row">
 	<h2>You can register for the following elections:</h2>
-	<ul id="election_list">
+	<ul class="list-group">
 		{% if elections %}
             {% for election in elections %}
-            	<li class="election_list_item">
-					<a href="{% url 'register_create_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name }}</span></a>
+            	<li class="list-group-item">
+					<a href="{% url 'register_create_password' %}?election_id={{ election.id }}" >{{ election.name }}</a>
 				</li>
                
             {% endfor %} 

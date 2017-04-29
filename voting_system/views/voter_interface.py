@@ -93,7 +93,7 @@ def public_verify(request):
 						request.session['verify_forename'] = user.first_name.capitalize()
 						request.session['verify_surname'] = user.last_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
-						return redirect (request.POST.get('destination'))
+						return redirect (destination)
 					else:
 						messages.error(request, "Your credentials does not match our records.")
 						form = VerifyLoginForm()
@@ -119,15 +119,17 @@ def CastVoteId(request): #Chris Please Check
 	#TODO check if voter is logged in via verify and redirect if not. 
 	if request.method == "POST":
 		verify_username = request.session['verify_username']
-
-		user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
-		if user is not None:
-			request.session['voter_id_check_passed'] = True
-			return redirect('cast_election_select')
-		else:
-			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
-			return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
-
+		try:
+			user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
+			if user is not None:
+				request.session['voter_id_check_passed'] = True
+				return redirect('cast_election_select')
+			else:
+				messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
+				return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		except Verify.DoesNotExist:
+			messages.error(request, 'Voter does not exists.')
+			return redirect('cast_vote_id')
 	else:
 		return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
@@ -138,7 +140,7 @@ def CastElectionSelect(request):
 
 	elections = GetAvailableElectionsForUser(user.voter_id, False)
 
-	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':voter_code_viewrequest.session['verify_surname'], 'elections':elections })
+	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name': request.session['verify_surname'], 'elections':elections })
 
 
 def CastEnterPassword(request):
@@ -259,7 +261,8 @@ def public_vote_place(request):
 			return render(request, 'voter_interface/pages/voting/place-STV.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates,"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Ballot', reverse('public_vote__ballot')), ('Place Vote', reverse('public_vote__place_vote')) ]})
 		
 		else:
-			pass #throw an error	
+			messages.error(request, 'An error occured')
+			return redirect('public_vote__place_vote')
 
 
 

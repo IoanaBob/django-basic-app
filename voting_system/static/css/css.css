@@ -309,6 +309,9 @@ p {
 h1 {
 	font-size: 50px;
 }
+span {
+	font-size: 16px
+}
 
 /*Aligns all the content within .container, which is set to a defined width*/
 .container {
