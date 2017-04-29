@@ -73,7 +73,7 @@ input[type="password"]:after {
 #footer {
 	background-color: #DEE0E2;
 	width: 100%;
-	margin-top: 75px;
+	margin-top: 0px;
 }
 
 .bottom-border {
@@ -103,6 +103,9 @@ input[type="password"]:after {
 	font-weight: 400;
 }
 
+.footer-list > li > a {
+	color: #454A4C;
+}
 
 .breadcrumb {
 	background-color: white;
@@ -323,7 +326,10 @@ h1 {
 
 #welcome-header-bar {
 	background-color: #005EAC;
-	height: 200px;
+	height: auto;
+	min-height: 10px;
+	max-height: 200px;
+
 }
 
 #global-footer-bar {
@@ -353,6 +359,7 @@ h1 {
 
 .bold-footer {
 	font-family: arial ;
+	padding-left: 0;
 }
 
 .footer-list {
@@ -514,7 +521,7 @@ h1 {
 	color: white;
 	font-family: arial;
 	margin-left: 15px;
-	padding-top: 10px;
+	padding: 10px;
 }
 
 #voter-message {

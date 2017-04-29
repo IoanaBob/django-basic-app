@@ -1,9 +1,10 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
 
-<div class="container">
-	<div class="row">
-        <h1>Login</h1>
+
+	
+        <h1><b>Login</b></h1>
+        <hr/>
         <span>{{message}}</span>
 
         <form method="POST">{% csrf_token %}
@@ -11,6 +12,6 @@
             
             <button type="submit" class="btn btn-success">Login</button>
         </form>
-    </div>
-</div>
+  
+
 {% endblock %}
