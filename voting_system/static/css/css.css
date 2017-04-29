@@ -323,7 +323,9 @@ h1 {
 
 #welcome-header-bar {
 	background-color: #005EAC;
-	height: 200px;
+	height: auto;
+	min-height: 10px;
+	max-height: 200px;
 }
 
 #global-footer-bar {
@@ -514,7 +516,7 @@ h1 {
 	color: white;
 	font-family: arial;
 	margin-left: 15px;
-	padding-top: 10px;
+	padding: 10px;
 }
 
 #voter-message {

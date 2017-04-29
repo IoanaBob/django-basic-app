@@ -20,7 +20,8 @@ def RegisterSummary(request): #CHRIS PLEASE CHECK
 
 
 def RegisterVoterId(request): #Chris Please Check
-	#TODO check if voter is logged in via verify and redirect if not. 
+	#TODO check if voter is logged in via verify and redirect if not.
+
 	if request.method == "POST":
 		verify_username = request.session['verify_username']
 
@@ -33,7 +34,7 @@ def RegisterVoterId(request): #Chris Please Check
 			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 	else:
-		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'] })
 
 
 def RegisterElectionSelect(request):
@@ -81,8 +82,9 @@ def public_verify(request):
 	if request.method == "POST":
 		form = VerifyLoginForm(request.POST)
 		if form.is_valid():
-			destination = request.GET.get('destination')
+			
 			try:
+				destination = request.GET.get('destination')
 				user = Verify.objects.get(email = request.POST.get('email'))
 				if user is not None:
 					# WE NEED TO REMOVE THIS SESSION AFTER TIME and WE NEED TO OFFER LOGOUT
@@ -99,7 +101,7 @@ def public_verify(request):
 			except Verify.DoesNotExist:
 					messages.error(request, "Your credentials does not match our records.")
 					form = VerifyLoginForm()
-					return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
+					return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form})
 		#COPIED CODE HAD NO 'ELSE' HERE - WHAT DO WE WANT TO DO
 
 	else:
@@ -136,7 +138,7 @@ def CastElectionSelect(request):
 
 	elections = GetAvailableElectionsForUser(user.voter_id, False)
 
-	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
+	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':voter_code_viewrequest.session['verify_surname'], 'elections':elections })
 
 
 def CastEnterPassword(request):
