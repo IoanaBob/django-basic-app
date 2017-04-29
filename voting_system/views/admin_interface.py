@@ -42,7 +42,7 @@ def admin_login(request):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
-						return redirect ('admin_homepage')
+						admin_master_homepage
 					else:
 						form = LoginForm()
 						messages.error(request, "Your credentials does not match our records.")
@@ -64,7 +64,7 @@ def admin_logout(request):
 		pass
 	
 	messages.success(request, "You have been successfully logged out")
-	return redirect ('public_vote__home')
+	return redirect ('public_homepage')
 
 # ---- Authentication END ---- #
 
