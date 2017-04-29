@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify, Region, Election, Voter
+from voting_system.models import VoterCode, VoterAuth, RegionVote, Verify, Region, Election, Voter, Candidate
 from voting_system.forms import CheckPasswordForm, CheckCodeForm, RegisterVoteForm, VerifyLoginForm
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -164,7 +164,7 @@ def CastEnterPassword(request):
 		#TODO check if the passwords match 
 		if user is not None:
 			election_id = request.GET.get('election_id')
-
+			request.session['election_id'] = election_id
 			if(password_check(request.POST.get('password'), VoterAuth.objects.get(voter_id=user.voter_id,election_id= election_id).password_hash)):
 				return redirect('public_vote__ballot')
 			else:
@@ -189,23 +189,31 @@ def public_vote_home(request):
 	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') )]})
 
 
-def public_vote_ballot(request): #TODO this should be two seperate functions and should be named something like "check voter code" (which is a function that already exists so check if it can be used) and "terms and conditions" (or simialr)
+def public_vote_ballot(request): #TODO rename cast_check_code
 	if request.method == "POST":
 		form = CheckCodeForm(request.POST)
 		code = form.data['code']
 		voter_id = request.session['verify_voter_id'] 
 		try:
+
 			#id should be changed to voter_id - the query - when it exists
-			if code in VoterCode.objects.filter(voter_id= voter_id).values_list('code',flat=True) :
+			if code in VoterCode.objects.filter(voter_id= voter_id, election_id = request.session['election_id']).values_list('code',flat=True) :
+				print("Goes here try")
+			
 				request.session['code_input'] = code
 				return redirect('public_vote__acknowledgement')
+			else:
+				print(election_id)
+				print(voter_id)
+				messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
+				return redirect('public_vote__ballot')	
 		except VoterCode.DoesNotExist:
 			# error message should be added here
 			messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
 			return redirect('public_vote__ballot')	
 	else:
 		form = CheckCodeForm()
-	return render(request, 'voter_interface/pages/voting/ballot.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
 
 def public_vote_ballot_acknowledgement(request):
 	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
@@ -285,7 +293,8 @@ def public_vote_place(request):
 		
 		region_id = VoterCode.objects.get(code= checked_code).region_id
 
-		candidates = election.candidates.all()
+		candidates = Candidate.objects.filter(region_id = region_id)
+		print(candidates[0].first_name)
 		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
 
 		if(election_vote_method == "fptp"):
@@ -301,7 +310,7 @@ def public_vote_place(request):
 
 # This should not be allowed to be accessed in any other way than from check_password (POST)
 # when it's working
-def check_code(request): 
+def check_code(request): #Depreciated
 	if request.method == "POST":
 		form = CheckCodeForm(request.POST)
 		# SHOULD BE CHANGED TO voter id!! (when it exists)
