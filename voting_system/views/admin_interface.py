@@ -379,17 +379,20 @@ def candidate_create(request):
 			
 			form = CandidateForm(request.POST)
 			party = request.POST.get('party_id')
+			region = request.POST.get('region_id')
 			if form.is_valid():
 
 				candidate = form.save(commit=False)
 				candidate.id = getNextID('candidates')
 				candidate.party_id = party
+				candidate.region_id = region
 				candidate.save()
 				messages.success(request, "Successfully added a new candidiate!")
 			return redirect('candidate_view')
 		else:
+			regions = Region.objects.all()
 			form = CandidateForm()
-			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form })
+			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form, 'regions': regions })
 
 
 def candidate_edit(request, id=None):
@@ -401,16 +404,23 @@ def candidate_edit(request, id=None):
 		candidate = get_object_or_404(Candidate, id=id)
 		if request.method == "POST":
 			form = CandidateForm(request.POST, instance=candidate)
+			party = request.POST.get('party_id')
+			region = request.POST.get('region_id')
 			if form.is_valid():
 				candidate = form.save(commit=False)
+				candidate.party_id = party
+				candidate.region_id = region
 				candidate.save()
 				messages.success(request, "Candidate #"+id+" successfully update!")
 				return redirect('candidate_view')
 		else:
+			
 			form = CandidateForm(instance=candidate)
 			form.fields['party_id'].initial = candidate.party_id
+			form.fields['region_id'].initial = candidate.region_id
 
-		return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}))], 'first_name':request.session['forename'], 'form': form})
+		return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}))], 'first_name':request.session['forename'], 'form': form
+		})
 
 
 def candidate_delete(request, id=None):
