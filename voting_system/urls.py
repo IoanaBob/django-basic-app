@@ -121,7 +121,11 @@ urlpatterns = [
 
 
     #remove these after testing finished #TODO remove these
-    url(r'^voting/cleanafiction/$', views.DeleteAFictionPasswords, name='cleanafiction')
+    url(r'^voting/cleanafiction/$', views.DeleteAFictionPasswords, name='cleanafiction'),
+    
+    url(r'^test_vote_fetch/$', views.test_vote_fetch, name='test_vote_fetch')
+        
+
     
 ]
 

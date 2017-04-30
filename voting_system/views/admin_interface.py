@@ -19,6 +19,7 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.db import connections
 
 from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
@@ -922,5 +923,33 @@ def region_populate(request):
 
 
 
+def test_vote_fetch(request):
+	election_id = 1
+	region_id = 1
+	candidate_id = 1
+
+	votes = VoteResults(election_id,region_id,candidate_id)
+	
+	voters = AllVoters(election_id,region_id)
+
+	return render(request, 'admin_interface/pages/test_fetch_vote.html', {"votes":votes,"voters":voters})
+
+
+def VoteResults(election_id,region_id,candidate_id):
+	#TODO add the filtering
+	region_db_name = "region"+str(region_id)
+	cursor = connections[region_db_name].cursor()
+	cursor.execute("SELECT election_id,candidate_id,ballot_id,rank from votes ;")
+	votes = cursor.fetchall()
+	return votes
+
+
+def AllVoters(election_id,region_id):
+	cursor = connections["people"].cursor()
+	cursor.execute("SELECT voter_id,address_postcode from voters ;")
+	voters = cursor.fetchall()
+	print(voters)
+	#TODO add the filtering by region/election
+	return voters
 
 
