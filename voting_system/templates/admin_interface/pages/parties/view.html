@@ -32,6 +32,27 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if parties.has_other_pages %}
+        <ul class="pagination">
+            {% if parties.has_previous %}
+            <li><a href="{% url 'party_view' page_id=parties.previous_page_number %}">&laquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in parties.paginator.page_range %}
+            {% if parties.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+                <li><a href="{% url 'party_view' page_id=i %}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if elections.has_next %}
+            <li><a href="{% url 'party_view' page_id=parties.next_page_number %}">&raquo;</a></li>
+            {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    {% endif %}
 {% else %}
     <h3>No Parties Available</h3>
 {% endif %}

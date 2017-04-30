@@ -1,0 +1,74 @@
+{% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+    <h1>Print Unissued Voter Codes</h1>
+    <p>This action will generate a PDF to be printed with every unissued voter code.</p>
+    <h2>Please Select the Election</h2>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <select name="elections" id="elections" class="js-example-basic js-states form-control" required>
+            {% for election in elections %}
+                <option value="{{ election.id }}" >{{ election.name }}</option>
+            {% endfor %}
+        </select>
+        <div class="hide" id="submit">
+            <input type="submit" id="process_form" class="btn btn-success" value="Print Voter Codes">
+            <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    
+                    <div class="modal-body">
+                        <p>Are you sure you wish to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-success" data-confirm="modal" id="agree" download>Confirm</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+            
+    </form>
+
+
+
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        $(".js-example-basic").select2({
+            width: 500
+        });
+        if( $('.js-example-basic').has('option:selected').length > 0 ) {
+            $('#submit').removeClass('hide');
+        }
+        $('.js-example-basic').on("select2:selecting", function(e) { 
+            $('#submit').removeClass('hide');
+        });
+       
+        $('#process_form').on('click', function(e) {
+            var form = $(this).closest('form');
+            e.preventDefault();
+            $('#myModal').modal({
+                backdrop: 'static',
+                keyboard: false
+                })
+                .one('click', '#agree', function(e) {
+                    form.trigger('submit');
+                    $('#myModal').modal('toggle');
+                    $(".js-example-basic option:selected").removeAttr("selected");
+                    $(".js-example-basic").select2('val', '');
+                });
+            });
+
+        
+    });
+</script>
+{% endblock %}

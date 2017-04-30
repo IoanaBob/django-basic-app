@@ -13,12 +13,18 @@
 </br>
 
 
+<<<<<<< HEAD
 
 	<h3>The following elections are open for online voting and you have completed their registeration process:</h3>
 	<ul id="election_list">
+=======
+<div class="row">
+	<h2>The following elections are open for online voting and you have completed their registeration process:</h2>
+	<ul class="list-group">
+>>>>>>> 56b688e0613cb5d188c3f2e7d7ae5142808e06d2
 		{% if elections %}
             {% for election in elections %}
-            	<li class="election_list_item">
+            	<li class="list-group-item">
 					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name }}</span></a>
 				</li>
                

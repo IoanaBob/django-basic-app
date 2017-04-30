@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, render, get_object_or_404
 from voting_system.models import *
+from django.db.models import Q, Count
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password as admin_password_check
@@ -14,8 +15,12 @@ from django.conf import settings
 from random import choice
 from random import randint
 import datetime
-from django.http import JsonResponse
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
+from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
@@ -37,7 +42,8 @@ def admin_login(request):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
-						return redirect ('admin_homepage')
+						return redirect ('admin_master_homepage')
+
 					else:
 						form = LoginForm()
 						messages.error(request, "Your credentials does not match our records.")
@@ -59,7 +65,7 @@ def admin_logout(request):
 		pass
 	
 	messages.success(request, "You have been successfully logged out")
-	return redirect ('public_vote__home')
+	return redirect ('public_homepage')
 
 # ---- Authentication END ---- #
 
@@ -205,7 +211,7 @@ def voter_code_homepage(request): #not sure we need these home pages??
 		return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage'))], 'first_name': request.session['forename']})
 
 
-def voter_code_view(request, page_id=1):
+def voter_code_view(request, page_id=1, id=None, election_id=None, sort=None):
 	authorised,username = CheckAuthorisation(request,True,[('voter_codes__view',)])
 	if(not authorised):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
@@ -213,57 +219,32 @@ def voter_code_view(request, page_id=1):
 	else:
 		authorised,username = CheckAuthorisation(request,True,[("voter_codes__view",)])
 		if(authorised):
-			codes_list = VoterCode.objects.all().order_by('id')
-			paginator = Paginator(codes_list, settings.PAGINATION_LENGTH)
+			election = election_id
+			sort = sort
+			if election_id != None:
+				if sort != None:
+					codes = VoterCode.objects.all().filter(election_id=election_id).order_by(sort)
+				else:
+					codes = VoterCode.objects.all().filter(election_id=election_id)
+			elif id != None:
+				codes = VoterCode.objects.all().filter(id = id)	
+			else:
+				if sort != None:
+					codes = VoterCode.objects.all().order_by(sort)
+				else:
+					codes = VoterCode.objects.all()
+			paginator = Paginator(codes, settings.PAGINATION_LENGTH)
 			try:
 				voter_codes = paginator.page(page_id)
 			except PageNotAnInteger:
 				voter_codes = paginator.page(1)
 			except EmptyPage:
 				voter_codes = paginator.page(paginator.num_pages)
-			return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes})
+			return render(request, 'admin_interface/pages/codes/view.html', {'title': "View Voter Codes", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("View Voter Codes", reverse('voter_code_view'))], 'first_name':request.session['forename'], 'voter_codes': voter_codes,  "election": election,"sort": sort})
 		else:
 			messages.error(request, "Access Denied. You do not have sufficient privileges.")
 			return redirect('voter_code_homepage')
-def voter_code_print(request, id=None, election_id=None, sort=None, pageLim=25):
-	authorised,username = CheckAuthorisation(request,True,[('voter_codes__print',)])
-	if(not authorised):
-		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('voter_code_homepage')
-	else:
-		election = election_id
-		sort = sort
-		if election_id != None:
-			if sort != None:
-				
-				codes = VoterCode.objects.all().filter(election_id=election_id).order_by(sort)
-			else:
-				codes = VoterCode.objects.all().filter(election_id=election_id)
-		elif id != None:
-			codes = VoterCode.objects.all().filter(id = id)
-			
-		else:
-			if sort != None:
-				codes = VoterCode.objects.all().order_by(sort)
-			else:
-				codes = VoterCode.objects.all()
 
-		if request.POST:
-
-			voter_code_ids = json.loads(request.POST.get('voter_codes'))
-			print(voter_code_ids)
-
-			#get code + address
-			for code in voter_code_ids:
-				
-				details = VoterCode.objects.all().filter(id = code)
-				#hardcoder... lol.. change later -- off to work
-				voter = Voter.objects.all().filter(voter_id = "JZG7QIJPVJSN40N")
-
-
-			return render(request, 'admin_interface/pages/codes/print.html')
-		else:
-			return render(request, 'admin_interface/pages/codes/print.html', {'title': 'Print voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("Print", reverse('voter_code_print'))], 'first_name': request.session['forename'], "codes": codes, "election": election,"Sort": sort})
 def voter_code_create_rand(request):
 
 	for i in range(0, 30):
@@ -278,10 +259,86 @@ def voter_code_create_rand(request):
 
 	return render(request, 'admin_interface/pages/codes/index.html')
 
-def voter_code_print_process(request):
+def voter_code_print_unissued(request):
+	authorised,username = CheckAuthorisation(request,True,[('voter_codes__print',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('voter_code_homepage')
+	else:
+		if request.POST:
+			election = request.POST.get('elections')
+			data = {"data": []}
+			try:
+				election_details = Election.objects.values().filter(id=election)
+				
+				# Get all voter codes where not be printed
+				try:
+					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
+					
+					for code in voter_codes:
+						try:
+							details = Voter.objects.filter(voter_id = code).values()
+							data['data'].append({"election": election_details[0], "voter": details[0], "region": PostcodeToRegion(details[0]['address_postcode']) })
+
+						except Voter.DoesNotExist:
+							messages.error(request, "One or more voters does not exists. Please try again.")
+							redirect('voter_code_print_unissued')
+
+				except VoterCode.DoesNotExist:
+					messages.error(request, "One or more voter codes does not exist.")
+					return redirect('voter_code_print_unissued')
+				
+			except Election.DoesNotExist:
+				messages.error(request, "One or more elections does not exist.")
+				return redirect('voter_code_print_unissued')
+			pdf = render_to_pdf('admin_interface/pages/codes/print/letter.html', data)
+			
+			if pdf:
+				response = HttpResponse(pdf, content_type='application/pdf')
+				filename = "Unissued_codes_%s.pdf" %(election)
+				content = "print; filename="+filename
+				download = request.GET.get("download")
+				if download:
+					content = "print; filename="+filename
+				response['Content-Disposition'] = content
+				return response
+			messages.error
+			return redirect("voter_code_print")
+		
+		else:
+			elecs = Election.objects.filter(Q(end_date__gte = datetime.date.today()))
+			elections = []
+
+			for elec in elecs:
+				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter( Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).exists():
+					elections.append(elec)
+			
+			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections})
+
 
 	return True
-# ---- Voter Code END ---- #
+
+
+
+def voter_code_populate(request):
+	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('voter_code_homepage')
+	else:
+		if request.method == "POST":
+			form = VoterCodeForm(request.POST)
+			if form.is_valid():
+				election = form.instance.election
+				form.save(commit=False)
+				print(election)
+				VoterCode.populate_voter_codes(election)
+				messages.success(request, "Successfully added voter codes for "+ election.name)
+				return redirect('voter_code_populate')
+		else:
+			form = VoterCodeForm()
+		return render(request, 'admin_interface/pages/codes/form.html', {"title": "Populate Voter Codes", 'breadcrumb': [("Home", reverse('voter_code_homepage')), ("Populate Voter Codes", reverse('voter_code_populate'))], 'first_name':request.session['forename'], 'form': form})
+		# ---- Voter Code END ---- #
 	
 # ---- MISC START (TO SORTT) ---- #
 
@@ -325,17 +382,20 @@ def candidate_create(request):
 			
 			form = CandidateForm(request.POST)
 			party = request.POST.get('party_id')
+			region = request.POST.get('region_id')
 			if form.is_valid():
 
 				candidate = form.save(commit=False)
 				candidate.id = getNextID('candidates')
 				candidate.party_id = party
+				candidate.region_id = region
 				candidate.save()
 				messages.success(request, "Successfully added a new candidiate!")
 			return redirect('candidate_view')
 		else:
+			regions = Region.objects.all()
 			form = CandidateForm()
-			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form })
+			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Create new Candidate", reverse('candidate_create'))],  'first_name':request.session['forename'], 'form': form, 'regions': regions })
 
 
 def candidate_edit(request, id=None):
@@ -347,16 +407,23 @@ def candidate_edit(request, id=None):
 		candidate = get_object_or_404(Candidate, id=id)
 		if request.method == "POST":
 			form = CandidateForm(request.POST, instance=candidate)
+			party = request.POST.get('party_id')
+			region = request.POST.get('region_id')
 			if form.is_valid():
 				candidate = form.save(commit=False)
+				candidate.party_id = party
+				candidate.region_id = region
 				candidate.save()
 				messages.success(request, "Candidate #"+id+" successfully update!")
 				return redirect('candidate_view')
 		else:
+			
 			form = CandidateForm(instance=candidate)
 			form.fields['party_id'].initial = candidate.party_id
+			form.fields['region_id'].initial = candidate.region_id
 
-		return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}))], 'first_name':request.session['forename'], 'form': form})
+		return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Candidate Homepage", reverse('candidate_homepage')), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}))], 'first_name':request.session['forename'], 'form': form
+		})
 
 
 def candidate_delete(request, id=None):
@@ -811,37 +878,16 @@ def getNextID(tblName):
 	return row[0]
 
 # ---- Misc Functions START --- #
-'''def generate_buttons_page_menu(page_name):
-
-	allowed_pages = ['admin_master_homepage',
-					'admin_homepage',
-					'election_homepage',
-					'voter_code_homepage',
-					'party_homepage',
-					'region_homepage',
-					'candidate_homepage']
-	# Check if menu is in allowed_list
-
-	buttons = []
-
-	if page_name in allowed_pages:
-		#probably better from stratch 
-		# get list of roles
-		
-		roles = GetUserRoles(rquest.session['username'])
-		print(roles)
-		#get dir name
-		parent_name = page_name.replace('_homepage', '')
-
-		#for role in roles:
-
-			#if parent_name contains role:
-			
-				#add into buttons using ('button name', button reverse(url_name)
-
-
-	#else:
-		#return False'''
+def render_to_pdf(template_src, context_dict={}):
+    #get template
+    template = get_template(template_src)
+    # add dynamic attributes
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return  HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
 
 def get_random_date(year):
@@ -852,29 +898,15 @@ def get_random_date(year):
 
     # if the value happens to be in the leap year range, try again
     except ValueError:
+		
+
         get_random_date(year)
 # ---- Misc Functions END --- #
 
 # don't move these functions or change their names. I am working on them.
 # -- okay -- I've changed the region popuate to generated correct ID with sequences - CA
+# MOVED populate_voter_codes into the voter code section LINE:
 
-def populate_voter_codes(request):
-	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])
-	if(not authorised):
-		messages.error(request, "Access Denied. You do not have sufficient privileges.")
-		return redirect('voter_code_homepage')
-	else:
-		if request.method == "POST":
-			form = VoterCodeForm(request.POST)
-			if form.is_valid():
-				election = form.instance.election
-				form.save(commit=False)
-				print(election)
-				VoterCode.populate_voter_codes(election)
-				return redirect('elections')
-		else:
-			form = VoterCodeForm()
-		return render(request, 'admin_interface/populate_voter_codes.html', {'form': form})
 
 def region_populate(request):
 	authorised,username = CheckAuthorisation(request,True,[('region',)])

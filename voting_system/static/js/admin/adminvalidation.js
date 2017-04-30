@@ -17,8 +17,13 @@ $(document).ready(function() {
 				required: "Please fill in the password field" 
 			}
 		}
+<<<<<<< HEAD
 	})
 });
 
 
 
+=======
+	});
+});
+>>>>>>> 56b688e0613cb5d188c3f2e7d7ae5142808e06d2
