@@ -25,7 +25,7 @@ from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
-		return render(request, 'admin_interface/pages/index.html', {'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
+		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
 
