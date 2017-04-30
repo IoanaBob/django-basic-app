@@ -55,6 +55,7 @@ def RegisterElectionSelect(request):
 	user = Verify.objects.get(email = request.session['verify_username'])
 
 	elections = GetAvailableElectionsForUser(user.voter_id)
+	print(elections)
 
 	return render(request, 'voter_interface/pages/voting/register_election_select.html', {"title": "Register to Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
 
@@ -420,11 +421,12 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Aberconwy
 
 	elections = []
-
+	print(region_name_list)
 	if(registering):
 		for region_name in region_name_list:
 			if(not region_name == None):
 				region = Region.objects.get(name = region_name)
+				print(region)
 				
 				if(not region == None):
 					# date checking

@@ -1,5 +1,5 @@
 {% include "voter_interface/components/header.html" %}
-
+{% load staticfiles %}
 <div class="container">
     
     {% include 'admin_interface/components/toast.html' %}    
@@ -8,5 +8,9 @@
     {% endblock %}
 </div>
 {% include "voter_interface/components/footer.html" %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/ballot.js' %}"></script>
 {% block js %}
+
 {% endblock %}
