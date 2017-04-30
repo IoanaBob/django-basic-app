@@ -73,9 +73,12 @@ def RegisterPasswordCreation(request):
 			election = Election.objects.get(id = election_id)
 
 			person = Voter.objects.get(voter_id = user.voter_id)
-			voter_id_region = VoterCode.postcode_to_region(person.address_postcode)
+
+			region_name = PostcodeToRegion(person.address_postcode,election.regions_type)
+			region = Region.objects.get(name = region_name)
+			
 			voter_code = VoterCode.generate_voter_code()
-			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = voter_id_region)
+			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = region)
 			entry.save()
 
 			return redirect('register_complete')
@@ -209,7 +212,7 @@ def public_vote_ballot(request): #TODO rename cast_check_code
 				request.session['code_input'] = code
 				return redirect('public_vote__acknowledgement')
 			else:
-				print(election_id)
+				print(request.session['election_id'])
 				print(voter_id)
 				messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
 				return redirect('public_vote__ballot')	
@@ -247,7 +250,11 @@ def public_vote_request(request):
 
 def SecureVoteToDatabse(vote_instance,region_id):
 	region_db_name = "region"+str(region_id)
-	cursor = connections[region_db_name].cursor()
+	try:
+		cursor = connections[region_db_name].cursor()
+	except:
+		print("WARNING A database does not yet exist for this region.") #This is only in place while the infrastruvture is not set up for all regional databses. 
+		return None	
 	cursor.execute("INSERT INTO votes (id,election_id,candidate_id,ballot_id,rank) VALUES (nextval('votes_id_seq'),"+str(vote_instance.election_id)+","+str(vote_instance.candidate_id)+",'"+str(vote_instance.ballot_id)+"',"+str(vote_instance.rank)+")");
 
 
@@ -298,7 +305,7 @@ def public_vote_place(request):
 		election_vote_method = election.election_method
 		
 		region_id = VoterCode.objects.get(code= checked_code).region_id
-
+		print(region_id)
 		candidates = Candidate.objects.filter(region_id = region_id)
 		print(candidates[0].first_name)
 		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
@@ -425,25 +432,31 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	if(registering):
 		for region_name in region_name_list:
 			if(not region_name == None):
-				region = Region.objects.get(name = region_name)
-				print(region)
-				
-				if(not region == None):
-					# date checking
-					for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
-						# check if voter registered for the election
-						if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
-							elections.append(election)
+				try:
+					region = Region.objects.get(name = region_name)
+					print(region)
+					
+					if(not region == None):
+						# date checking
+						for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
+							# check if voter registered for the election
+							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
+								elections.append(election)
+				except:
+					print("Region not found, likely a non created admin_district")
 	else:
 		for region_name in region_name_list:
 			if(not region_name == None):
-				region = Region.objects.get(name = region_name)
-				
-				if(not region == None):
-					open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
-					for election in open_elections:
-						if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
-							elections.append(election)
+				try:
+					region = Region.objects.get(name = region_name)
+					
+					if(not region == None):
+						open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
+						for election in open_elections:
+							if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
+								elections.append(election)
+				except:
+					print("Region not found, likely a non created admin_district")
 
 	return elections
 

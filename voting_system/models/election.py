@@ -19,6 +19,8 @@ class Election(models.Model):
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')
     regions = models.ManyToManyField(Region, through='ElectionRegion')
+    regions_type = models.CharField(max_length=50, choices=( ('admin_district', 'admin_district'), ('parliamentary_constituency','parliamentary_constituency'), ('european_electoral_region','european_electoral_region'),('admin_ward','admin_ward') ))
+    
 
     def __str__(self):
         return '%s; from: %s; to: %s' % (self.name, self.start_date, self.end_date)
