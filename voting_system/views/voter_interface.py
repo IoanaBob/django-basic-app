@@ -404,7 +404,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Get Voters Regions
 	voter = Voter.objects.get(voter_id= voter_id)
 	region_name_list = []
-	check_region_types = ["parliamentary_constituency"] # TODO add other region types e.g. local
+	check_region_types = ["parliamentary_constituency", "admin_district"] # TODO add other region types e.g. local
 
 	for region_type in check_region_types:
 		region_name_list.append( PostcodeToRegion(voter.address_postcode.replace(" ",""),region_type) )
