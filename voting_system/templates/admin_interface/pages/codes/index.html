@@ -1,7 +1,6 @@
 {% extends 'admin_interface/base.html' %}
 
 {% block content %}
-<<<<<<< HEAD
 
 <div class="row">
 	<div class="dashboard-font col-md-6 col-sm-6">
@@ -13,19 +12,5 @@
 		<p>Print voter codes</p>
 	</div>		
 </div>
-=======
-<table class="index">
-	
-	<tr>
-		Print
-		<td><a href="{% url 'voter_code_view' %}"><u><b><p>View Voter Codes</p></b></u></a></td>
-		<td><a href="{% url 'voter_code_print_unissued' %}"><u><b><p>Print Unissued Voter Codes</p></b></u></a></td>
-	</tr>
-	<tr>
-		<td><p>View all voter codes</p></td>
-		<td><p>Print all Unissued voter codes</p></td>
-	</tr>
-	
-</table>
->>>>>>> 56b688e0613cb5d188c3f2e7d7ae5142808e06d2
+
 {% endblock %}
