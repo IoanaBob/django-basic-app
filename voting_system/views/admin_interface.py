@@ -273,7 +273,7 @@ def voter_code_print_unissued(request):
 				
 				# Get all voter codes where not be printed
 				try:
-					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
+					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
 					
 					for code in voter_codes:
 						try:
@@ -310,13 +310,15 @@ def voter_code_print_unissued(request):
 			elections = []
 
 			for elec in elecs:
-				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter(Q(invalidated_date__gte = datetime.date.today())).exists():
+				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter( Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).exists():
 					elections.append(elec)
 			
 			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections})
 
 
 	return True
+
+
 
 def voter_code_populate(request):
 	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])

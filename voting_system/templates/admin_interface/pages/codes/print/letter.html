@@ -1,174 +1,189 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-    <head>
+
+<head>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
         
-        <style>
-            
-            * {
-                box-sizing: border-box;
-            }
-            @page {
+        @page {
             size: A5 landscape;
             margin: 1cm;
-                
-            }
-            .content {
-                width: 100%;
-                height: 100%;
-                vertical-align: top;
-                border: 1px solid red;
-            }
-            .content section{
-                min-width: 50%;
-                box-sizing: border-box;
-                display: inline-block;
-                vertical-align: top;
-                padding: 5px;
-            }
-            p.heading {
-                font-weight: bold;
-                margin: 0;
-                font-size: 12px;
-            }
-            p {
-                margin: 0;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse; 
-            }
-            table td {
-                border: 1px solid #000;
-                padding: 5px;
-                margin: 0;
-                width: 50%;
-                vertical-align: center;
-            }
-            span.voter_code {
-                font-size: 15px;
-                font-style: italic;
-            }
-            .voting_code {
-                margin-top: 40px !important;
-            }
-            
-        </style>
-    </head>
-    <body>
-        {% for item in data %}
-            <table width="100%" cellspacing="0" cellpadding="2"  style="border: 0px solid #fff !important;">
-
-            <tr>
-                <td>
-                    <table width="100%" border="1" cellspacing="0" cellpadding="5" >
-                        <tr>
-                            <td colspan="2">
-                                <p class="heading">Poll card</p>
-                                <!--<p class="heading">Cerdyn pleidlesio</p>-->
-                            </td>
-                        </tr>
-                        <tr>
-                            <td c>
-                                <p>Electoral Division</p>
-                                <!--<p>Adran Etholiadol</p>-->
-                            </td>
-                            <td>
-                                {{ item.region }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>Date of Online Election</p>
-                                <!--<p>Dyddiad yr Etholiadol Ar-lein</p> -->
-                            </td>
-                            <td>
-                                <p>{{ item.election.start_date }}</p>
-                                <!--<p>{{ welsh_date }}</p>-->
-                            </td>
-                        </tr>
-                        
-                    </table>
-                </td>
-                <td width="10px">
-
-                </td>
-                <td rowspan="3" style="vertical-align: top;">
-                    <table width="100%" cellspacing="0" cellpadding="5">
-                        <tr>
-                            <td >
-                                <p class="heading">Your Details<!-- Eich Gwybodaeth--></p>
+        }
         
-                                <p>{{ item.voter.name_suffix }} {{ item.voter.forename }} {{ item.voter.surname }}</p>
-                                <p>{{ item.voter.address_line_1 }}</p>
-                                {% if item.voter.address_line_2 %}
-                                    <p>{{ item.voter.address_line_2 }}</p>
-                                {% endif %}
-                                {% if item.voter.address_line_3 %}
-                                    <p>{{ item.voter.address_line_3 }}</p>
-                                {% endif %}
-                                <p>{{ item.voter.address_city }}</p>
-                                <p>{{ item.voter.address_county }}</p>
-                                <p>{{ item.voter.address_postcode }}</p>
+        .content {
+            width: 100%;
+            min-height: 100%;
+            vertical-align: top;
+            border: 1px solid red;
+        }
+        
+        .content section {
+            min-width: 50%;
+            box-sizing: border-box;
+            display: inline-block;
+            vertical-align: top;
+            padding: 5px;
+        }
+        
+        p.heading {
+            font-weight: bold;
+            margin: 0;
+            font-size: 12px;
+        }
+        
+        p {
+            margin: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        table td {
+            border: 1px solid #000;
+            padding: 5px;
+            margin: 0;
+            width: 50%;
+            vertical-align: center;
+        }
+        
+        span.voter_code {
+            font-size: 15px;
+            font-style: italic;
+        }
+        
+        .voting_code {
+            margin-top: 40px !important;
+        }
+    </style>
+</head>
 
-                                <p class="heading">Voter Code<!-- | Cod Pleidleiswyr-->: <span class=" voter_code">{{ item.voter.code }}</span></p>
-                                
-                            </td>
-                        </tr>    
-                    </table>
-                </td>
+<body>
+    {% for item in data %}
+    <table width="100%" cellspacing="0" cellpadding="2" style="border: 0px solid #fff !important;">
 
-            </tr>
-            <tr>
+        <tr>
+            <td>
+                <table width="100%" border="1" cellspacing="0" cellpadding="5">
+                    <tr>
+                        <td colspan="2">
+                            <p class="heading">Poll card</p>
+                            <!--<p class="heading">Cerdyn pleidlesio</p>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td c>
+                            <p>Electoral Division</p>
+                            <!--<p>Adran Etholiadol</p>-->
+                        </td>
+                        <td>
+                            {{ item.region }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Date of Online Election</p>
+                            <!--<p>Dyddiad yr Etholiadol Ar-lein</p> -->
+                        </td>
+                        <td>
+                            <p>{{ item.election.start_date }}</p>
+                            <!--<p>{{ welsh_date }}</p>-->
+                        </td>
+                    </tr>
 
-            </tr>
-            <tr>
-                 <td>
-                    <table width="100%" border="1" cellspacing="0" cellpadding="5">
-                        <tr>
-                            <td colspan="2">
-                                <p class="heading">Voting inforamtion</p>
-                                <!-- <p class="heading">Gwybodaeth Pleidleisio</p>-->
-                            </td>
-                            
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>Polling Dates</p>
-                                 <!-- <p>Diwronod Pleidleisio</p>-->
-                            
-                            </td>
-                            <td>
-                                <p>{{ item.election.start_date }} to {{ item.election.end_date }}</p>
-                                 <!-- <p>{{ item.election.welsh.start_date }} to {{ item.election.end_date }}</p>-->
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>Website Address</p>
-                                <!--<p>Cyfeiriad Gwefan</p>-->
-                            </td>
-                            <td>
-                                <p>https://www.gov.uk/vote/</p>        
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>Date of Online Election</p>
-                                <!--<p>Dyddiad yr Etholiad Ar-lein</p>-->
-                            </td>
-                            <td>
-                                <p>{{ item.election.start_date }}</p>
-                                <!--<p>{{ item.election.welsh.start_date }}</p>-->
-                            </td>
-                        </tr>
-                        
-                    </table>
-                </td>
-            </tr>
+                </table>
+            </td>
+            <td width="10px">
 
-            </table>
-           
-        {% endfor %}
-    </body>
-    
+            </td>
+            <td rowspan="3" style="vertical-align: top;">
+                <table width="100%" cellspacing="0" cellpadding="5">
+                    <tr>
+                        <td>
+                            <p class="heading">Your Details
+                                <!-- Eich Gwybodaeth-->
+                            </p>
+
+                            <p>{{ item.voter.name_suffix }} {{ item.voter.forename }} {{ item.voter.surname }}</p>
+                            <p>{{ item.voter.address_line_1 }}</p>
+                            {% if item.voter.address_line_2 %}
+                            <p>{{ item.voter.address_line_2 }}</p>
+                            {% endif %} {% if item.voter.address_line_3 %}
+                            <p>{{ item.voter.address_line_3 }}</p>
+                            {% endif %}
+                            <p>{{ item.voter.address_city }}</p>
+                            <p>{{ item.voter.address_county }}</p>
+                            <p>{{ item.voter.address_postcode }}</p>
+
+                            <p class="heading">Voter Code
+                                <!-- | Cod Pleidleiswyr-->: <span class=" voter_code">{{ item.voter.code }}</span></p>
+
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+        </tr>
+        <tr>
+
+        </tr>
+        <tr>
+            <td>
+                <table width="100%" border="1" cellspacing="0" cellpadding="5">
+                    <tr>
+                        <td colspan="2">
+                            <p class="heading">Voting inforamtion</p>
+                            <!-- <p class="heading">Gwybodaeth Pleidleisio</p>-->
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Polling Dates</p>
+                            <!-- <p>Diwronod Pleidleisio</p>-->
+
+                        </td>
+                        <td>
+                            <p>{{ item.election.start_date }} to {{ item.election.end_date }}</p>
+                            <!-- <p>{{ item.election.welsh.start_date }} to {{ item.election.end_date }}</p>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Website Address</p>
+                            <!--<p>Cyfeiriad Gwefan</p>-->
+                        </td>
+                        <td>
+                            <p>https://www.gov.uk/vote/</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>Date of Online Election</p>
+                            <!--<p>Dyddiad yr Etholiad Ar-lein</p>-->
+                        </td>
+                        <td>
+                            <p>{{ item.election.start_date }}</p>
+                            <!--<p>{{ item.election.welsh.start_date }}</p>-->
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+
+    </table>
+    <div class="page-break"></div>
+
+    {% endfor %}
+</body>
+
 </html>
