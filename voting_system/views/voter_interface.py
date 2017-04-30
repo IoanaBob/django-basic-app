@@ -449,10 +449,23 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 #Voter id:
 #I3GJ2ZDUMTHT9T9
 
+#Detils for john doe:
+#doej@gmail.com
+#GROUP2
+#Voter ID: K2GJ1ZPUNTLT8K9
+
 def DeleteAFictionPasswords(request):
 	VoterAuth.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 	VoterCode.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 
 	messages.error(request, "A Fiction's passwords for elections deleted.") 
+	return redirect('register_summary')
+	
+	
+def DeleteJohnPasswords(request):
+	VoterAuth.objects.filter(voter_id="K2GJ1ZPUNTLT8K9").delete()
+	VoterCode.objects.filter(voter_id="K2GJ1ZPUNTLT8K9").delete()
+
+	messages.error(request, "Johns's passwords for elections deleted.") 
 	return redirect('register_summary')
 	
