@@ -16,23 +16,17 @@ import datetime
 def public_homepage(request):
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
+
 def public_homepage(request):
-
-	votes = [(1,1,1,"jyfasdosa"),(1,2,1,"ergf"),(1,3,1,"asd"),(1,1,1,"rge")]
-
-	vote_count = {}
-
-	vote_count[1] = 0
-
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
 
 
-def RegisterSummary(request): #CHRIS PLEASE CHECK
+def RegisterSummary(request):
 	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
 
 
-def RegisterVoterId(request): #Chris Please Check
+def RegisterVoterId(request):
 	#TODO check if voter is logged in via verify and redirect if not.
 
 	if request.method == "POST":
@@ -89,7 +83,7 @@ def RegisterPasswordCreation(request):
 		return render(request, 'voter_interface/pages/voting/register_create_password.html', {"title": "Register to Vote Online - Create Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
 
 
-def RegisterComplete(request): #CHRIS PLEASE CHECK
+def RegisterComplete(request):
 	#election_name = request.POST.get('election_name')
 	election_name = ""
 	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ], "election_name": election_name })
@@ -129,11 +123,11 @@ def public_verify(request):
 
 
 #CAST VOTE
-def CastVoteSummary(request): #CHRIS PLEASE CHECK
+def CastVoteSummary(request):
 	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
 
 
-def CastVoteId(request): #Chris Please Check
+def CastVoteId(request):
 	#TODO check if voter is logged in via verify and redirect if not. 
 	if request.method == "POST":
 		verify_username = request.session['verify_username']
@@ -209,8 +203,6 @@ def public_vote_ballot(request): #TODO rename cast_check_code
 				request.session['code_input'] = code
 				return redirect('public_vote__acknowledgement')
 			else:
-				print(election_id)
-				print(voter_id)
 				messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
 				return redirect('public_vote__ballot')	
 		except VoterCode.DoesNotExist:
