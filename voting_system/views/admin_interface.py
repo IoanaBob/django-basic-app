@@ -510,7 +510,7 @@ def election_create(request):
 					new_party.save()
 				
 				# Add parties
-				selected_regions = request.POST.getlist('regions[]')
+				selected_regions = request.POST.getlist('region_id')
 				for region in selected_regions:
 					new_region = ElectionRegion()
 					new_region.id = getNextID("election_regions")
@@ -590,7 +590,7 @@ def election_edit(request, id=None):
 						#remove any not used
 						ElectionParties.objects.filter(party_id = party).delete()
 					# Add parties
-					selected_regions = request.POST.getlist('regions[]')
+					selected_regions = request.POST.getlist('region_id')
 					for region in selected_regions:
 						if region not in region_current:
 							new_region = ElectionRegion()

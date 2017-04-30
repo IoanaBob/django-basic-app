@@ -2,18 +2,15 @@
 {% load staticfiles %}
 {% block content %}
 
-
-
-	
-        <h1><b>Login</b></h1>
-        <hr/>
-        <span>{{message}}</span>
-        <form method="POST" id="adminLogin">
-            {% csrf_token %}
-            {{ form.as_p }}
-            
-            <button type="submit" class="btn btn-success">Login</button>
-        </form>
+    <h1><b>Login</b></h1>
+    <hr/>
+    <span>{{message}}</span>
+    <form method="POST" id="adminLogin">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit" class="btn btn-success">Login</button>
+    </form>
   
 
 {% endblock %}

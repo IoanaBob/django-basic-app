@@ -2,23 +2,12 @@
 <link rel="stylesheet" href="{% static 'css/select2.min.css' %}"> {% if not election %}
 <h1>New Election</h1> {% else %}
 <h1>Edit Election</h1> {% endif %} {% if candidates %}
-<form method="POST">{% csrf_token %} {{ form.as_p }}
-    <section class="election_sec">
-        <h2>Add Regions</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
 
-        <a href="#" class="btn btn-success" id="region_selectAll" data-clicked="false" style="display:block;width: 200px">Select All Regions</a>
-
-
-        <select name="regions[]" id="regions_dropdown" class="js-example-placeholder-multiple" multiple="multiple" required>
-		{% for region in regions %}
-
-			<option value="{{ region.id }}" {% if region.id in current_regions %} selected {% endif %}>{{ region.name }}</option>
-
-		{% endfor %}
-		</select>
-
-    </section>
     <h2>Actions</h2>
+    <a href="#" class="btn btn-success" id="region_selectAll" data-clicked="false" style="width: 200px">Select All Regions</a>
     <input type="submit" class="btn btn-success" value="Save">
 </form>
 {% else %}
@@ -28,18 +17,23 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+{% endblock %}
+{% block js %}
 <script src="{% static 'js/select2.full.min.js' %}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $(".js-example-basic-single").select2({
-            width: 300
+            width: 500
         });
-        $(".js-example-placeholder-multiple").select2({
+        $(".js-example-basic-multiple").select2({
             width: 500,
-            height: 50
-        }), $("#region_selectAll").click(function(a) {
-            a.preventDefault(), "false" == $("#region_selectAll").attr("data-clicked") ? ($("select#regions_dropdown option").attr("selected", !0).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "true")) : ($("select#regions_dropdown option").attr("selected", !1).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "false"))
-        })
+            height: 100
+        }),
+        $("#region_selectAll").click(function(a) {
+            a.preventDefault(), "false" == $("#region_selectAll").attr("data-clicked") ? ($("select#id_region_id option").attr("selected", !0).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "true"), $("#region_selectAll").text("Deselect All Regions")) : ($("select#id_region_id option").attr("selected", !1).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "false"), $("#region_selectAll").text("Select All Regions"))
+        });
     });
 </script>
+
 {% endblock %}
