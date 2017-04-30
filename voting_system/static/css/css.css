@@ -609,3 +609,24 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
+
+/*Craig's CSS*/
+.election-font {
+	font-size: 16px
+}
+
+.white-font > li > a {
+	text-decoration: none;
+	color: white;
+}
+
+.dashboard-font h3 {
+	text-decoration: underline;
+	font-weight: bold;
+	font-size: 19px;
+	color: #005EAC;
+}
+
+.dashboard-font p {
+	font-size: 16px;
+}

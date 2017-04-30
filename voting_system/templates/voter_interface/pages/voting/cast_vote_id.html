@@ -7,12 +7,13 @@
 <img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
 </div>
 </div>
+<hr/>
 <p>You are verified as: {{first_name}} {{last_name}}</p>
-<p>TODO:  REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY (enter voter id to see list of elections available to you .... )</p>
+<p>Your voter ID is unique to you. You should not share your ID with anyone else. The ID is used everytime you want to cast your vote in an election.</p>
 </br>
 
 
-<div class="row">
+
 	<form method="POST" class="form-horizontal">
 		{% csrf_token %}
 
@@ -23,7 +24,6 @@
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
 
-</div>
 
 
 

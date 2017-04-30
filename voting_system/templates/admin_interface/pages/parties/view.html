@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<h1>Parties</h1>
+<h1><b>Parties</b></h1>
+<hr>
 {% if parties %}
     <table class="table table-striped table-hover">
         <thead>
@@ -34,7 +35,8 @@
 {% else %}
     <h3>No Parties Available</h3>
 {% endif %}
-<h2>Actions</h2>
+<br>
+<h2><b>Actions</b></h2>
 <a href="{% url 'party_create' %}" class="btn btn-success">Create</a>
 
 {% endblock %}

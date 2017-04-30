@@ -1,8 +1,9 @@
 {% extends 'voter_interface/base.html' %}
 {% block content %}
 {% if not sent %}
-<div class="container">
+
 	<h1><b>Request Vote Code</b></h1>
+    <hr>
 	<div class="row">
 		<p class="col-md-12">By entering your Voter ID and a password of your choice, a unique online code will be sent to your home address. This code is only usable with your personal Voter ID and won't be usable with another ID. Once you have your online code, you will be able to log in and use your one time code to vote in the election. This online code is only usable once.</p>
 	</div>
@@ -34,11 +35,11 @@
             </div>
         </div>
 	</form>
-</div>
-{% else %}
-<div class="container">
-	<h1><b>Vote Code Sent</b></h1>
 
+{% else %}
+
+	<h1><b>Vote Code Sent</b></h1>
+    <hr>
 	<div class="row">
 	<p class="col-md-8">Your details have been saved. Your online code will be sent to your home address affiliated with the Voter ID. This code is valid for one use and is required in order to vote on the ballot</p>
 	</div>
@@ -47,6 +48,6 @@
 			<a href="{% url 'public_vote__home' %}"><button class="btn btn-success">OK</button></a>
 		</span>
 	</div>
-</div>
+
 {% endif %}
 {% endblock %}

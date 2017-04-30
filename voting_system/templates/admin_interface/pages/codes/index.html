@@ -1,15 +1,15 @@
 {% extends 'admin_interface/base.html' %}
 
 {% block content %}
-<table class="index">
-	<tr>
-		<td><a href="{% url 'voter_code_view' %}"><u><b><p>View Voter Codes</p></b></u></a></td>
-		<td><a href="{% url 'voter_code_print' %}"><u><b><p>Print Voter Codes</p></b></u></a></td>
-	</tr>
-	<tr>
-		<td><p>View all voter codes</p></td>
 
-	</tr>
-	
-</table>
+<div class="row">
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'voter_code_view' %}"><h3>View Voter Codes</h3></a>
+		<p>View all voter codes</p>
+	</div>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'voter_code_print' %}"><h3>Print Voter Codes </h3></a>
+		<p>Print voter codes</p>
+	</div>		
+</div>
 {% endblock %}

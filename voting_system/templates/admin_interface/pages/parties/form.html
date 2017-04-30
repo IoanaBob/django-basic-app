@@ -1,7 +1,8 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
 
-<h1>New Party</h1>
+<h1><b>New Party</b></h1>
+<hr>
 <form method="POST">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save" class="btn btn-success">

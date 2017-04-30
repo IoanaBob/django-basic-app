@@ -7,13 +7,14 @@
 <img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
 </div>
 </div>
-<p>You are verified as: {{first_name}} {{last_name}}</p>
+<hr/>
+<p>You are verified as: <b>{{first_name}} {{last_name}}</b></p>
 <p>TODO: REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
 </br>
 
 
-<div class="row">
-	<h2>The following elections are open for online voting and you have completed their registeration process:</h2>
+
+	<h3>The following elections are open for online voting and you have completed their registeration process:</h3>
 	<ul id="election_list">
 		{% if elections %}
             {% for election in elections %}
@@ -25,7 +26,7 @@
     {% endif %}
 	</ul>
 
-</div>
+
 
 
 
