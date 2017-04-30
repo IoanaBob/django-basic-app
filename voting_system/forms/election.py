@@ -5,7 +5,7 @@ from voting_system.models.candidate import Candidate
 
 class ElectionForm(forms.ModelForm):
 	#"first past the post" and "single transferable vote"
-	choices = ('fptp', 'stv')
+	choices = [('fptp','First Past the Post'),('stv','Single Transferable Vote')]
 	id = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 	election_type = forms.ChoiceField(choices = choices, required=True)
 
