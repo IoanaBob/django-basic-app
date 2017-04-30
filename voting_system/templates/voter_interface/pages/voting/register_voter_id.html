@@ -24,8 +24,16 @@
         <br>
         
         <button type="submit" class="btn btn-success">Submit</button>
+
     </form>
 
+<form method="POST" class="form-horizontal">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="destination" value ="{{destination}}" />
+    
+        <button type="submit" class="btn btn-success">Login</button>
+    </form>
 
 
 
