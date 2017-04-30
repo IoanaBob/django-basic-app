@@ -1,16 +1,22 @@
 {% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
 {% block content %}
 
-<div class="container">
-	<div class="row">
-        <h1>Login</h1>
-        <span>{{message}}</span>
+    <h1><b>Login</b></h1>
+    <hr/>
+    <span>{{message}}</span>
+    <form method="POST" id="adminLogin">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit" class="btn btn-success">Login</button>
+    </form>
+  
 
-        <form method="POST">{% csrf_token %}
-            {{ form.as_p }}
-            
-            <button type="submit" class="btn btn-success">Login</button>
-        </form>
-    </div>
-</div>
+{% endblock %}
+
+
+{% block js %}
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js"></script>
+    <script src="{% static 'js/admin/adminvalidation.js' %}"></script>
 {% endblock %}

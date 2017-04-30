@@ -274,7 +274,7 @@ def voter_code_print_unissued(request):
 				
 				# Get all voter codes where not be printed
 				try:
-					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
+					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
 					
 					for code in voter_codes:
 						try:
@@ -311,13 +311,15 @@ def voter_code_print_unissued(request):
 			elections = []
 
 			for elec in elecs:
-				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter(Q(invalidated_date__gte = datetime.date.today())).exists():
+				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter( Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).exists():
 					elections.append(elec)
 			
 			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Voter Codes Homepage", reverse('voter_code_homepage')), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections})
 
 
 	return True
+
+
 
 def voter_code_populate(request):
 	authorised,username = CheckAuthorisation(request,True,[('voter_codes',)])
@@ -509,7 +511,7 @@ def election_create(request):
 					new_party.save()
 				
 				# Add parties
-				selected_regions = request.POST.getlist('regions[]')
+				selected_regions = request.POST.getlist('region_id')
 				for region in selected_regions:
 					new_region = ElectionRegion()
 					new_region.id = getNextID("election_regions")
@@ -589,7 +591,7 @@ def election_edit(request, id=None):
 						#remove any not used
 						ElectionParties.objects.filter(party_id = party).delete()
 					# Add parties
-					selected_regions = request.POST.getlist('regions[]')
+					selected_regions = request.POST.getlist('region_id')
 					for region in selected_regions:
 						if region not in region_current:
 							new_region = ElectionRegion()

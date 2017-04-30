@@ -1,14 +1,14 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
-<table class="index">
-    <tr>
-        <td><a href="{% url 'role_view' %}"><u><b><p>View Roles</p></b></u></a></td>
-        <td><a href="{% url 'role_create' %}"><u><b><p>Create Role</p></b></u></a></td>
-    </tr>
-    <tr>
-        <td><p>View all role</p></td>
-        <td><p>Create a new role</p></td>
-        <!-- <td><p>Assign new role to admin</p></td> Not sure what this is for??? -->
-    </tr>
-</table>
+
+<div class="row">
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'role_view' %}"><h3>View Roles</h3></a>
+		<p>View all roles</p>
+	</div>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'role_create' %}"><h3>Create Role</h3></a>
+		<p>Create a new role</p>
+	</div>	
+</div>
 {% endblock %}

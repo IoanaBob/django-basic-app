@@ -7,23 +7,23 @@
 <img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
 </div>
 </div>
-<p>You are verified as: {{first_name}} {{last_name}}</p>
-<p>TODO:  REPLACE THIS TEXT WITH INSTRUCTIONS AND SUMMARY</p>
+<hr>
+<p>You are verified as: <b>{{first_name}} {{last_name}}</b></p>
+<p>Enter your unique voter ID into the text box below. When this is done, proceed to the next step by clicking the "submit" button below.</p>
 </br>
 
 
-<div class="row">
+
 	<form method="POST" class="form-horizontal">
 		{% csrf_token %}
-
 		<div class="col-md-12">
-      		<label class="col-md-2" for="voter_id">Voter Id:</label>  <input class="col-md-10 form-control" type="text" name="voter_id" />
+      		<label class="col-md-2 control-label" for="voter_id">Voter Id:</label>  
+      		<input class="col-md-10 form-control" type="text" name="voter_id" />
         </div>
+        <br>
         
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
-
-</div>
 
 
 

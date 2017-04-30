@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 {% endblock %}
 {% if form.instance.id %}
-    <h1>Edit Candidate</h1>
+    <h1><b>Edit Candidate</b></h1>
 {% else %}
-    <h1>New Candidate</h1>
+    <h1><b>New Candidate</b></h1>
 {% endif %}
-
+<hr>
 {% if form.party_id %}
 <div class="form_container">
     <div class="row">
@@ -19,7 +19,7 @@
                 <form method="POST">{% csrf_token %}
 
                 {{ form.as_p }}
-               
+
                 <button role="button" class="btn btn-success">Save</button>
             </form>
         </div>
@@ -40,8 +40,6 @@
   $(".js-example-basic-single").select2({
       width: 300
   });
- 
-
 });
     </script>
 

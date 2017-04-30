@@ -1,4 +1,4 @@
-
+<<<<<<< HEAD
 html {
 	font-family: arial
 }
@@ -312,9 +312,6 @@ p {
 h1 {
 	font-size: 50px;
 }
-span {
-	font-size: 16px
-}
 
 /*Aligns all the content within .container, which is set to a defined width*/
 .container {
@@ -332,6 +329,7 @@ span {
 	height: auto;
 	min-height: 10px;
 	max-height: 200px;
+
 }
 
 #global-footer-bar {
@@ -611,7 +609,7 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
-S
+
 /*Craig's CSS*/
 .election-font {
 	font-size: 16px
@@ -632,4 +630,3 @@ S
 .dashboard-font p {
 	font-size: 16px;
 }
-

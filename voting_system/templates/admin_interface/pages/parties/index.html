@@ -1,18 +1,15 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
-<table class="index">
-	<tr>
-		<td><a href="{% url 'party_view' %}"><u><b><p>View Parties</p></b></u></a></td>
-		<td><a href="{% url 'party_create' %}"><u><b><p>Create Parties</p></b></u></a></td>
-		<!--<td><a href="#"><u><b><p>Edit Homepage</p></b></u></a></td>-->
-		<!--<td><a href="#"><u><b><p>Edit Admin Homepage</p></b></u></a></td>-->
-	</tr>
-	<tr>
-		<td><p>View all Parties</p></td>
 
-		<td><p>Create a new Party</p></td>
-	</tr>
-	
-</table>
+<div class="row">
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'party_view' %}"><h3>View Parties</h3></a>
+		<p>View the existing parties</p>
+	</div>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'party_create' %}"><h3>Create Parties</h3></a>
+		<p>Add a new party</p>
+	</div>	
+</div>
 
 {% endblock %}
