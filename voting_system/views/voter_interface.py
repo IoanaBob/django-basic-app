@@ -14,16 +14,11 @@ import datetime
 
 
 def public_homepage(request):
-	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
-
-
-def public_homepage(request):
-	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
-
+	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ]})
 
 
 def RegisterSummary(request):
-	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ] ,'destination':request.GET.get('destination') })
 
 
 def RegisterVoterId(request):
@@ -35,17 +30,17 @@ def RegisterVoterId(request):
 			user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
 		except:
 			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
-			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections',  None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 		if user is not None:
 			request.session['voter_id_check_passed'] = True
 			return redirect('register_election_select')
 		else:
 			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
-			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 	else:
-		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 
 def RegisterElectionSelect(request):
@@ -55,7 +50,7 @@ def RegisterElectionSelect(request):
 	elections = GetAvailableElectionsForUser(user.voter_id)
 	print(elections)
 
-	return render(request, 'voter_interface/pages/voting/register_election_select.html', {"title": "Register to Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
+	return render(request, 'voter_interface/pages/voting/register_election_select.html', {"title": "Register to Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
 
 
 def RegisterPasswordCreation(request):
@@ -89,13 +84,13 @@ def RegisterPasswordCreation(request):
 	else:
 		election_id = request.GET.get('election_id')
 		election = Election.objects.get(id = election_id)
-		return render(request, 'voter_interface/pages/voting/register_create_password.html', {"title": "Register to Vote Online - Create Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+		return render(request, 'voter_interface/pages/voting/register_create_password.html', {"title": "Register to Vote Online - Create Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
 
 
 def RegisterComplete(request):
 	#election_name = request.POST.get('election_name')
 	election_name = ""
-	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ], "election_name": election_name })
+	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ], "election_name": election_name })
 	
 
 def public_verify(request):
@@ -118,22 +113,22 @@ def public_verify(request):
 					else:
 						messages.error(request, "Your credentials does not match our records.")
 						form = VerifyLoginForm()
-						return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
+						return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None)], 'welcome': "Verify Login", 'form': form, "destination":destination})
 			except Verify.DoesNotExist:
 					messages.error(request, "Your credentials does not match our records.")
 					form = VerifyLoginForm()
-					return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form})
+					return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In',None)], 'welcome': "Verify Login", 'form': form})
 		#COPIED CODE HAD NO 'ELSE' HERE - WHAT DO WE WANT TO DO
 
 	else:
 		form = VerifyLoginForm()
 		destination = request.GET.get('destination')
-		return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify'))], 'welcome': "Verify Login", 'form': form, "destination":destination})
+		return render(request, 'voter_interface/pages/verify.html',{'title': "GOV Verify Login", 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None)], 'welcome': "Verify Login", 'form': form, "destination":destination})
 
 
 #CAST VOTE
 def CastVoteSummary(request):
-	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
+	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ],'destination':request.GET.get('destination') })
 
 
 def CastVoteId(request):
@@ -147,12 +142,12 @@ def CastVoteId(request):
 				return redirect('cast_election_select')
 			else:
 				messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
-				return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+				return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 		except Verify.DoesNotExist:
 			messages.error(request, 'Voter does not exists.')
 			return redirect('cast_vote_id')
 	else:
-		return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
+		return render(request, 'voter_interface/pages/voting/cast_vote_id.html', {"title": "Cast to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 
 def CastElectionSelect(request):
@@ -161,7 +156,7 @@ def CastElectionSelect(request):
 
 	elections = GetAvailableElectionsForUser(user.voter_id, False)
 
-	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name': request.session['verify_surname'], 'elections':elections })
+	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name': request.session['verify_surname'], 'elections':elections })
 
 
 def CastEnterPassword(request):
@@ -179,7 +174,7 @@ def CastEnterPassword(request):
 			else:
 				messages.error(request, "The password you entered did not match the one you registered for this election") 
 				election = Election.objects.get(id = election_id)
-				return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+				return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
 
 		else:
 			messages.error(request, "Something went wrong while registering. Please try again") #TODO improve error handling
@@ -188,14 +183,14 @@ def CastEnterPassword(request):
 	else:
 		election_id = request.GET.get('election_id')
 		election = Election.objects.get(id = election_id)
-		return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
+		return render(request, 'voter_interface/pages/voting/cast_enter_password.html', {"title": "Cast Vote Online - Enter Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
 
 
 
 
 def public_vote_home(request):
 
-	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') )]})
+	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None )]})
 
 
 def public_vote_ballot(request): #TODO rename cast_check_code
@@ -221,10 +216,10 @@ def public_vote_ballot(request): #TODO rename cast_check_code
 			return redirect('public_vote__ballot')	
 	else:
 		form = CheckCodeForm()
-		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
 
 def public_vote_ballot_acknowledgement(request):
-	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
 
 
 
@@ -232,17 +227,16 @@ def public_vote_request(request):
 	if request.method == "POST":
 		#checks
 		#if checks passed
-		return render(request, 'voter_interface/pages/voting/request.html', {"title": "Request to Vote", "sent": True,'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home') ), ('Request Code', reverse('public_vote__request_code') ),("Sent", "#")]})
+		return render(request, 'voter_interface/pages/voting/request.html', {"title": "Request to Vote", "sent": True,'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None ), ('Request Code', None ),("Sent", None)]})
 	else:
 		#FRONT END GUYS, LOOK AT THE STRUCTURE,  breadcrumb is the menu, title is the page title, header_messages are the welcome message
 		return render(request, 'voter_interface/pages/voting/request.html', {
 			"title": "Request to Vote",
 			'breadcrumb': [
 				('Home', "http://www.gov.uk"),
-				('Elections', reverse('public_homepage')),
-				('Log In', reverse('public_verify')),
-				('Election Home', reverse('public_vote__home') ),
-				('Election Home', reverse('public_vote__request_code'))
+				('Elections', None),
+				('Log In', None),
+				('Election Home', None ),
 			]
 			})
 
@@ -288,7 +282,7 @@ def public_vote_place(request):
 				SecureVoteToDatabse(new_vote,region_id)
 		
 		if total_ranks > 0:
-			return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Home', reverse('public_vote__ballot'))]})
+			return render(request, 'voter_interface/pages/voting/place.html', {"title": "Election Ballot", "placed": True, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
 		else:
 			messages.error(request, "Please choose at least one option.")
 			return redirect('public_vote__place_vote');
@@ -310,10 +304,10 @@ def public_vote_place(request):
 		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
 
 		if(election_vote_method == "fptp"):
-			return render(request, 'voter_interface/pages/voting/place.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Ballot', reverse('public_vote__ballot')), ('Place Vote', reverse('public_vote__place_vote')) ]})
+			return render(request, 'voter_interface/pages/voting/place.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Ballot', None), ('Place Vote', None) ]})
 		
 		elif(election_vote_method == "stv"):
-			return render(request, 'voter_interface/pages/voting/place-STV.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates,"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Log In', reverse('public_verify')), ('Election Home', reverse('public_vote__home')), ('Election Ballot', reverse('public_vote__ballot')), ('Place Vote', reverse('public_vote__place_vote')) ]})
+			return render(request, 'voter_interface/pages/voting/place-STV.html', {"election_id":election_id,"region_id":region_id,"candidates":candidates,"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Ballot', None), ('Place Vote', None) ]})
 		
 		else:
 			messages.error(request, 'An error occured')
