@@ -1,0 +1,66 @@
+$(document).ready(function() {
+	$("#voterLogin").validate({
+		rules: {
+			email: {
+				required: true,
+				email: true
+			},
+			password: {
+				required: true
+			}
+		},
+		messages: {
+			email: {
+				required: "Please fill in the email field",
+				email: "Please enter a valid email address"
+			},
+			password: {
+				required: "Please fill in the password field" 
+			}
+		}
+	}),
+	$("#enterVoterID").validate({
+		rules: {
+			voter_id: {
+				required: true
+			}
+		},
+		messages: {
+			voter_id: {
+				required: "Please fill in the voter ID field"
+			}
+		}
+	}),
+	$("#enterPassword").validate({
+		rules: {
+			password: {
+				required: true
+			}
+		},
+		messages: {
+			password: {
+				required: "Please fill in the password field"
+			}
+		}
+	}),
+	$("#create_confirm_password").validate({
+		rules: {
+			password: {
+				required: true
+			},
+			confirm_password: {
+				required: true,
+				equalTo: "#password"
+			}
+		},
+		messages: {
+			password: {
+				required: "Please fill in the password field"
+			},
+			confirm_password: {
+				required: "Please confirm your password",
+				equalTo: "Your passwords don't match!"
+			}
+		}
+	})
+});

@@ -5,12 +5,14 @@
 <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 <h1><b>Admin</b></h1>
 <hr/>
-<form method="POST">{% csrf_token %}
+<form method="POST" id="adminCreate">{% csrf_token %}
 
     <h2><b>Personal Information</b></h2>
+    <hr>     
     {{ form.as_p }}
     <br>
     <h2><b>Change Password</b></h2>
+    <hr>
     {% if current_roles %}
         <p><label for="id_cur_password">Current Password</label><input type="password" id="id_cur_password" name="current_password"></p>
     {% endif %}
@@ -19,13 +21,16 @@
     <br>
 
     <h2><b>Roles</b></h2>
+    <hr>
     <select name="roles[]" id="roles" class="js-example-basic-multiple js-states form-control" multiple="multiple" requ>
     {% for role in roles %}
         <option value="{{ role.id }}" {% if role.id in current_roles %} selected {% endif %} >{{ role.name }}</option>
     {% endfor %}
     </select>
+    <br>
     <input type="checkbox" id="selectAll" >
-    
+    <br>
+    <br>
     <input type="submit" value="Submit" class="btn btn-success" style="display: block;">
 </form>
 <div class="errors">

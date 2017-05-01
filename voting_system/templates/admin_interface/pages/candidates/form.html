@@ -16,11 +16,12 @@
 <div class="form_container">
     <div class="row">
             <div class="form-group col-md-12">
-                <form method="POST">{% csrf_token %}
+                <form method="POST" id="adminNewCandidate">{% csrf_token %}
 
                 {{ form.as_p }}
 
-
+                <br>
+                <br>
                
                 <button role="button" class="btn btn-success">Save</button>
             </form>
