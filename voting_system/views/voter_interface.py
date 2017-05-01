@@ -31,8 +31,12 @@ def RegisterVoterId(request):
 
 	if request.method == "POST":
 		verify_username = request.session['verify_username']
+		try:
+			user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
+		except:
+			messages.error(request, "The voter id you entered does not match the GOV.UK Verify account you are using.")
+			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
-		user = Verify.objects.get(voter_id = request.POST.get('voter_id'),email = verify_username)	
 		if user is not None:
 			request.session['voter_id_check_passed'] = True
 			return redirect('register_election_select')
@@ -72,6 +76,8 @@ def RegisterPasswordCreation(request):
 			region = Region.objects.get(name = region_name)
 			
 			voter_code = VoterCode.generate_voter_code()
+			print("Voter Code: (for testing only, remove once testing complete)")
+			print(voter_code) #Delete these print statements once testing is complete
 			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = region)
 			entry.save()
 
