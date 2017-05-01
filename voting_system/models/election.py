@@ -27,7 +27,7 @@ class Election(models.Model):
     
 
     def __str__(self):
-        return '%s; from: %s; to: %s' % (self.name, self.start_date, self.end_date)
+        return '%s; from: %s; to: %s' % (self.name, self.voting_start_date, self.voting_end_date)
 
     class Meta:
         db_table = 'elections'
