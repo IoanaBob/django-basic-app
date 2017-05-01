@@ -7,3 +7,6 @@ class RegionVote(models.Model):
     candidate_id = models.IntegerField()
     ballot_id = models.IntegerField()
     rank = models.IntegerField()
+
+    class Meta:
+        db_table = 'votes'
