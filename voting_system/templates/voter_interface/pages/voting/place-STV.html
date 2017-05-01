@@ -33,15 +33,15 @@
         {% for candidate in candidates %}
             <div class="ballot_candidate_container centered_block">
                 <div class="ballot_candidate_info_container">
-                    <span class="candidate_name centered_block">{{ candidate.2 }}, {{ candidate.1 }}</span>
-                    <span class="candidate_address centered_block">{{ candidate.3 }}</span>
-                    <span class="candidate_party_name centered_block">{{ candidate.4 }}</span>
+                   <span class="candidate_name centered_block">{{ candidate.last_name }}, {{ candidate.first_name }}</span>
+                    <span class="candidate_address centered_block">{{ candidate.address }}</span>
+                    <span class="candidate_party_name centered_block">{{ candidate.party.name }}</span>
                 </div><div class="ballot_candidate_party_container">
-                    <img class="party_logo" src="{% static '/images/labour_logo.jpg' %}"/>
+                 <img class="party_logo" src="{% static '/images/'|add:candidate.party.name|add:'_logo.jpg' %}"/>
                 </div>
                 <div class="ballot_candidate_vote_container">
-                    <div id="candidate_box_{{ candidate.0 }}" class="ballot_vote_box">
-                        <input id="candidate_rank_{{ candidate.0 }}" class="ballot_rank ballot_rank_number" type="number" min="0" max="{{ candidates|length }}" />
+                    <div id="candidate_box_{{ candidate.id }}" class="ballot_vote_box">
+                        <input id="candidate_rank_{{ candidate.id }}" class="ballot_rank ballot_rank_number" type="number" min="0" max="{{ candidates|length }}" />
                     </div>					
                 </div>
             </div>	
