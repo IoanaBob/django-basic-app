@@ -41,7 +41,7 @@
 		{% if elections %}
             {% for election in elections %}
             	<li class="list-group-item">
-					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name|title }}</span></a>
+					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name }}</span></a>
 				</li>
                
             {% endfor %} 

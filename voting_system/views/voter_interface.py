@@ -437,7 +437,8 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 					
 					if(not region == None):
 						# date checking
-						for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
+						print(Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()))
+						for election in Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()):
 							# check if voter registered for the election
 							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
 								elections.append(election)
@@ -450,7 +451,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 					region = Region.objects.get(name = region_name)
 					
 					if(not region == None):
-						open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
+						open_elections = Election.objects.filter(regions__in=[region], voting_end_date__gte = datetime.date.today(), voting_start_date__lte = datetime.date.today())
 						for election in open_elections:
 							if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
 								elections.append(election)
