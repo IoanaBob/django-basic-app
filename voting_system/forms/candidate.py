@@ -16,7 +16,7 @@ class CandidateForm(forms.ModelForm):
 
 	class Meta:
 		model = Candidate
-		fields = ('id', 'first_name', 'last_name', 'email', 'party_id', 'region_id')
+		fields = ('id', 'first_name', 'last_name', 'email', 'address', 'party_id', 'region_id')
 		labels = {
 			'first_name': _('First Name'),
 			'last_name': 'Last Name',
