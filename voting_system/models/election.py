@@ -7,8 +7,12 @@ from .region import Region
 class Election(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=60)
-    start_date = models.DateField(default=timezone.now)
-    end_date = models.DateField()
+
+    voting_start_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=14))
+    voting_end_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=15))
+    registration_start_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=1))
+    registration_end_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=15))
+
     #uninominal or secret voting =>
     # if uninominal voting = true, if party list = false
     uninominal_voting = models.BooleanField()
