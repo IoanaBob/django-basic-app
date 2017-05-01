@@ -937,7 +937,7 @@ def test_vote_fetch(request):
 	return render(request, 'admin_interface/pages/test_fetch_vote.html', {"votes":votes,"voters":voters})
 
 
-def VoteResults(election_id,region_id,candidate_id):
+def VoteResults(election_id,region_id):
 	#TODO add the filtering
 	region_db_name = "region"+str(region_id)
 	cursor = connections[region_db_name].cursor()
@@ -946,12 +946,149 @@ def VoteResults(election_id,region_id,candidate_id):
 	return votes
 
 
-def AllVoters(election_id,region_id):
+def AllVoters(election_id=None,region_id=None):
 	cursor = connections["people"].cursor()
 	cursor.execute("SELECT voter_id,address_postcode from voters ;")
 	voters = cursor.fetchall()
-	print(voters)
-	#TODO add the filtering by region/election
+	
+	if(election_id):
+		voters = FilterVotersByElection(voters,election_id)
+
+	if(region_id):
+		voters = FilterVotersByRegion(voters,region_id)
+
 	return voters
+
+def FilterVotersByElection(voters,election_id):
+	#TODO:Filter
+	filtered_voters = []
+	try:
+		election = Election.objects.get(id=election_id)
+		region_names = [region.name for region in election.regions.all()]
+		
+		for voter in voters:
+			voter_region = PostcodeToRegion(voter[1],election.regions_type)
+			if(voter_region in region_names):
+				filtered_voters.append(voter)
+
+		return filtered_voters
+
+	except:
+		return []
+
+
+def FilterVotersByRegion(voters,region_name,regions_type):
+	
+	filtered_voters = []
+	for voter in voters:
+		voter_region = PostcodeToRegion(voter[1],regions_type)
+		if(region_name == voter_region):
+			filtered_voters.append(voter)
+		
+	return filtered_voters
+
+def FilterVotersByRegistered(voters,election_id):
+	filtered_voters = []
+	for voter in voters:
+		register_check = VoterAuth.objects.filter(voter_id=voter[0],election_id=election_id)
+		if(register_check.count() > 0):
+			filtered_voters.append(voter)
+	
+	return filtered_voters
+
+
+#STATISTICS
+
+def MakeGraphInstance(graph_title,values_list,graph_num):
+	
+	return StatGraph(graph_title,values_list,graph_num)
+	
+
+
+def Demographics(request,election_id):
+	authorised,username = CheckAuthorisation(request,True,[('demographics',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		election = 	get_object_or_404(Election, id=election_id)	
+		regions = election.regions.all()
+
+		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election,"regions":regions })
+
+def GetGraph(request,election_id,region_id):
+
+	
+	authorised,username = CheckAuthorisation(request,True,[('demographics',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		election = 	get_object_or_404(Election, id=election_id)	
+		
+		elegible_voters = AllVoters(election_id)
+		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
+		
+		
+
+		demographic_statistics = []
+
+		elegible_voters_count = len(elegible_voters)
+		registered_voters_count = len(registered_voters)
+
+		demographic_statistics.append( MakeGraphInstance('Election Wide Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],0) )
+
+		region = Region.objects.get(id= region_id)
+		i = 1
+
+		region_elegible_voters = FilterVotersByRegion(elegible_voters,region.name,election.regions_type)
+		elegible_voters_count = len(region_elegible_voters)
+
+		region_registered_voters = FilterVotersByRegistered(region_elegible_voters,election_id)
+		registered_voters_count = len(region_registered_voters)
+
+		demographic_statistics.append( MakeGraphInstance(region.name + ': Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],i+1) )
+
+
+		return render(request, 'admin_interface/pages/statistics/get_graph.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election, "demographic_statistics":demographic_statistics })
+
+
+def Results(request,election_id,region_id):
+	authorised,username = CheckAuthorisation(request,True,[('electoral_officer',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		election = 	get_object_or_404(Election, id=election_id)	
+		region = 	get_object_or_404(Region, id=region_id)	
+		
+		results = VoteResults(election_id,region_id)
+
+		processed_results = ProcessResultsFPTP(results)
+		
+		MakeGraphInstance(region.name + ': Results for '+region.name,processed_results,1) 
+
+
+		return render(request, 'admin_interface/pages/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election, "processed_results":processed_results,"graph":graph })
+
+
+def ProcessResultsFPTP(results):
+	candidate_dict = {}
+
+	for result in results:
+		if(not result[1] in candidate_dict):
+			candidate_dict[result[1]] = 0
+		candidate_dict[result[1]] += 1
+
+	processed_results = []
+
+	for key,value in candidate_dict.items():
+		processed_results.append( [key,value] )
+
+	return processed_results
+
+
+
+
 
 
