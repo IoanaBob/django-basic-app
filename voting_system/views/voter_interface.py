@@ -45,7 +45,7 @@ def RegisterVoterId(request):
 			return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 	else:
-		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'] })
+		return render(request, 'voter_interface/pages/voting/register_voter_id.html', {"title": "Register to Vote Online - Enter Voter Id", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] })
 
 
 def RegisterElectionSelect(request):
