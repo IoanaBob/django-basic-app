@@ -1,36 +1,40 @@
 {% extends 'admin_interface/base.html' %}
 
 {% block content %}
-<table class="index">
-	<tr>
-		<td><a href="{% url 'admin_homepage' %}"><u><b><p>Admin Dashboard</p></b></u></a></td>
-		<td><a href="{% url 'election_homepage' %}"><u><b><p>Elections</p></b></u></a></td>
-		<td><a href="{% url 'candidate_homepage' %}"><u><b><p>Candidates</p></b></u></a></td>
+	<div class="row">
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'admin_homepage' %}"><h3>Admin Dashboard</h3></a>
+			<p>Create new admins who will have access to specific admin privilages</p>
+		</div>
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'election_homepage' %}"><h3>Elections</h3></a>
+			<p>View and modify election information</p>
+		</div>
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'candidate_homepage' %}"><h3>Candidates</h3></a>
+			<p>Create and manage candidates for elections</p>
+		</div>		
+	</div>
+	<div class="row">
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'region_homepage' %}"><h3>Regions</h3></a>
+			<p>View and modify region information</p>
+		</div>
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'role_homepage' %}"><h3>Roles</h3></a>
+			<p>View and modify role information</p>
+		</div>
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'party_homepage' %}"><h3>Parties</h3></a>
+			<p>View and modify party information</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="dashboard-font col-md-4 col-sm-4">
+			<a href="{% url 'voter_code_homepage' %}"><h3>Voter Codes</h3></a>
+			<p>View and reissue voter codes</p>
+		</div>
+	</div>
 
-	</tr>
-	<tr>
-		<td><p>Create new admins who will have access to specific admin privilages</p></td>
-		<td><p>View and modify election information</p></td>
-	</tr>
-	<tr>
-		<td><a href="{% url 'region_homepage' %}"><u><b><p>Regions</p></b></u></a></td>
-		<td><a href="{% url 'role_homepage' %}"><u><b><p>Roles</p></b></u></a></td>
-		<td><a href="{% url 'party_homepage' %}"><u><b><p>Parties</p></b></u></a></td>
-
-	</tr>
-	<tr>
-		<td><p>View and modify region information</p></td>
-		<td><p>View and modify role information</p></td>
-		<td><p>View and modify party information</p></td>
-	</tr>
-	<tr>
-		<td><a href="{% url 'voter_code_homepage' %}"><u><b><p>Voter Codes</p></b></u></a></td>
-
-	</tr>
-	<tr>
-		<td><p>View and reissue voter codes</p></td>
-		
-	</tr>
-</table>
 
 {% endblock %}

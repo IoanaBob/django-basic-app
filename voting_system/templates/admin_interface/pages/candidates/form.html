@@ -7,24 +7,24 @@
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 {% endblock %}
 {% if form.instance.id %}
-    <h1>Edit Candidate</h1>
+    <h1><b>Edit Candidate</b></h1>
 {% else %}
-    <h1>New Candidate</h1>
+    <h1><b>New Candidate</b></h1>
 {% endif %}
-
+<hr>
 {% if form.party_id %}
-<div class="form_container">
-    <div class="row">
-            <div class="form-group col-md-12">
-                <form method="POST">{% csrf_token %}
+    <div class="form_container">
+        <div class="row">
+                <div class="form-group col-md-12">
+                    <form method="POST">{% csrf_token %}
 
-                {{ form.as_p }}
-               
-                <button role="button" class="btn btn-success">Save</button>
-            </form>
+                    {{ form.as_p }}
+
+                    <button role="button" class="btn btn-success">Save</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 {% else %}
     <h2>Sorry, This action could not be executed</h2>
@@ -33,16 +33,15 @@
 
 {% endif %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="{% static 'js/select2.full.min.js' %}"></script>
-<script>
-    $(document).ready(function() {
-  $(".js-example-basic-single").select2({
-      width: 300
-  });
- 
 
-});
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $(".js-example-basic-single").select2({
+                width: 300
+            });
+        });
     </script>
-
 {% endblock %}

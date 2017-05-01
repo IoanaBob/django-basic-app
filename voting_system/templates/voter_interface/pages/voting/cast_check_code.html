@@ -2,18 +2,18 @@
 {% block content %}
 
 
-<h1>Vote Code</h1>
+<h1><b>Vote Code</b></h1>
+<hr/>
 <div class="row">
 	<p class="col-md-8">Enter your online vote code to continue. You can't continue without a valid code. This code can only be used once and must be associated with your Voter ID.</p>
 </div>
 <div class="row">
 	<div class="form-group col-md-4">
-		<label class="control-label" for="votecode">Online Code:</label>
 		<div class="input-group">
 			<form method="POST">
 				{% csrf_token %}
         		{{ form.as_p }}
-				<button type="submit" class="btn btn-primary">Save</button>
+				<button type="submit" class="btn btn-success">Save</button>
 			</form>
 		</div>
 	</div>

@@ -1,4 +1,4 @@
-
+<<<<<<< HEAD
 html {
 	font-family: arial
 }
@@ -73,7 +73,7 @@ input[type="password"]:after {
 #footer {
 	background-color: #DEE0E2;
 	width: 100%;
-	margin-top: 0px;
+	margin-top: 75px;
 }
 
 .bottom-border {
@@ -103,9 +103,6 @@ input[type="password"]:after {
 	font-weight: 400;
 }
 
-.footer-list > li > a {
-	color: #454A4C;
-}
 
 .breadcrumb {
 	background-color: white;
@@ -361,7 +358,6 @@ span {
 
 .bold-footer {
 	font-family: arial ;
-	padding-left: 0;
 }
 
 .footer-list {
@@ -611,25 +607,3 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
-S
-/*Craig's CSS*/
-.election-font {
-	font-size: 16px
-}
-
-.white-font > li > a {
-	text-decoration: none;
-	color: white;
-}
-
-.dashboard-font h3 {
-	text-decoration: underline;
-	font-weight: bold;
-	font-size: 19px;
-	color: #005EAC;
-}
-
-.dashboard-font p {
-	font-size: 16px;
-}
-

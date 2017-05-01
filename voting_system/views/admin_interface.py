@@ -19,12 +19,13 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from django.db import connections
 
 from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
-		return render(request, 'admin_interface/pages/index.html', {'title': "Login", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
+		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'))], 'first_name': request.session['forename']})
 	else:
 		return redirect('admin_login')
 
@@ -510,7 +511,7 @@ def election_create(request):
 					new_party.save()
 				
 				# Add parties
-				selected_regions = request.POST.getlist('regions[]')
+				selected_regions = request.POST.getlist('region_id')
 				for region in selected_regions:
 					new_region = ElectionRegion()
 					new_region.id = getNextID("election_regions")
@@ -590,7 +591,7 @@ def election_edit(request, id=None):
 						#remove any not used
 						ElectionParties.objects.filter(party_id = party).delete()
 					# Add parties
-					selected_regions = request.POST.getlist('regions[]')
+					selected_regions = request.POST.getlist('region_id')
 					for region in selected_regions:
 						if region not in region_current:
 							new_region = ElectionRegion()
@@ -924,5 +925,33 @@ def region_populate(request):
 
 
 
+def test_vote_fetch(request):
+	election_id = 1
+	region_id = 1
+	candidate_id = 1
+
+	votes = VoteResults(election_id,region_id,candidate_id)
+	
+	voters = AllVoters(election_id,region_id)
+
+	return render(request, 'admin_interface/pages/test_fetch_vote.html', {"votes":votes,"voters":voters})
+
+
+def VoteResults(election_id,region_id,candidate_id):
+	#TODO add the filtering
+	region_db_name = "region"+str(region_id)
+	cursor = connections[region_db_name].cursor()
+	cursor.execute("SELECT election_id,candidate_id,ballot_id,rank from votes ;")
+	votes = cursor.fetchall()
+	return votes
+
+
+def AllVoters(election_id,region_id):
+	cursor = connections["people"].cursor()
+	cursor.execute("SELECT voter_id,address_postcode from voters ;")
+	voters = cursor.fetchall()
+	print(voters)
+	#TODO add the filtering by region/election
+	return voters
 
 

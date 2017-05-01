@@ -16,23 +16,17 @@ import datetime
 def public_homepage(request):
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
+
 def public_homepage(request):
-
-	votes = [(1,1,1,"jyfasdosa"),(1,2,1,"ergf"),(1,3,1,"asd"),(1,1,1,"rge")]
-
-	vote_count = {}
-
-	vote_count[1] = 0
-
 	return render(request, 'voter_interface/pages/homepage.html', {"title": "Homepage", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ]})
 
 
 
-def RegisterSummary(request): #CHRIS PLEASE CHECK
+def RegisterSummary(request):
 	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
 
 
-def RegisterVoterId(request): #Chris Please Check
+def RegisterVoterId(request):
 	#TODO check if voter is logged in via verify and redirect if not.
 
 	if request.method == "POST":
@@ -55,6 +49,7 @@ def RegisterElectionSelect(request):
 	user = Verify.objects.get(email = request.session['verify_username'])
 
 	elections = GetAvailableElectionsForUser(user.voter_id)
+	print(elections)
 
 	return render(request, 'voter_interface/pages/voting/register_election_select.html', {"title": "Register to Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'], 'elections':elections })
 
@@ -72,9 +67,12 @@ def RegisterPasswordCreation(request):
 			election = Election.objects.get(id = election_id)
 
 			person = Voter.objects.get(voter_id = user.voter_id)
-			voter_id_region = VoterCode.postcode_to_region(person.address_postcode)
+
+			region_name = PostcodeToRegion(person.address_postcode,election.regions_type)
+			region = Region.objects.get(name = region_name)
+			
 			voter_code = VoterCode.generate_voter_code()
-			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = voter_id_region)
+			entry = VoterCode(voter_id= user.voter_id, code=voter_code, election = election, region = region)
 			entry.save()
 
 			return redirect('register_complete')
@@ -88,7 +86,7 @@ def RegisterPasswordCreation(request):
 		return render(request, 'voter_interface/pages/voting/register_create_password.html', {"title": "Register to Vote Online - Create Password", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')), ('Summary', reverse('register_summary')) ], 'first_name':request.session['verify_forename'], 'last_name':request.session['verify_surname'] , "election": election })
 
 
-def RegisterComplete(request): #CHRIS PLEASE CHECK
+def RegisterComplete(request):
 	#election_name = request.POST.get('election_name')
 	election_name = ""
 	return render(request, 'voter_interface/pages/voting/register_complete.html', {"title": "Register to Vote Online - Complete", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ], "election_name": election_name })
@@ -128,11 +126,11 @@ def public_verify(request):
 
 
 #CAST VOTE
-def CastVoteSummary(request): #CHRIS PLEASE CHECK
+def CastVoteSummary(request):
 	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', reverse('public_homepage')) ],'destination':request.GET.get('destination') })
 
 
-def CastVoteId(request): #Chris Please Check
+def CastVoteId(request):
 	#TODO check if voter is logged in via verify and redirect if not. 
 	if request.method == "POST":
 		verify_username = request.session['verify_username']
@@ -208,8 +206,7 @@ def public_vote_ballot(request): #TODO rename cast_check_code
 				request.session['code_input'] = code
 				return redirect('public_vote__acknowledgement')
 			else:
-				print(election_id)
-				print(voter_id)
+
 				messages.error(request, "Voter code does not exists or you are not registered with it. Please try again") #TODO improve error handling
 				return redirect('public_vote__ballot')	
 		except VoterCode.DoesNotExist:
@@ -246,7 +243,11 @@ def public_vote_request(request):
 
 def SecureVoteToDatabse(vote_instance,region_id):
 	region_db_name = "region"+str(region_id)
-	cursor = connections[region_db_name].cursor()
+	try:
+		cursor = connections[region_db_name].cursor()
+	except:
+		print("WARNING A database does not yet exist for this region.") #This is only in place while the infrastruvture is not set up for all regional databses. 
+		return None	
 	cursor.execute("INSERT INTO votes (id,election_id,candidate_id,ballot_id,rank) VALUES (nextval('votes_id_seq'),"+str(vote_instance.election_id)+","+str(vote_instance.candidate_id)+",'"+str(vote_instance.ballot_id)+"',"+str(vote_instance.rank)+")");
 
 
@@ -297,7 +298,7 @@ def public_vote_place(request):
 		election_vote_method = election.election_method
 		
 		region_id = VoterCode.objects.get(code= checked_code).region_id
-
+		print(region_id)
 		candidates = Candidate.objects.filter(region_id = region_id)
 		print(candidates[0].first_name)
 		#[(1,"1first","1last","4 why address road, Pointless Town, AB1 2CD","Labour"),(2,"2first","2last","4 why address road, Pointless Town, AB1 2CD","Labour")]
@@ -411,7 +412,7 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Get Voters Regions
 	voter = Voter.objects.get(voter_id= voter_id)
 	region_name_list = []
-	check_region_types = ["parliamentary_constituency"] # TODO add other region types e.g. local
+	check_region_types = ["parliamentary_constituency", "admin_district"] # TODO add other region types e.g. local
 
 	for region_type in check_region_types:
 		region_name_list.append( PostcodeToRegion(voter.address_postcode.replace(" ",""),region_type) )
@@ -420,28 +421,35 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Aberconwy
 
 	elections = []
-
+	print(region_name_list)
 	if(registering):
 		for region_name in region_name_list:
 			if(not region_name == None):
-				region = Region.objects.get(name = region_name)
-				
-				if(not region == None):
-					# date checking
-					for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
-						# check if voter registered for the election
-						if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
-							elections.append(election)
+				try:
+					region = Region.objects.get(name = region_name)
+					print(region)
+					
+					if(not region == None):
+						# date checking
+						for election in Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today()):
+							# check if voter registered for the election
+							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
+								elections.append(election)
+				except:
+					print("Region not found, likely a non created admin_district")
 	else:
 		for region_name in region_name_list:
 			if(not region_name == None):
-				region = Region.objects.get(name = region_name)
-				
-				if(not region == None):
-					open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
-					for election in open_elections:
-						if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
-							elections.append(election)
+				try:
+					region = Region.objects.get(name = region_name)
+					
+					if(not region == None):
+						open_elections = Election.objects.filter(regions__in=[region], end_date__gte = datetime.date.today(), start_date__lte = datetime.date.today())
+						for election in open_elections:
+							if(VoterAuth.objects.filter(election_id=election.id,voter_id = voter_id).count() > 0):
+								elections.append(election)
+				except:
+					print("Region not found, likely a non created admin_district")
 
 	return elections
 
@@ -455,10 +463,23 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 #Voter id:
 #I3GJ2ZDUMTHT9T9
 
+#Detils for john doe:
+#doej@gmail.com
+#GROUP2
+#Voter ID: K2GJ1ZPUNTLT8K9
+
 def DeleteAFictionPasswords(request):
 	VoterAuth.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 	VoterCode.objects.filter(voter_id="I3GJ2ZDUMTHT9T9").delete()
 
 	messages.error(request, "A Fiction's passwords for elections deleted.") 
+	return redirect('register_summary')
+	
+	
+def DeleteJohnPasswords(request):
+	VoterAuth.objects.filter(voter_id="K2GJ1ZPUNTLT8K9").delete()
+	VoterCode.objects.filter(voter_id="K2GJ1ZPUNTLT8K9").delete()
+
+	messages.error(request, "Johns's passwords for elections deleted.") 
 	return redirect('register_summary')
 	

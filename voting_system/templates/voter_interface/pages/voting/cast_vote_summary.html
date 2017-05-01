@@ -2,19 +2,19 @@
 
 {% block content %}
 
-	<div class="row">
+	
 	
 	<h1><b>Cast Your Vote Online</b></h1>
-	</div>
+	<hr>
+	
+
+		<p>If you have registered to vote online for an election, once the online voting opens, you may use the button below to cast your vote. You will need the password you created when you registered and a voter code which you would have been sent in the mail once you registered.</p>
+		<p><b>REMEMBER:</b> You only get to vote once in an election, once you've cast your vote you will not be able to vote in the same election again.</p>
+	
 	</br>
 
-	<div class="row">
-		<p>Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here. Put the summary of voting online here.</p>
-	</div>
-	</br>
-
-	<div class="row">
-		<h3>Current Elections Nationally where Online Voting is Open</h3>
+	
+		<h3><b>Current Elections Nationally where Online Voting is open</b></h3>
 		<p>You will select the elections you wish to register for later in the process. For now, please check your desired election is in the list below. If it is missing, this may be because the online registration process has not yet opened or because the election will not offer online voting. </p>
 		<ul class="list-group">
 			<li class="list-group-item">
@@ -24,15 +24,17 @@
 				Local Election - chesham (Amersham and Chesham Constituency Only)
 			</li>
 		</ul>
-	</div>
+	
 	</br>
+
 	
 	<div class="row">
 		<h2>Proceed and Log In Using GOV.UK Verify</h2>
-		<p>To register to vote online, you must first login using the GOV.UK Verify service. Click the button bellow to proceed or <a href="">click here</a> [INSERT THE LINK] to learn more about the GOV.UK Verify process.</p>
+
+		<p>To register to vote online, you must first login using the GOV.UK Verify service. Click the button bellow to proceed or <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">click here</a> to learn more about the GOV.UK Verify process.</p>
 
 		<a href="{% url 'public_verify' %}?destination=cast_vote_id"><button type="button" class="btn btn-success">Proceed to GOV.UK Verify Login</button></a>
-	</div>
+	
 	</br>
 
 	

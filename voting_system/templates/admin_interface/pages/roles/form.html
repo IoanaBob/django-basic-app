@@ -2,10 +2,11 @@
 {% block content %}
 
 {% if form.instance.id %}
-    <h1>Edit Role</h1>
+    <h1><b>Edit Role</b></h1>
 {% else %}
-    <h1>New Role</h1>
+    <h1><b>New Role</b></h1>
 {% endif %}
+<hr>
 <form method="POST">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save" class="btn btn-success">

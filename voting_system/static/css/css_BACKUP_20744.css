@@ -1,4 +1,4 @@
-
+<<<<<<< HEAD
 html {
 	font-family: arial
 }
@@ -332,6 +332,10 @@ span {
 	height: auto;
 	min-height: 10px;
 	max-height: 200px;
+<<<<<<< HEAD
+
+=======
+>>>>>>> 56b688e0613cb5d188c3f2e7d7ae5142808e06d2
 }
 
 #global-footer-bar {
@@ -611,7 +615,8 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
-S
+<<<<<<< HEAD
+
 /*Craig's CSS*/
 .election-font {
 	font-size: 16px
@@ -632,4 +637,5 @@ S
 .dashboard-font p {
 	font-size: 16px;
 }
-
+=======
+>>>>>>> 56b688e0613cb5d188c3f2e7d7ae5142808e06d2

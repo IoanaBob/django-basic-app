@@ -1,6 +1,7 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
-<h1>Candidates</h1>
+<h1><b>Candidates</b></h1>
+<hr>
 {% if candidates %}
     <table class="table table-striped table-hover">
         <thead>
@@ -8,6 +9,7 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Party</th>
             <th>Edit</th>
             <th>Delete</th>
         </thead>
@@ -25,6 +27,9 @@
                 </td>
                 <td>
                     {{ candidate.email }}
+                </td>
+                <td>
+                    {{ candidate.party.name }}
                 </td>
                 <td>
                     <a href="{% url 'candidate_edit' id=candidate.id %}" class="btn btn-success">edit</a>
