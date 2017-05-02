@@ -39,7 +39,7 @@ def admin_login(request):
 				user = Admin.objects.get(user_name = request.POST.get('username'))
 				if user is not None:
 					#remove this check SAM ADD encryption ;P
-					if  admin_password_check(request.POST.get('password'),user.password_hash):
+					if admin_password_check(request.POST.get('password'),user.password_hash):
 						request.session['username'] = user.user_name
 						request.session['forename'] = user.first_name.capitalize()
 						messages.success(request, "Welcome! You have been successfully logged in!")
@@ -943,6 +943,11 @@ def VoteResults(election_id,region_id):
 	cursor = connections[region_db_name].cursor()
 	cursor.execute("SELECT election_id,candidate_id,ballot_id,rank from votes ;")
 	votes = cursor.fetchall()
+
+	if(election_id):
+		election_id = int(election_id)
+		if(election_id > 0):
+			votes = [vote for vote in votes if vote[0] == election_id]
 	return votes
 
 
@@ -950,7 +955,6 @@ def AllVoters(election_id=None,region_id=None):
 	cursor = connections["people"].cursor()
 	cursor.execute("SELECT voter_id,address_postcode from voters ;")
 	voters = cursor.fetchall()
-	
 	if(election_id):
 		voters = FilterVotersByElection(voters,election_id)
 
@@ -959,13 +963,40 @@ def AllVoters(election_id=None,region_id=None):
 
 	return voters
 
+def FixBrokenPostCodes(working_code,broken_code):
+	cursor = connections["people"].cursor()
+	cursor.execute("UPDATE voters SET address_postcode = '"+working_code+"' WHERE address_postcode = '"+broken_code+"' ;")
+
+def CheckVoters(voters,election_id):
+	print("starting check")
+	required_fixes = []
+	working_code = "AB12 3LP"
+	current_code = ""
+
+	election = Election.objects.get(id=election_id)
+	region_names = [region.name for region in election.regions.all()]
+		
+	for voter in voters:
+		current_code = voter[1]
+		try:
+
+			voter_region = PostcodeToRegion(voter[1],election.regions_type)
+			working_code = voter[1]
+		except:
+			print(current_code)
+			required_fixes.append( (working_code,current_code) )
+	
+	for fix in required_fixes:
+		#print(fix)
+		FixBrokenPostCodes(fix[0],fix[1])
+
 def FilterVotersByElection(voters,election_id):
 	#TODO:Filter
+	#CheckVoters(voters,election_id)
 	filtered_voters = []
 	try:
 		election = Election.objects.get(id=election_id)
 		region_names = [region.name for region in election.regions.all()]
-		
 		for voter in voters:
 			voter_region = PostcodeToRegion(voter[1],election.regions_type)
 			if(voter_region in region_names):
@@ -975,8 +1006,7 @@ def FilterVotersByElection(voters,election_id):
 
 	except:
 		return []
-
-
+		
 def FilterVotersByRegion(voters,region_name,regions_type):
 	
 	filtered_voters = []
@@ -1006,7 +1036,7 @@ def MakeGraphInstance(graph_title,values_list,graph_num):
 
 
 def Demographics(request,election_id):
-	authorised,username = CheckAuthorisation(request,True,[('demographics',)])
+	authorised,username = CheckAuthorisation(request,True,[('statistics__demographics',)])
 	if(not authorised):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
@@ -1017,15 +1047,13 @@ def Demographics(request,election_id):
 		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election,"regions":regions })
 
 def GetGraph(request,election_id,region_id):
-
 	
-	authorised,username = CheckAuthorisation(request,True,[('demographics',)])
+	authorised,username = CheckAuthorisation(request,True,[('statistics__demographics',)])
 	if(not authorised):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
 	else:
 		election = 	get_object_or_404(Election, id=election_id)	
-		
 		elegible_voters = AllVoters(election_id)
 		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
 		
@@ -1059,31 +1087,32 @@ def Results(request,election_id,region_id):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
 	else:
-		election = 	get_object_or_404(Election, id=election_id)	
-		region = 	get_object_or_404(Region, id=region_id)	
+		election = get_object_or_404(Election, id=election_id)	
+		region = get_object_or_404(Region, id=region_id)	
 		
-		results = VoteResults(election_id,region_id)
+		votes = VoteResults(election_id,region_id)
 
-		processed_results = ProcessResultsFPTP(results)
+		processed_results = ProcessResultsFPTP(votes)
 		
-		MakeGraphInstance(region.name + ': Results for '+region.name,processed_results,1) 
+		graph = MakeGraphInstance(region.name + ': Results for '+region.name,processed_results,1) 
 
 
 		return render(request, 'admin_interface/pages/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election, "processed_results":processed_results,"graph":graph })
 
 
-def ProcessResultsFPTP(results):
+def ProcessResultsFPTP(votes):
 	candidate_dict = {}
 
-	for result in results:
-		if(not result[1] in candidate_dict):
-			candidate_dict[result[1]] = 0
-		candidate_dict[result[1]] += 1
+	for vote in votes:
+		if(not vote[1] in candidate_dict):
+			candidate_dict[vote[1]] = 0
+		candidate_dict[vote[1]] += 1
 
 	processed_results = []
 
 	for key,value in candidate_dict.items():
-		processed_results.append( [key,value] )
+		candidate = Candidate.objects.get(id=key)
+		processed_results.append( [candidate.last_name+","+candidate.first_name,value] )
 
 	return processed_results
 

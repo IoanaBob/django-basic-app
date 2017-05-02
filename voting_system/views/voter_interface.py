@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import make_password, check_password as passwor
 from django.contrib import messages
 import requests
 import datetime
+import sys
 
 
 def public_homepage(request):
@@ -442,6 +443,8 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
 								elections.append(election)
 				except:
+					e = sys.exc_info()[0]
+					print(e)
 					print("Region not found, likely a non created admin_district")
 	else:
 		for region_name in region_name_list:
