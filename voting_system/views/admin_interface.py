@@ -270,16 +270,20 @@ def voter_code_print_unissued(request):
 			election = request.POST.get('elections')
 			data = {"data": []}
 			try:
+
 				election_details = Election.objects.values().filter(id=election)
 				
 				# Get all voter codes where not be printed
 				try:
-					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
-					
-					for code in voter_codes:
+					voter_ids = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values('voter_id', 'code')
+					print(voter_ids)
+					for id in voter_ids:
+						print(id)
 						try:
-							details = Voter.objects.filter(voter_id = code).values()
-							data['data'].append({"election": election_details[0], "voter": details[0], "region": PostcodeToRegion(details[0]['address_postcode']) })
+							details = Voter.objects.filter(voter_id = id['voter_id']).values()
+						
+
+							data['data'].append({"election": election_details[0], "voter": details[0], "code": id['code'], "region": PostcodeToRegion(details[0]['address_postcode']) })
 
 						except Voter.DoesNotExist:
 							messages.error(request, "One or more voters does not exists. Please try again.")
@@ -307,7 +311,7 @@ def voter_code_print_unissued(request):
 			return redirect("voter_code_print")
 		
 		else:
-			elecs = Election.objects.filter(Q(end_date__gte = datetime.date.today()))
+			elecs = Election.objects.filter(Q(voting_end_date__gte = datetime.date.today()))
 			elections = []
 
 			for elec in elecs:
