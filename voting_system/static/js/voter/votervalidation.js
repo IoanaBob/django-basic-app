@@ -57,7 +57,7 @@ $(document).ready(function() {
 		messages: {
 			password: {
 				required: "Please fill in the password field",
-				minlength: "Your password must be at least "
+				minlength: "Your password must be at least 6 characters long"
 			},
 			confirm_password: {
 				required: "Please confirm your password",
