@@ -44,14 +44,16 @@
     {% endif %}
      <!--BREADCRUMBS<-->
     <div class="container">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb-item">
             {% for item in breadcrumb %}
-                {% ifequal item.1  None %}
-  					       <a class="noHover">{{ item.0 }}</a>
-  				
-		            {% else %}
-  					       <a href="{{ item.1 }}">{{ item.0 }}</a></li>
-		            {% endifequal %}
+                 <li class="breadcrumb-item">
+                    {% ifequal item.1  None %}
+                        <a class="noHover">{{ item.0 }}</a>
+                    
+                    {% else %}
+                        <a href="{{ item.1 }}">{{ item.0 }}</a></li>
+                    {% endifequal %}
+                </li>
 
             {% endfor %}
         </ol>
