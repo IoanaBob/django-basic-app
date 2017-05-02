@@ -654,3 +654,7 @@ S
 	font-size: 16px;
 }
 
+.noHover {
+	color: inherit !important;
+	text-decoration: inherit !important;
+}

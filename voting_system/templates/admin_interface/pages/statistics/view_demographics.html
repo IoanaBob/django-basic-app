@@ -1,0 +1,38 @@
+{% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+
+
+<h1>Demographics Statistics</h1>
+<h2>Election: {{election.name}}<h2>
+
+<select id="region_filter" onchange="UpdateGraphs()" class="js-example-basic-single">
+    <option value="">-- Select a Region --</option>
+    {% for region in regions %}
+
+        <option value="{{region.id}}">{{region.name}}</option>
+    {% endfor %}
+
+</select>
+
+<div id="graph_container">
+
+</div>
+
+
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/stats.js' %}" type="text/javascript" ></script>
+<script src="{% static 'js/loader.js' %}" type="text/javascript" ></script>
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script type="text/javascript">
+// Load the Visualization API and the corechart package.
+	google.charts.load('current', {'packages':['corechart']});
+	$(document).ready(function() {
+        $(".js-example-basic-single").select2({
+            width: 500
+        });
+	 });
+</script>
+{% endblock %}

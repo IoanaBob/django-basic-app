@@ -94,7 +94,7 @@
                             <!--<p>Dyddiad yr Etholiadol Ar-lein</p> -->
                         </td>
                         <td>
-                            <p>{{ item.election.start_date }}</p>
+                            <p>{{ item.election.voting_start_date }}</p>
                             <!--<p>{{ welsh_date }}</p>-->
                         </td>
                     </tr>
@@ -123,8 +123,8 @@
                             <p>{{ item.voter.address_county }}</p>
                             <p>{{ item.voter.address_postcode }}</p>
 
-                            <p class="heading">Voter Code
-                                <!-- | Cod Pleidleiswyr-->: <span class=" voter_code">{{ item.voter.code }}</span></p>
+                             <p class="heading">Voter ID: <span class=" voter_code">{{ item.voter.voter_id }}</span></p>
+                            <p class="heading">Voter Code: <span class=" voter_code">{{ item.code }}</span></p>
 
                         </td>
                     </tr>
@@ -152,7 +152,7 @@
 
                         </td>
                         <td>
-                            <p>{{ item.election.start_date }} to {{ item.election.end_date }}</p>
+                            <p>{{ item.election.voting_start_date }} to {{ item.election.voting_end_date }}</p>
                             <!-- <p>{{ item.election.welsh.start_date }} to {{ item.election.end_date }}</p>-->
                         </td>
                     </tr>
@@ -171,7 +171,7 @@
                             <!--<p>Dyddiad yr Etholiad Ar-lein</p>-->
                         </td>
                         <td>
-                            <p>{{ item.election.start_date }}</p>
+                            <p>{{ item.election.election_start_date }}</p>
                             <!--<p>{{ item.election.welsh.start_date }}</p>-->
                         </td>
                     </tr>
