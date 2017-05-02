@@ -14,12 +14,14 @@
 <p>Please enter your Voter ID. This is a unique code found on your polling card, which you should have recieved through the post. Haven't recieved a polling card? <a href="https://www.gov.uk/register-to-vote">Add your details to the electoral register</a>.</p>
 
 
-	<form method="POST" class="form-horizontal">
-    {% csrf_token %}
+	<form method="POST" id="enterVoterID" class="form-horizontal">
+		{% csrf_token %}
+
     <div class="row">
     	<label class="col-md-2" for="voter_id" style="font-size: 19px;">Voter Code:</label>
-    	<input class="col-md-10" type="text" name="voter_id" />
+    	<input class="col-md-10 voteID" type="text" name="voter_id" />
     </div>
+    <br>
     <div class="row">
     	<div class="col-md-12">
     		<button type="submit" class="btn btn-success">Submit</button>

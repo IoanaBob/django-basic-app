@@ -7,7 +7,7 @@
     <h1><b>New Region</b></h1>
 {% endif %}
 <hr/>
-<form method="POST">{% csrf_token %}
+<form method="POST" id="adminNewRegion">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save" class="btn btn-success">
 </form>

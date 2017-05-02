@@ -1,0 +1,33 @@
+{% extends 'admin_interface/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+<h1>Select Election</b></h1>
+
+<hr>
+{% if elections %}
+    <form method="POST">
+        {% csrf_token %}
+        
+        <select name="election" class="js-example-basic-single">
+            {% for election in elections %}
+                <option value="{{ election.id }}">{{ election.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-success" style="display: block;" value="Next">
+    </form>
+{% else %}
+    <h2>Sorry, there are no elections available</h2>
+{% endif %}
+{% endblock %}
+{% block js %}
+<script src="{% static 'js/select2.full.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".js-example-basic-single").select2({
+            width: 500
+        });
+    });
+</script>
+
+{% endblock %}

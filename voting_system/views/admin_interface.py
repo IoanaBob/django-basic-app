@@ -270,16 +270,20 @@ def voter_code_print_unissued(request):
 			election = request.POST.get('elections')
 			data = {"data": []}
 			try:
+
 				election_details = Election.objects.values().filter(id=election)
 				
 				# Get all voter codes where not be printed
 				try:
-					voter_codes = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values_list('voter_id', flat=True)
-					
-					for code in voter_codes:
+					voter_ids = VoterCode.objects.filter(election_id = election).filter(sent_status = False).filter(Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).values('voter_id', 'code')
+					print(voter_ids)
+					for id in voter_ids:
+						print(id)
 						try:
-							details = Voter.objects.filter(voter_id = code).values()
-							data['data'].append({"election": election_details[0], "voter": details[0], "region": PostcodeToRegion(details[0]['address_postcode']) })
+							details = Voter.objects.filter(voter_id = id['voter_id']).values()
+						
+
+							data['data'].append({"election": election_details[0], "voter": details[0], "code": id['code'], "region": PostcodeToRegion(details[0]['address_postcode']) })
 
 						except Voter.DoesNotExist:
 							messages.error(request, "One or more voters does not exists. Please try again.")
@@ -307,7 +311,7 @@ def voter_code_print_unissued(request):
 			return redirect("voter_code_print")
 		
 		else:
-			elecs = Election.objects.filter(Q(end_date__gte = datetime.date.today()))
+			elecs = Election.objects.filter(Q(voting_end_date__gte = datetime.date.today()))
 			elections = []
 
 			for elec in elecs:
@@ -540,76 +544,74 @@ def election_edit(request, id=None):
 		
 		if request.method == "POST":
 			form = ElectionForm(request.POST, instance=election)
-			if "candidates[]" not in request.POST:
-				messages.error(request, 'Please select candidate(s)')
-			else:
-				if form.is_valid():
+
+			if form.is_valid():
 
 
-					election = form.save(commit=False)
-					election.save()
+				election = form.save(commit=False)
+				election.save()
 
-					'''#check if th
+				'''#check if th
 
-					party_ids = []
-					party_ids_remove = []
-					# Add Candidates
-					selected_candidates = request.POST.getlist('candidates[]')
-					print(candidates_current)
-					cur_cand = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
-					for candidate in selected_candidates:
-						#check if this candidate is in current
-						if candidate not in cur_cand:
-							new_candidate = ElectionCandidate()
-							new_candidate.id = getNextID("election_candidates")
-							new_candidate.election_id = id
-							new_candidate.candidate_id = candidate
-							new_candidate.save()
+				party_ids = []
+				party_ids_remove = []
+				# Add Candidates
+				selected_candidates = request.POST.getlist('candidates[]')
+				print(candidates_current)
+				cur_cand = ElectionCandidate.objects.filter(election_id = id).values_list("candidate_id", flat=True)
+				for candidate in selected_candidates:
+					#check if this candidate is in current
+					if candidate not in cur_cand:
+						new_candidate = ElectionCandidate()
+						new_candidate.id = getNextID("election_candidates")
+						new_candidate.election_id = id
+						new_candidate.candidate_id = candidate
+						new_candidate.save()
 
-						
-							candidate_data = Candidate.objects.get(id = candidate)
-							if candidate_data.party_id not in party_ids:
-								party_ids.append(candidate_data.party_id)
-						else:
-							del candidates_current[candidate]
 					
-					
-					for cur in cur_cand:
-						#delete any candidates which not be reused from previous
-						# get party id then append to party_ids_remove
-						ElectionCandidate.objects.filter(candidate_id = cur).delete()
-					
-					
-					for party in party_ids:
-						new_party = ElectionParty()
-						new_party.id = getNextID("election_parties")
-						new_party.election_id = id
-						new_party.party_id = party
-						new_party.save()
+						candidate_data = Candidate.objects.get(id = candidate)
+						if candidate_data.party_id not in party_ids:
+							party_ids.append(candidate_data.party_id)
+					else:
+						del candidates_current[candidate]
+				
+				
+				for cur in cur_cand:
+					#delete any candidates which not be reused from previous
+					# get party id then append to party_ids_remove
+					ElectionCandidate.objects.filter(candidate_id = cur).delete()
+				
+				
+				for party in party_ids:
+					new_party = ElectionParty()
+					new_party.id = getNextID("election_parties")
+					new_party.election_id = id
+					new_party.party_id = party
+					new_party.save()
 
-					for party in party_ids_remove:
-						#remove any not used
-						ElectionParties.objects.filter(party_id = party).delete()
-					# Add parties
-					selected_regions = request.POST.getlist('region_id')
-					for region in selected_regions:
-						if region not in region_current:
-							new_region = ElectionRegion()
-							new_region.id = getNextID("election_regions")
-							new_region.election_id = id
-							new_region.region_id = region
-							new_region.save()
-						else:
-							regions_current.pop(region)
-					for cur in region_current:
-						#delete any regions which not be reused from previous
-						ElectionRegion.objects.filter(region_id = cur).delete()'''
-					messages.success(request, candidates_current)
-					return redirect('election_view')
+				for party in party_ids_remove:
+					#remove any not used
+					ElectionParties.objects.filter(party_id = party).delete()
+				# Add parties
+				selected_regions = request.POST.getlist('region_id')
+				for region in selected_regions:
+					if region not in region_current:
+						new_region = ElectionRegion()
+						new_region.id = getNextID("election_regions")
+						new_region.election_id = id
+						new_region.region_id = region
+						new_region.save()
+					else:
+						regions_current.pop(region)
+				for cur in region_current:
+					#delete any regions which not be reused from previous
+					ElectionRegion.objects.filter(region_id = cur).delete()'''
+				messages.success(request, candidates_current)
+				return redirect('election_view')
 		else:
 			form = ElectionForm(instance=election)
-			candidates = Candidate.objects.all()
-			regions = Region.objects.all()
+		candidates = Candidate.objects.all()
+		regions = Region.objects.all()
 		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Edit Election', 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Election Homepage", reverse('election_homepage')), ("Edit Election", reverse('election_edit',kwargs={'id':id}))],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
 
 
@@ -871,6 +873,74 @@ def region_delete(request, id=None):
 		return redirect('region_homepage')
 # ---- Region END --- #
 
+# ---- Statistics START --- #
+
+def statistics_homepage(request):
+	authorised,username = CheckAuthorisation(request,True,[("statistics",)])
+	if(authorised):
+		if request.POST:
+			return redirect('election_demographics', election_id=request.POST.get('election'))
+		else:
+			elections = Election.objects.filter(Q(voting_end_date__lte = datetime.date.today()))
+			print(elections)
+			return render(request, 'admin_interface/pages/statistics/index.html', {'title': "Statistics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Statistics Homepage", reverse('statistics_homepage'))], 'first_name':request.session['forename'], "elections": elections})
+	else:
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_master_homepage')
+
+def Demographics(request,election_id):
+	authorised,username = CheckAuthorisation(request,True,[('statistics__demographics',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		election = 	get_object_or_404(Election, id=election_id)	
+		regions = election.regions.all()
+
+		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Statistics Homepage", reverse('statistics_homepage')), ("View Statistics", None)], 'first_name':request.session['forename'], "election":election,"regions":regions })
+
+def GetGraph(request,election_id,region_id):
+
+	
+	authorised,username = CheckAuthorisation(request,True,[('statistics__demographics',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		election = 	get_object_or_404(Election, id=election_id)	
+		
+		elegible_voters = AllVoters(election_id)
+		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
+		
+		
+
+		demographic_statistics = []
+
+		elegible_voters_count = len(elegible_voters)
+		registered_voters_count = len(registered_voters)
+
+		demographic_statistics.append( MakeGraphInstance('Election Wide Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],0) )
+
+		region = Region.objects.get(id= region_id)
+		i = 1
+
+		region_elegible_voters = FilterVotersByRegion(elegible_voters,region.name,election.regions_type)
+		elegible_voters_count = len(region_elegible_voters)
+
+		region_registered_voters = FilterVotersByRegistered(region_elegible_voters,election_id)
+		registered_voters_count = len(region_registered_voters)
+
+		demographic_statistics.append( MakeGraphInstance(region.name + ': Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],i+1) )
+
+
+		return render(request, 'admin_interface/pages/statistics/get_graph.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Statistics Homepage", reverse('statistics_homepage')), ("Get Graph", None) ], "election":election, "demographic_statistics":demographic_statistics })
+
+
+
+# ---- Statistics END --- #
+
+
+
 def getNextID(tblName):
 	cursor = connection.cursor()
 	cursor.execute( "select nextval('"+tblName+"_id_seq')")
@@ -1032,7 +1102,6 @@ def FilterVotersByRegistered(voters,election_id):
 def MakeGraphInstance(graph_title,values_list,graph_num):
 	
 	return StatGraph(graph_title,values_list,graph_num)
-	
 
 
 def Demographics(request,election_id):
@@ -1045,6 +1114,7 @@ def Demographics(request,election_id):
 		regions = election.regions.all()
 
 		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage')), ("Roles Homepage", reverse('role_homepage'))], "election":election,"regions":regions })
+
 
 def GetGraph(request,election_id,region_id):
 	

@@ -13,6 +13,21 @@ h1 {
 label {
 	width: 200px;
 }
+
+.error {
+	color: red;
+	padding-left: 10px;
+	width: 320px;
+}
+
+.col-md-10.voteID.error {
+	
+}
+
+.js-example-basic-multiple.js-states.form-control.error {
+	width: 100%;	
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -202,6 +217,12 @@ input[type="password"]:after {
   	.submenu, .dropdown-menu {
   		float: left;
   	}
+}
+/*EDITING FOR ERROR MESSAGES OF DIFFERENT DEVICES*/
+@media (max-width: 940px) {
+	.error {
+		padding-left: 0;
+	}
 }
 
 /*TABLETS*/
@@ -633,3 +654,19 @@ S
 	font-size: 16px;
 }
 
+.noHover {
+	color: inherit !important;
+	text-decoration: inherit !important;
+}
+.expandable li {
+	display: none;
+	
+}
+.expandable li:first-child,
+.expandable li:nth-child(2),
+.expandable li:nth-child(3) {
+	display: block;
+}
+.expandable.expanded li {
+	display: block;
+}

@@ -23,6 +23,10 @@
 
 <p>From the list below, please select the election that you wish to vote in.</p>
 
+
+	<h2>The following elections are open for online voting and you have completed their registeration process:</h2>
+	<br>
+
 <br/>
 
 <table>
@@ -36,12 +40,13 @@
 		</tr>
 	</table>
 
-	<h2>Available Elections</h2>
+	<h2><b>Available Elections</b></h2>
+	<hr>
 	<ul class="list-group">
 		{% if elections %}
             {% for election in elections %}
             	<li class="list-group-item">
-					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name|title }}</span></a>
+					<a href="{% url 'cast_enter_password' %}?election_id={{ election.id }}" ><span class="available_election">{{ election.name }}</span></a>
 				</li>
                
             {% endfor %} 
