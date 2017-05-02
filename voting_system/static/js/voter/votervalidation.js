@@ -47,6 +47,7 @@ $(document).ready(function() {
 		rules: {
 			password: {
 				required: true
+				minlength: 6
 			},
 			confirm_password: {
 				required: true,
@@ -55,7 +56,8 @@ $(document).ready(function() {
 		},
 		messages: {
 			password: {
-				required: "Please fill in the password field"
+				required: "Please fill in the password field",
+				minlength: "Your password must be at least "
 			},
 			confirm_password: {
 				required: "Please confirm your password",
