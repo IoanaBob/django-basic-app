@@ -29,15 +29,15 @@
     <!--BREADCRUMBS<-->
     <div class="container">
         <ol class="breadcrumb">
-            {% for item in breadcrumb %}
+           {% for item in breadcrumb %}
                 <li class="breadcrumb-item">
-                    {% if item.1 is not None %}
-                    <a href="{{ item.1 }}">{{ item.0 }}</a></li>
-                    {% else %}
+                    {% ifequal item.1  None %}
                         <a class="noHover">{{ item.0 }}</a>
-                    {% endif %}
+                    
+                    {% else %}
+                        <a href="{{ item.1 }}">{{ item.0 }}</a></li>
+                    {% endifequal %}
                 </li>
-
             {% endfor %}
         </ol>
     </div>
