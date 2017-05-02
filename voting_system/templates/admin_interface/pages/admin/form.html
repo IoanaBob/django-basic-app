@@ -40,9 +40,10 @@
 </div>
 
 
+{% endblock %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="{% static 'js/select2.full.min.js' %}"></script>
+{% block js %}
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
 <script>
     $(document).ready(function() {
     $(".js-example-basic-multiple").select2({
@@ -59,5 +60,4 @@
     });
 });
 </script>
-
 {% endblock %}

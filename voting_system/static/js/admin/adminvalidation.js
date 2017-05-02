@@ -116,7 +116,7 @@ $(document).ready(function() {
 			end_date: {
 				required: true
 			},
-			'regions[]': {
+			region_id: {
 				required: true
 			}
 		},
@@ -130,7 +130,7 @@ $(document).ready(function() {
 			end_date: {
 				required: "Please enter an end date"
 			},
-			'regions[]': {
+			region_id: {
 				required: "Please select a region"
 			}
 		}

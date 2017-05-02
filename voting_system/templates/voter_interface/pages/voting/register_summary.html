@@ -6,28 +6,20 @@
 	<h1><b>Register to Vote Online</b></h1>
 	<hr/>
 	
-	</br>
+	<p>To cast your vote online, you must first register to vote online. You must complete this process for each election. You will need a poll card for each election you would like to register for. This will arrive in the mail.</p>
 
-
-		<p>To caste your vote online, you must first register to vote online. You must complete this process for each election. You will need a poll card for each election you would like to register for. This will arrive in the mail.</p>
-		</br>
-
-		<h3><b>Current Elections Nationally where Online Voting Registration is Open</b></h3>
-		<hr>
-		<p>You will select the elections you wish to register for later in the process. For now, please check your desired election is in the list below. If it is missing, this may be because the online registration process has not yet opened or because the election will not offer online voting. </p>
-		<ul>
-			<li><span class="election-font">General Election<span> <span>(National)</span></li>
-			<li><span class="election-font">Local Election - chesham <span> <span>(Amersham and Chesham Constituency Only)</span></li>
-		</ul>
-		</br>
-
+	<h3><b>Active Elections</b></h3>
 	
-		<h3><b>Proceed and Log In Using GOV.UK Verify</b></h3>
-		<p>To register to vote online, you must first login using the GOV.UK Verify service. Click the button bellow to proceed or <a href="">click here</a> [INSERT THE LINK] to learn more about the GOV.UK Verify process.</p>
+	<p>You will select the election you wish to register for later in the process. For now, please make sure that the election you wish to register for is included within the list below. If it is missing, this may be because the online registration process has not yet opened, has closed, or the election is not available for online voting.</p>
+	<ul class="list-group">
+		<li class="list-group-item">[National] 2017 General Election</li>
+		<li class="list-group-item">[Local] Chesham By-election <b>AMERSHAM AND CHESHAM CONSTITUENCY ONLY</b></li>
+	</ul>
+	
+	<h3><b>Proceed and Log In Using GOV.UK Verify</b></h3>
+	<p>To register to vote online, you must first login using the GOV.UK Verify service. Click the button bellow to continue or <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">learn more about the GOV.UK Verify process</a>.</p>
 
-		<a href="{% url 'public_verify' %}?destination=register_voter_id"><button type="button" class="btn btn-success">Proceed to GOV.UK Verify Login</button></a>
-	
-	
+	<a href="{% url 'public_verify' %}?destination=register_voter_id"><button type="button" class="btn btn-success">Continue</button></a>
 
 <!--INCASE YOU WANT TO GO BACK TO HAVING DIVs WITH ROWS
 	<div class="row">

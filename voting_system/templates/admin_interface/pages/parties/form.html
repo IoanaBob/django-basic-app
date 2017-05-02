@@ -1,8 +1,15 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
 
+{% if form.instance.id  %}
+
+<h1><b>Edit Party</b></h1>
+{% else %}
+
 <h1><b>New Party</b></h1>
+{% endif %}
 <hr>
+
 <form method="POST" id="adminNewParty">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save" class="btn btn-success">

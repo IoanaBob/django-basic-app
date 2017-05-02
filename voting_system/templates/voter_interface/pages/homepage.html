@@ -1,39 +1,46 @@
 {% extends 'voter_interface/base.html' %}
 {% block content %}
-	
+
+	<style>
+		tr,td
+		{
+			padding-right: 20px;
+		}
+	</style>
+
+
 
 	<h1><b>Online Voting</b></h1>
 	<hr/>
 	<div class="row">
-			<p class="col-md-8">Sign in or register to become eligable to vote online in elections. Then you can cast your vote within an election.</p>
+			<p class="col-md-8">Welcome to Online Voting. What do you wish to do?</p>
 	</div>
-	</br>
-	<div class="row">
-		<p class="col-md-2 col-sm-2 col-xs-2" style="padding-top: 25px; padding-left: 35px;"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></p>
-		<p class="col-md-10 col-xs-10 col-xs-10">We use <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">GOV.UK Verify</a>. If you do not already have an account, we will ask you to make one before you cast your vote. We advise this is done before the day of elections.</p>
-	</div>
+
 	</br>
 
-	<div>
-		<div id="online_option_container" class="col-md-6 col-xs-12">
-			<h2><b>Register to Vote Online</b></h2>
-			<p>To caste your vote online, you must first register to vote online. You must complete this process for each election.</p>
-			<p>You will need a poll card for each election you would like to register for. This will arrive in the mail.</p>
-			<a href="{% url 'register_summary' %}"><button type="button" class="btn btn-success">Register to Vote Online</button></a>
-
-		</div>
-
-		<div id="online_option_container" class="col-md-6 col-xs-12">
-			<h2><b>Cast You Vote Online</b></h2>
-			<p>If you have registered to vote online for an election, once the online voting opens, you may use the button below to cast your vote.</p>
-			<p>You will need the password you created when you registered and a voter code which you would have been sent in the mail once you registered.</p>
-			<a href="{% url 'cast_vote_summary' %}"><button type="button" class="btn btn-success">Cast your Vote</button></a>
-		</div>
-
-	</div>
-
-
+	<table>
+		<tr>
+			<td>
+				<span class="glyphicon glyphicon-info-sign" aria-hidden="true" style="padding-bottom: 15px;"></span>
+			</td>
+			<td>
+				<p><b>We use <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">GOV.UK Verify</a>. If you do not already have an account, we will ask you to make one before you cast your vote. We advise this is done before the day of elections.</b></p>
+			</td>
+		</tr>
+	</table>
 	
+<div class="row">
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'register_summary' %}"><h3>Register to Vote Online</h3></a>
+		<p>To caste your vote online, you must first register to vote online. You must complete this process for each election.</p>
+		<p>You will need a poll card for each election you would like to register for. This will arrive in the mail.</p>
+	</div>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<a href="{% url 'cast_vote_summary' %}"><h3>Cast your Vote</h3></a>
+		<p>If you have registered to vote online for an election, once the online voting opens, you may use the button below to cast your vote.</p>
+		<p>You will need the password you created when you registered and a voter code which you would have been sent in the mail once you registered.</p>
+	</div>	
+</div>
 
 
 	

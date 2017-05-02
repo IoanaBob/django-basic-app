@@ -20,6 +20,10 @@ label {
 	width: 320px;
 }
 
+.col-md-10.voteID.error {
+	
+}
+
 .js-example-basic-multiple.js-states.form-control.error {
 	width: 100%;	
 }
