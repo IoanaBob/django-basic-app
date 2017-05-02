@@ -196,7 +196,7 @@ def CastEnterPassword(request):
 
 def public_vote_home(request):
 
-	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None )]})
+	return render(request, 'voter_interface/pages/voting/home.html', {"title": "Election Homepage","header_messages": {}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None )]})
 
 
 def public_vote_ballot(request): #TODO rename cast_check_code
@@ -222,10 +222,10 @@ def public_vote_ballot(request): #TODO rename cast_check_code
 			return redirect('public_vote__ballot')	
 	else:
 		form = CheckCodeForm()
-		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
+		return render(request, 'voter_interface/pages/voting/cast_check_code.html', {'form': form, "title": "Election Ballot", "header_messages": {}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
 
 def public_vote_ballot_acknowledgement(request):
-	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {"welcome": "Welcome to Online Voting", "voter": "Here you will be able to cast your vote in the election by entering your details and online code, or request a code so you can access the ballot"}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
+	return render(request, 'voter_interface/pages/voting/acknowledgement.html', {"title": "Election Ballot", "header_messages": {}, 'breadcrumb': [('Home', "http://www.gov.uk"), ('Elections', None), ('Log In', None), ('Election Home', None), ('Election Home', None)]})
 
 
 
