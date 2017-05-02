@@ -46,10 +46,14 @@
 	<h3><b>Available Elections</b></h3>
 	<p>You will select the election you wish to cast a ballot for later in the process. For now, please make sure that the election you wish to vote in is included within the list below. If it is missing, this may be because the online voting process has not yet opened, has closed, or the election is not available for online voting.</p>
 	
-	<ul class="list-group">
-		<li class="list-group-item">[National] 2017 General Election</li>
-		<li class="list-group-item">[Local] Chesham By-election <b>AMERSHAM AND CHESHAM CONSTITUENCY ONLY</b></li>
-	</ul>
+	{% if elections %}
+		<ul class="list-group expandable">
+			{% for election in elections %}
+				<li class="list-group-item">{{ election }}</li>
+			{% endfor %}
+			
+		</ul>
+	{% endif %}
 
 	<h3><b>Proceed and Log In Using GOV.UK Verify</b></h3>
 	<p>To register to vote online, you must first login using the GOV.UK Verify service. Click the button bellow to continue or <a href="https://www.gov.uk/government/publications/introducing-govuk-verify/introducing-govuk-verify">learn more about the GOV.UK Verify process</a>.</p>
@@ -62,6 +66,16 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
-	$('.carousel').carousel();
+	$(document).ready(function(e) {
+		if( $('.expandable li').length > 3)
+			$('<button class="btn btn-success" role="button" id="expandList">View All Avilable Elections</button>').insertAfter('.expandable');
+
+		
+		$('#expandList').on('click', function(e) {
+			e.preventDefault();
+			$('.expandable').toggleClass('expanded');
+			$(this).text(( $(this).text() == "View All Avilable Elections") ? "Hide Elections" : "View All Avilable Elections" );
+		});
+	});
 	</script>
 {% endblock %}

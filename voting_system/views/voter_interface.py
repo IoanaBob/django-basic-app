@@ -18,7 +18,10 @@ def public_homepage(request):
 
 
 def RegisterSummary(request):
-	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ] ,'destination':request.GET.get('destination') })
+	#get elections
+	elections = Election.objects.filter(registration_start_date__lte = datetime.date.today(), registration_end_date__gte = datetime.date.today()).values_list('name', flat=True)
+
+	return render(request, 'voter_interface/pages/voting/register_summary.html', {"title": "Register to Vote Online - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ] ,'destination':request.GET.get('destination'), 'elections': elections })
 
 
 def RegisterVoterId(request):
@@ -128,7 +131,10 @@ def public_verify(request):
 
 #CAST VOTE
 def CastVoteSummary(request):
-	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ],'destination':request.GET.get('destination') })
+	elections = Election.objects.filter(voting_start_date__lte = datetime.date.today(), voting_end_date__gte = datetime.date.today()).values_list('name', flat=True)
+
+
+	return render(request, 'voter_interface/pages/voting/cast_vote_summary.html', {"title": "Cast Your Vote - Summary", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None) ],'destination':request.GET.get('destination'), 'elections': elections })
 
 
 def CastVoteId(request):
