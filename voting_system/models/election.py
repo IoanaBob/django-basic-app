@@ -23,7 +23,7 @@ class Election(models.Model):
     parties = models.ManyToManyField(Party, through='ElectionParty')
     candidates = models.ManyToManyField(Candidate, through='ElectionCandidate')
     regions = models.ManyToManyField(Region, through='ElectionRegion')
-    regions_type = models.CharField(max_length=50, choices=( ('admin_district', 'admin_district'), ('parliamentary_constituency','parliamentary_constituency'), ('european_electoral_region','european_electoral_region'),('admin_ward','admin_ward') ))
+    regions_type = models.CharField(max_length=50, choices=( ('admin_district', 'Admin District'), ('parliamentary_constituency','Parliamentary Constituency'), ('european_electoral_region','European Electoral Region'),('admin_ward','Admin Ward') ))
     
 
     def __str__(self):

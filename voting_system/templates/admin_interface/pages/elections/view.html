@@ -25,10 +25,10 @@
                      {{ election.name }}
                     </td>
                     <td>
-                    {{ election.start_date }}
+                    {{ election.voting_start_date }}
                     </td>
                     <td>
-                    {{ election.end_date }}
+                    {{ election.voting_end_date }}
                     </td>
                     <td>
                         <a href="{% url 'election_edit' id=election.id %}" class="btn btn-success">Edit</a>
