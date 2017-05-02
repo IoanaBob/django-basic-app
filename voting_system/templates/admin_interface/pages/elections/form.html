@@ -3,6 +3,7 @@
 
 <h1>New Election</h1> {% else %}
 <h1>Edit Election</h1> {% endif %} {% if candidates %}
+<hr>
 <form method="POST" id="adminNewElection">
     {% csrf_token %}
     {{ form.as_p }}

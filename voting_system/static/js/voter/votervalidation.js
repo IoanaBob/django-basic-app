@@ -31,6 +31,18 @@ $(document).ready(function() {
 			}
 		}
 	}),
+	$("#enterVoterCode").validate({
+		rules: {
+			code: {
+				required: true
+			}
+		},
+		messages: {
+			code: {
+				required: "Please enter your vote code"
+			}
+		}
+	})
 	$("#enterPassword").validate({
 		rules: {
 			password: {
@@ -46,7 +58,7 @@ $(document).ready(function() {
 	$("#create_confirm_password").validate({
 		rules: {
 			password: {
-				required: true
+				required: true,
 				minlength: 6
 			},
 			confirm_password: {
