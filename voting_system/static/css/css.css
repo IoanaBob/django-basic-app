@@ -677,9 +677,10 @@ S
 #txt {
   	vertical-align: middle;
   	padding-left: 5px;
-  	font-size: 29px;
+  	font-size: 30px; /*match gov website CA */
   	font-weight: bold;
   	padding-top: 3px;
+	color: white;
 }
 .noHover {
 	color: inherit !important;
