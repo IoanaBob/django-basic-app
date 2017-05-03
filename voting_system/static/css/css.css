@@ -187,11 +187,11 @@ input[type="password"]:after {
 	padding-top: 10px
 }
 
-.navbar-inverse .navbar-brand:hover,
+/*.navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus,
 .navbar-inverse .navbar-brand > img {
 	text-decoration: underline
-}
+}*/
 
 /*FOR PHONE DEVICES */
 @media (max-width: 667px) {
