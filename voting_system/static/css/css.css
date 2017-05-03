@@ -644,7 +644,7 @@ S
 }
 .dashboard-font {
 	position: relative;
-	height: 125px;
+	min-height: 125px;
 }
 
 .dashboard-font h3 {
@@ -656,7 +656,6 @@ S
 
 .dashboard-font p {
 	font-size: 16px;
-	
 }
 
 .noHover {
@@ -678,15 +677,16 @@ S
 .dashboard-font .fa {
 	font-size: 50px !important;
 	position: absolute;
-	left:0;
-	top:0;
-	right: 0;
+
 	bottom: 0;
 	margin: auto;
 	
 }
 .dashboard-content:hover + .icon .fa {
 	color: #005EAC;
+}
+.dashboard-font .fa.large {
+    margin-top: -20px;
 }
 .dashboard-font .fa.low {
 	margin-top: 20px;
@@ -703,11 +703,11 @@ p.dashboard-item p,
 	margin-top: 0;
 }
 .dashboard-content {
-
 	display: inline-block;
 	width: calc( 100% - 80px);
 	margin-left: 70px;
-	height: 125px;
-}p.dashboard-item {
+	min-height: 125px;
+}
+p.dashboard-item {
 	min-height: 44px;
 }
