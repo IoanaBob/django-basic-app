@@ -3,7 +3,11 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
-<h1><b>Admin</b></h1>
+{% if form.instance.id %}
+    <h1><b>Edit Admin</b></h1>
+{% else %}
+    <h1><b>New Admin</b></h1>
+{% endif %}
 <hr/>
 <form method="POST" id="adminCreate">{% csrf_token %}
 
@@ -13,7 +17,7 @@
     <br>
     <h2><b>Change Password</b></h2>
     <hr>
-    {% if current_roles %}
+    {% if form.instance.id %}
         <p><label for="id_cur_password">Current Password</label><input type="password" id="id_cur_password" name="current_password"></p>
     {% endif %}
     <p><label for="id_password">Password</label><input type="password" name="password" id="id_password"></p>
@@ -31,7 +35,7 @@
     <input type="checkbox" id="selectAll" >
     <br>
     <br>
-    <input type="submit" value="Submit" class="btn btn-success" style="display: block;">
+    <button role="button" class="btn btn-success" style="display: block;">{% if form.instance.id  %}<i class="fa fa-floppy-o" aria-hidden="true"></i> Save{% else %}<i class="fa fa-plus" aria-hidden="true"></i> Create{% endif %}</button>
 </form>
 <div class="errors">
     {% for error in errors %}

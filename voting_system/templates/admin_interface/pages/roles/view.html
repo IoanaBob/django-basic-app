@@ -21,10 +21,10 @@
                     {{ role.name }}
                     </td>
                     <td>
-                        <a href="{% url 'role_edit' id=role.id %}" class="btn btn-success">Edit</a> 
+                        <a href="{% url 'role_edit' id=role.id %}" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a> 
                     </td>
                     <td>
-                        <a href="{% url 'role_delete' id=role.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'role_delete' id=role.id %}" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -55,6 +55,6 @@
     <h3>No Roles Available</h3>
 {% endif %}
 <h2><b>Actions</b></h2>
-<a href="{% url 'role_create' %}" class="btn btn-success">Create</a>
+<a href="{% url 'role_create' %}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Create</a>
 
 {% endblock %}

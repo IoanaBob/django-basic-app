@@ -12,7 +12,7 @@
 
 <form method="POST" id="adminNewParty">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Save" class="btn btn-success">
+    <button role="button" class="btn btn-success" style="display: inline-block">{% if form.instance.id  %}<i class="fa fa-floppy-o" aria-hidden="true"></i> Save{% else %}<i class="fa fa-plus" aria-hidden="true"></i> Create{% endif %}</button>
 </form>
 
 {% endblock %}

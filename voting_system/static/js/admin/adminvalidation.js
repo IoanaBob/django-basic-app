@@ -68,13 +68,7 @@ $(document).ready(function() {
 				email: true,
 				required: true
 			},
-			password: {
-				required: true
-			},
-			repeatPassword: {
-				required: true,
-				equalTo: "#id_password"
-			}, 
+			
 			'roles[]': {
 				required: true
 			}
@@ -92,13 +86,6 @@ $(document).ready(function() {
 			email: {
 				email: "Please enter a valid email",
 				required: "Please enter an email address"
-			},
-			password: {
-				required: "Please enter a password"
-			},
-			repeatPassword: {
-				required: "Please confirm the password",
-				equalTo: "Your passwords aren't equal!"
 			},
 			'roles[]': {
 				required: "Please select a role"
