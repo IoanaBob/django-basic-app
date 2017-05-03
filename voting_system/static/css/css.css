@@ -680,7 +680,7 @@ S
   	font-size: 29px;
   	font-weight: bold;
   	padding-top: 3px;
-=======
+}
 .noHover {
 	color: inherit !important;
 	text-decoration: inherit !important;
@@ -733,5 +733,5 @@ p.dashboard-item p,
 }
 p.dashboard-item {
 	min-height: 44px;
->>>>>>> 366e8447fae4af97d884c1ca98260e191257956d
+
 }
