@@ -1,20 +1,21 @@
 {% extends 'voter_interface/base.html' %}
 {% load staticfiles%}
 {% block content %}
+
 <div class="row">
-<h1 class="col-md-8 col-sm-8 col-xs-8" style="font-size: 40px;"><b>Enter your voter ID</b> </h1> 
-<div class="col-md-4 col-sm-4 col-xs-4" id="verify_logo_conteiner">
-<img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
-</div>
+	<h1 class="col-md-8 col-sm-8 col-xs-8" style="font-size: 40px;"><b>Enter Your Voter ID</b> </h1> 
+	<div class="col-md-4 col-sm-4 col-xs-4" id="verify_logo_conteiner">
+		<img  id="verify_logo" src=" {% static '/images/Verify_logo.jpg' %} " /> 
+	</div>
 </div>
 <hr>
-<p>You are verified as: <b>{{first_name}} {{last_name}}</b></p>
-<p>Enter your unique voter ID into the text box below. When this is done, proceed to the next step by clicking the "submit" button below.</p>
-</br>
+
+<div class="alert alert-success" role="alert"><p>You are verified as: <b>{{first_name}} {{last_name}}</b></p></div>
+
+<p>Please enter your Voter ID. This is a unique code found on your polling card, which you should have recieved through the post. Haven't recieved a polling card? <a href="https://www.gov.uk/register-to-vote">Add your details to the electoral register</a>.</p>
 
 
-
-	<form method="POST" class="form-horizontal">
+	<!--<form method="POST" id="enterVoterID" class="form-horizontal">
 		{% csrf_token %}
 		<div class="col-md-12">
       		<label class="col-md-2 control-label" for="voter_id">Voter Id:</label>  
@@ -23,6 +24,20 @@
         <br>
         
         <button type="submit" class="btn btn-success">Submit</button>
+        <br><-->
+    <form method="POST" id="enterVoterID" class="form-horizontal">
+    {% csrf_token %}
+    
+    	<label class="col-md-2" for="voter_id" style="font-size: 19px; padding-left: 0;">Voter ID:</label>
+    	<input class="col-md-10" type="text" name="voter_id" />
+    
+      <br>
+      <br>
+    	<div class="col-md-12" style="padding-left: 0;">
+    		<button type="submit" class="btn btn-success">Submit</button>
+   		</div>
+   	
+
     </form>
 
 

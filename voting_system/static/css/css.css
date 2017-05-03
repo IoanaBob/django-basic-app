@@ -13,6 +13,21 @@ h1 {
 label {
 	width: 200px;
 }
+
+.error {
+	color: red;
+	padding-left: 10px;
+	width: 320px;
+}
+
+.col-md-10.voteID.error {
+	
+}
+
+.js-example-basic-multiple.js-states.form-control.error {
+	width: 100%;	
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -202,6 +217,12 @@ input[type="password"]:after {
   	.submenu, .dropdown-menu {
   		float: left;
   	}
+}
+/*EDITING FOR ERROR MESSAGES OF DIFFERENT DEVICES*/
+@media (max-width: 940px) {
+	.error {
+		padding-left: 0;
+	}
 }
 
 /*TABLETS*/
@@ -621,6 +642,10 @@ S
 	text-decoration: none;
 	color: white;
 }
+.dashboard-font {
+	position: relative;
+	min-height: 125px;
+}
 
 .dashboard-font h3 {
 	text-decoration: underline;
@@ -633,6 +658,7 @@ S
 	font-size: 16px;
 }
 
+<<<<<<< HEAD
 #navbar-table {
 	margin-top: -1px;
 }
@@ -654,4 +680,58 @@ S
   	font-size: 29px;
   	font-weight: bold;
   	padding-top: 3px;
+=======
+.noHover {
+	color: inherit !important;
+	text-decoration: inherit !important;
+}
+.expandable li {
+	display: none;
+	
+}
+.expandable li:first-child,
+.expandable li:nth-child(2),
+.expandable li:nth-child(3) {
+	display: block;
+}
+.expandable.expanded li {
+	display: block;
+}
+.dashboard-font .fa {
+	font-size: 50px !important;
+	position: absolute;
+
+	bottom: 0;
+	margin: auto;
+	
+}
+.dashboard-content:hover + .icon .fa {
+	color: #005EAC;
+}
+.dashboard-font .fa.large {
+    margin-top: -20px;
+}
+.dashboard-font .fa.low {
+	margin-top: 20px;
+}
+p.dashboard-item p,
+.dashboard-item h3,
+.dashboard-font .icon {
+	display: inline-block;
+	position: relative;
+}
+ .dashboard-font .icon {
+	display: inline-block;
+	height: 62.5px;
+	margin-top: 0;
+}
+.dashboard-content {
+	display: inline-block;
+	width: calc( 100% - 80px);
+	margin-left: 70px;
+	min-height: 125px;
+}
+p.dashboard-item {
+	min-height: 44px;
+>>>>>>> 366e8447fae4af97d884c1ca98260e191257956d
 }

@@ -1,0 +1,61 @@
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+{% load staticfiles %}
+
+<h1>Demographics Statistics</h1>
+<h2>Election: {{election.name}}<h2>
+
+
+<div id="graph_container">
+
+
+<div class="row">
+    <div class="dashboard-font col-md-12 col-sm-12 col-xs-12 col-xl-12">
+        
+
+    <div class="stat_chart" id="chart_div_{{ graph.graph_num }}"></div>
+        
+    </div>
+
+    <div id="results_container">
+      <ul>
+        {% for result in processed_results %}
+        <li> {{result.0}}: {{result.1}} </li>
+        {% endfor %}
+      </ul>
+    </div>
+   
+</div>
+
+
+
+
+
+</div>
+
+<script src="{% static 'js/stats.js' %}" type="text/javascript" ></script>
+<script src="{% static 'js/loader.js' %}" type="text/javascript" ></script>
+
+ <script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Load the Visualization API and the corechart package.
+     
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+        {% autoescape off %}
+            {{ graph.function_string }}
+        {% endautoescape %}
+
+}
+
+    </script>
+{% endblock %}

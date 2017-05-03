@@ -1,7 +1,8 @@
 {% extends 'admin_interface/base.html' %}
 {% block content %}
 
-<h1>Roles</h1>
+<h1><b>Roles</b></h1>
+<hr>
 {% if roles %}
     <table class="table table-striped table-hover">
         <thead>
@@ -20,10 +21,10 @@
                     {{ role.name }}
                     </td>
                     <td>
-                        <a href="{% url 'role_edit' id=role.id %}" class="btn btn-success">Edit</a> 
+                        <a href="{% url 'role_edit' id=role.id %}" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a> 
                     </td>
                     <td>
-                        <a href="{% url 'role_delete' id=role.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'role_delete' id=role.id %}" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -53,7 +54,7 @@
 {% else %}
     <h3>No Roles Available</h3>
 {% endif %}
-<h2>Actions</h2>
-<a href="{% url 'role_create' %}" class="btn btn-success">Create</a>
+<h2><b>Actions</b></h2>
+<a href="{% url 'role_create' %}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Create</a>
 
 {% endblock %}
