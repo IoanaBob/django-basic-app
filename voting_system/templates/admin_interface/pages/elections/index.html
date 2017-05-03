@@ -4,12 +4,24 @@
 
 <div class="row">
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'election_view' %}"><h3>View Elections</h3></a>
-		<p>View the existing elections</p>
+		<div class="icon">
+			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'election_view' %}" class="dashboard-item"><h3>View Elections</h3></a>
+			<p class="dashboard-item">View, Edit and Delete a Selected Election.</p>
+			
+		</div>
+		
 	</div>
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'election_create' %}"><h3>Create Election</h3></a>
-		<p>Create a new election</p>
-	</div>	
+		<div class="icon">
+			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'election_create' %}" class="dashboard-item"><h3>Create Election</h3></a>
+			<p class="dashboard-item">Create a New Election.</p>
+		</div>
+	</div>
 </div>
 {% endblock %}

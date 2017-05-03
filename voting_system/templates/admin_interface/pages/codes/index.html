@@ -4,13 +4,28 @@
 
 <div class="row">
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'voter_code_view' %}"><h3>View Voter Codes</h3></a>
-		<p>View all voter codes</p>
+		<div class="icon">
+			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'voter_code_view' %}" class="dashboard-item"><h3>View Voter Codes</h3></a>
+			<p class="dashboard-item">View Voter Codes.</p>
+			
+		</div>
+		
 	</div>
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'voter_code_print_unissued' %}"><h3>Print Unissued Voter Codes </h3></a>
-		<p>Print unissued voter codes</p>
-	</div>		
+		<div class="icon">
+			<i class="fa fa-print fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'voter_code_print_unissued' %}" class="dashboard-item"><h3>Print Voter Codes</h3></a>
+			<p class="dashboard-item">Print Unissued Voter Codes</p>
+			
+		</div>
+		
+	</div>
+		
 </div>
 
 {% endblock %}

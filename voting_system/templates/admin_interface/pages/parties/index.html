@@ -3,13 +3,27 @@
 
 <div class="row">
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'party_view' %}"><h3>View Parties</h3></a>
-		<p>View the existing parties</p>
+		<div class="icon">
+			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'party_view' %}" class="dashboard-item"><h3>View Parties</h3></a>
+			<p class="dashboard-item">View, Edit and Delete a Selected Party.</p>
+			
+		</div>
+		
 	</div>
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'party_create' %}"><h3>Create Parties</h3></a>
-		<p>Add a new party</p>
-	</div>	
+		<div class="icon">
+			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'party_create' %}" class="dashboard-item"><h3>Create Parties</h3></a>
+			<p class="dashboard-item">Create a New Role.</p>
+			
+		</div>
+		
+	</div>
 </div>
 
 {% endblock %}

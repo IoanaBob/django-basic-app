@@ -34,11 +34,13 @@
 		<a href="{% url 'register_summary' %}"><h3>Register to Vote Online</h3></a>
 		<p>To caste your vote online, you must first register to vote online. You must complete this process for each election.</p>
 		<p>You will need a poll card for each election you would like to register for. This will arrive in the mail.</p>
+		<a href="{% url 'register_summary' %}" class="btn btn-success">Register to Vote Online</a>
 	</div>
 	<div class="dashboard-font col-md-6 col-sm-6">
 		<a href="{% url 'cast_vote_summary' %}"><h3>Cast your Vote</h3></a>
 		<p>If you have registered to vote online for an election, once the online voting opens, you may use the button below to cast your vote.</p>
 		<p>You will need the password you created when you registered and a voter code which you would have been sent in the mail once you registered.</p>
+		<a href="{% url 'cast_vote_summary' %}" class="btn btn-success" role="button">Cast your Vote</a>
 	</div>	
 </div>
 

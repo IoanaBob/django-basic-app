@@ -3,18 +3,39 @@
 {% block content %}
 
 <div class="row">
-		<div class="dashboard-font col-md-4 col-sm-4">
-			<a href="{% url 'region_view' %}"><h3>View Region</h3></a>
-			<p>View all regions</p>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<div class="icon">
+			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
 		</div>
-		<div class="dashboard-font col-md-4 col-sm-4">
-			<a href="{% url 'region_create' %}"><h3>Create Region</h3></a>
-			<p>Create a new region</p>
+		<div class="dashboard-content">
+			<a href="{% url 'region_view' %}" class="dashboard-item"><h3>View Region</h3></a>
+			<p class="dashboard-item">View, Edit and Delete Selected a Regions.</p>
+			
 		</div>
-		<div class="dashboard-font col-md-4 col-sm-4">
-			<a href="{% url 'region_populate' %}"><h3>Populate Region</h3></a>
-			<p>Populate regions database</p>
-		</div>		
+		
 	</div>
+	<div class="dashboard-font col-md-6 col-sm-6">
+		<div class="icon">
+			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'region_create' %}" class="dashboard-item"><h3>Create Region</h3></a>
+			<p class="dashboard-item">Create a New Region.</p>
+		</div>
+		
+	</div>
+	<!--
+	<div class="dashboard-font col-md-4 col-sm-4">
+		<div class="icon">
+			<i class="fa fa-plus-table fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'region_populate' %}" class="dashboard-item"><h3>Populate Regions</h3></a>
+			<p class="dashboard-item">Populate  a New Region.</p>
+		</div>
+		
+	</div> 
+	-->	
+</div>
 
 {% endblock %}

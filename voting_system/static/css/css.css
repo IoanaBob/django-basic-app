@@ -642,6 +642,10 @@ S
 	text-decoration: none;
 	color: white;
 }
+.dashboard-font {
+	position: relative;
+	height: 125px;
+}
 
 .dashboard-font h3 {
 	text-decoration: underline;
@@ -652,6 +656,7 @@ S
 
 .dashboard-font p {
 	font-size: 16px;
+	
 }
 
 .noHover {
@@ -669,4 +674,40 @@ S
 }
 .expandable.expanded li {
 	display: block;
+}
+.dashboard-font .fa {
+	font-size: 50px !important;
+	position: absolute;
+	left:0;
+	top:0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	
+}
+.dashboard-content:hover + .icon .fa {
+	color: #005EAC;
+}
+.dashboard-font .fa.low {
+	margin-top: 20px;
+}
+p.dashboard-item p,
+.dashboard-item h3,
+.dashboard-font .icon {
+	display: inline-block;
+	position: relative;
+}
+ .dashboard-font .icon {
+	display: inline-block;
+	height: 62.5px;
+	margin-top: 0;
+}
+.dashboard-content {
+
+	display: inline-block;
+	width: calc( 100% - 80px);
+	margin-left: 70px;
+	height: 125px;
+}p.dashboard-item {
+	min-height: 44px;
 }

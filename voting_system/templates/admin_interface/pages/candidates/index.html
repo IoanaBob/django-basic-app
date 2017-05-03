@@ -4,12 +4,24 @@
 
 <div class="row">
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'candidate_view' %}"><h3>View Candidates</h3></a>
-		<p>View all candidates</p>
+		<div class="icon">
+			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'candidate_view' %}" class="dashboard-item"><h3>View Candidates</h3></a>
+			<p class="dashboard-item">View, Edit and Delete a Selected Candidates.</p>	
+		</div>
 	</div>
 	<div class="dashboard-font col-md-6 col-sm-6">
-		<a href="{% url 'candidate_create' %}"><h3>Create Candidate</h3></a>
-		<p>Add a new candidate</p>
-	</div>		
+		<div class="icon">
+			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+		</div>
+		<div class="dashboard-content">
+			<a href="{% url 'candidate_create' %}" class="dashboard-item"><h3>Create Candidate</h3></a>
+			<p class="dashboard-item">Create a New Role.</p>
+			
+		</div>
+		
+	</div>
 </div>
 {% endblock %}
