@@ -2,28 +2,32 @@
 {% block content %}
 
 <div class="row">
-	<div class="dashboard-font col-md-6 col-sm-6">
-		<div class="icon">
-			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+	
+	{% if 'role__view' in roles %}
+		<div class="dashboard-font col-md-6 col-sm-6">
+			<div class="icon">
+				<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+			</div>
+			<div class="dashboard-content">
+				<a href="{% url 'role_view' %}" class="dashboard-item"><h3>View Roles</h3></a>
+				<p class="dashboard-item">View, Edit and Delete a Selected Roles.</p>
+				
+			</div>
 		</div>
-		<div class="dashboard-content">
-			<a href="{% url 'role_view' %}" class="dashboard-item"><h3>View Roles</h3></a>
-			<p class="dashboard-item">View, Edit and Delete a Selected Roles.</p>
+	{% endif %}
+	{% if 'role__create' in roles %}
+		<div class="dashboard-font col-md-6 col-sm-6">
+			<div class="icon">
+				<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+			</div>
+			<div class="dashboard-content">
+				<a href="{% url 'role_create' %}" class="dashboard-item"><h3>Create Role</h3></a>
+				<p class="dashboard-item">Create a New Role.</p>
+				
+			</div>
 			
 		</div>
-		
-	</div>
-	<div class="dashboard-font col-md-6 col-sm-6">
-		<div class="icon">
-			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
-		</div>
-		<div class="dashboard-content">
-			<a href="{% url 'role_create' %}" class="dashboard-item"><h3>Create Role</h3></a>
-			<p class="dashboard-item">Create a New Role.</p>
-			
-		</div>
-		
-	</div>
+	{% endif %}
 	
 </div>
 {% endblock %}

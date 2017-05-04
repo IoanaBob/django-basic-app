@@ -2,29 +2,30 @@
 
 {% block content %}
 <div class="row">
-	<div class="dashboard-font col-md-6 col-sm-6">
-		<div class="icon">
-			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
-		</div>
-		<div class="dashboard-content">
-			<a href="{% url 'admin_view' %}" class="dashboard-item"><h3>View Admins</h3></a>
-			<p class="dashboard-item">View, Edit and Delete a Selected Admins.</p>
+	{% if 'admin__view' in roles %}
+		<div class="dashboard-font col-md-6 col-sm-6">
+			<div class="icon">
+				<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
+			</div>
+			<div class="dashboard-content">
+				<a href="{% url 'admin_view' %}" class="dashboard-item"><h3>View Admins</h3></a>
+				<p class="dashboard-item">View, Edit and Delete a Selected Admins.</p>
+				
+			</div>
 			
 		</div>
-		
-	</div>
-	<div class="dashboard-font col-md-6 col-sm-6">
-		<div class="icon">
-			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+	{% endif %}
+	{% if 'admin__create' in roles %}
+		<div class="dashboard-font col-md-6 col-sm-6">
+			<div class="icon">
+				<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
+			</div>
+			<div class="dashboard-content">
+				<a href="{% url 'admin_create' %}" class="dashboard-item"><h3>Create Admin</h3></a>
+				<p class="dashboard-item">Create a New Admin.</p>
+			</div>
 		</div>
-		<div class="dashboard-content">
-			<a href="{% url 'admin_create' %}" class="dashboard-item"><h3>Create Admin</h3></a>
-			<p class="dashboard-item">Create a New Admin.</p>
-			
-		</div>
-		
-	</div>
-
+	{% endif %}
 </div>
 
 {% endblock %}

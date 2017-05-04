@@ -162,7 +162,7 @@ def CastElectionSelect(request):
 	user = Verify.objects.get(email = request.session['verify_username'])
 
 	elections = GetAvailableElectionsForUser(user.voter_id, False)
-
+	print(elections)
 	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name': request.session['verify_surname'], 'elections':elections })
 
 
@@ -460,7 +460,6 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 								elections.append(election)
 				except:
 					print("Region not found, likely a non created admin_district")
-
 	return elections
 
 

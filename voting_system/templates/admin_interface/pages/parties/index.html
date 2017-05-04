@@ -2,6 +2,7 @@
 {% block content %}
 
 <div class="row">
+	{% if 'party__view' in roles %}
 	<div class="dashboard-font col-md-6 col-sm-6">
 		<div class="icon">
 			<i class="fa fa-list fa-fw low" aria-hidden="true"></i>
@@ -13,6 +14,8 @@
 		</div>
 		
 	</div>
+	{% endif %}
+	{% if 'party__create' in roles %}
 	<div class="dashboard-font col-md-6 col-sm-6">
 		<div class="icon">
 			<i class="fa fa-plus-circle fa-fw low" aria-hidden="true"></i>
@@ -24,6 +27,7 @@
 		</div>
 		
 	</div>
+	{% endif %}
 </div>
 
 {% endblock %}

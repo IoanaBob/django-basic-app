@@ -32,10 +32,10 @@
                     {{ candidate.party.name }}
                 </td>
                 <td>
-                    <a href="{% url 'candidate_edit' id=candidate.id %}" class="btn btn-success"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+                    <a href="{% url 'candidate_edit' id=candidate.id %}" class="btn btn-success {% if 'candidates__edit' not in roles %}disabled{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
                 </td>
                 <td>
-                    <a href="{% url 'candidate_delete' id=candidate.id %}" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
+                    <a href="{% url 'candidate_delete' id=candidate.id %}" class="btn btn-danger {% if 'candidates__delete' not in roles %}disabled{% endif %}"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
                 </td>
             </tr>
             {% endfor %}
@@ -67,7 +67,7 @@
     <h3>No Candidates Available</h3>
 {% endif %}
 <h2>Actions</h2>
-<a href="{% url 'candidate_create' %}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> Create new Candidate</a>
+<a href="{% url 'candidate_create' %}" class="btn btn-success {% if 'candidates__create' not in roles %}disabled{% endif %}"><i class="fa fa-plus" aria-hidden="true"></i> Create new Candidate</a>
 
 
 {% endblock %}

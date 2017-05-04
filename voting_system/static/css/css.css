@@ -632,7 +632,7 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
-S
+
 /*Craig's CSS*/
 .election-font {
 	font-size: 16px
@@ -642,9 +642,43 @@ S
 	text-decoration: none;
 	color: white;
 }
-.dashboard-font {
-	position: relative;
-	min-height: 125px;
+
+
+@media screen and (max-width: 700px) {
+	.dashboard-font {
+		position: relative;
+		min-height: 125px;
+		display: block;
+		float: none !important;
+		width: 100% !important;
+		vertical-align: top;
+
+	}
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-md-4,
+	.dashboard-font.col-sm-4 {
+		width: 100% !important
+	}
+	
+}
+@media screen and (min-width: 700px) {
+	.dashboard-font {
+		position: relative;
+		min-height: 125px;
+		float: none !important;
+		display: inline-block;
+		vertical-align: top;
+
+	}
+	.dashboard-font.col-md-4,
+	.dashboard-font.col-sm-4 {
+		width: 30% !important
+	}
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-sm-6 {
+		width: 49% !important
+	}
 }
 
 .dashboard-font h3 {
