@@ -894,7 +894,7 @@ def statistics_homepage(request):
 		else:
 			elections = Election.objects.filter(Q(voting_end_date__lte = datetime.date.today()))
 			print(elections)
-			return render(request, 'admin_interface/pages/statistics/index.html', {'title': "Statistics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage'))], 'first_name':request.session['forename'], "elections": elections})
+			return render(request, 'admin_interface/pages/statistics/index.html', {'title': "Statistics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage'), 'pie-chart')], 'first_name':request.session['forename'], "elections": elections})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
@@ -908,7 +908,7 @@ def Demographics(request,election_id):
 		election = 	get_object_or_404(Election, id=election_id)	
 		regions = election.regions.all()
 
-		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage')), ("View Statistics", None)], 'first_name':request.session['forename'], "election":election,"regions":regions })
+		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage'), 'pie-chart'), ("View Statistics", None, 'graph')], 'first_name': request.session['forename'], "election":election, "regions":regions })
 
 def GetGraph(request,election_id,region_id):
 
@@ -943,8 +943,8 @@ def GetGraph(request,election_id,region_id):
 
 		demographic_statistics.append( MakeGraphInstance(region.name + ': Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],i+1) )
 
-
-		return render(request, 'admin_interface/pages/statistics/get_graph.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage')), ("Get Graph", None) ], "election":election, "demographic_statistics":demographic_statistics })
+		
+		return render(request, 'admin_interface/pages/statistics/get_graph.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Statistics Homepage", reverse('statistics_homepage'), 'pie-chart'), ("Get Graph", None, 'pie-chart') ], "election":election, "demographic_statistics":demographic_statistics, 'first_name':request.session['forename']  })
 
 
 
@@ -1128,7 +1128,7 @@ def Demographics(request,election_id):
 		election = 	get_object_or_404(Election, id=election_id)	
 		regions = election.regions.all()
 
-		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks')], "election":election,"regions":regions })
+		return render(request, 'admin_interface/pages/statistics/view_demographics.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ('Select Election', reverse('statistics_homepage'), 'pie-chart'), ("Demographics", reverse('election_demographics', kwargs={'election_id': election_id}), 'tasks')], "election":election,"regions":regions, 'first_name': request.session['forename'] })
 
 
 def GetGraph(request,election_id,region_id):
@@ -1187,7 +1187,7 @@ def ResultsSelectElection(request):
 			region = Region.objects.get(id = region_id)
 			elections.append( (region, Election.objects.filter(regions__in=[region], voting_end_date__lte = datetime.date.today()) ) )
 						  
-		return render(request, 'admin_interface/pages/results/results_select_elections.html', {'title': "Election Results - Select Election", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Results - Select Election", '#', 'tasks')], "elections":elections })
+		return render(request, 'admin_interface/pages/results/results_select_elections.html', {'title': "Election Results - Select Election", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Results", None, 'pie-chart'), ("Select Election", None, 'tasks')], "elections":elections, 'first_name': request.session['forename'] })
 
 
 def Results(request,election_id,region_id):
@@ -1206,7 +1206,7 @@ def Results(request,election_id,region_id):
 		graph = MakeGraphInstance(region.name + ': Results for '+region.name,processed_results,1) 
 
 
-		return render(request, 'admin_interface/pages/results/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'),("Results - Select Election", reverse('results_select_election'), 'tasks'), ("Results", '#', 'tasks')], "election":election, "processed_results":processed_results,"graph":graph })
+		return render(request, 'admin_interface/pages/results/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Results", None, 'pie-chart'), ("Select Election", reverse('results_select_election'), 'tasks'), ("Results", None, 'pie-chart')], "election":election, "processed_results":processed_results,"graph":graph, 'first_name': request.session['forename']  })
 
 
 def ProcessResultsFPTP(votes):

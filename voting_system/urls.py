@@ -81,7 +81,6 @@ urlpatterns = [
     url(r'^administration/statistics/$', views.statistics_homepage, name='statistics_homepage'),
     url(r'^administration/statistics/demographics/(?P<election_id>\d+)$', views.Demographics, name='election_demographics'),
     url(r'^administration/statistics/get_graph/(?P<election_id>\d+)/(?P<region_id>\d+)$', views.GetGraph, name='get_graph'),
-    
     url(r'^administration/results/select_election/$', views.ResultsSelectElection, name='results_select_election'),
     url(r'^administration/results/(?P<election_id>\d+)/(?P<region_id>\d+)$', views.Results, name='election_results'),
     

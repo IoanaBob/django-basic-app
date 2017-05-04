@@ -721,7 +721,7 @@ section.election_sec a {
 	color: white;
 }
 .noHover {
-	color: inherit !important;
+	color: #337ab7 !important;
 	text-decoration: inherit !important;
 }
 .expandable li {
