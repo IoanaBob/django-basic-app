@@ -549,7 +549,16 @@ def election_edit(request, id=None):
 
 
 				election = form.save(commit=False)
+
 				election.save()
+
+				selected_regions = request.POST.getlist('region_id')
+				for region in selected_regions:
+					new_region = ElectionRegion()
+					new_region.id = getNextID("election_regions")
+					new_region.election_id = election.id
+					new_region.region_id = region
+					new_region.save()
 
 				'''#check if th
 
@@ -1025,6 +1034,7 @@ def AllVoters(election_id=None,region_id=None):
 	cursor = connections["people"].cursor()
 	cursor.execute("SELECT voter_id,address_postcode from voters ;")
 	voters = cursor.fetchall()
+	print(voters)
 	if(election_id):
 		voters = FilterVotersByElection(voters,election_id)
 
@@ -1067,8 +1077,11 @@ def FilterVotersByElection(voters,election_id):
 	try:
 		election = Election.objects.get(id=election_id)
 		region_names = [region.name for region in election.regions.all()]
+
 		for voter in voters:
+			print(voter)
 			voter_region = PostcodeToRegion(voter[1],election.regions_type)
+			print(voter_region)
 			if(voter_region in region_names):
 				filtered_voters.append(voter)
 
@@ -1124,9 +1137,12 @@ def GetGraph(request,election_id,region_id):
 		return redirect('admin_login')
 	else:
 		election = 	get_object_or_404(Election, id=election_id)	
-		elegible_voters = AllVoters(election_id)
-		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
 		
+		elegible_voters = AllVoters(election_id)
+		print(len(elegible_voters))
+
+		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
+		print(len(registered_voters))
 		
 
 		demographic_statistics = []
