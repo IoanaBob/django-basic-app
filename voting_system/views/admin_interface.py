@@ -529,7 +529,7 @@ def election_create(request):
 				return redirect('election_view')
 		else:
 			form = ElectionForm()
-			regions = Region.objects.all()
+		regions = Region.objects.all()
 	
 		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("Create new Election", reverse('election_create'), 'plus')],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, "roles": GetUserRoles(request.session.get('username'))})
 
