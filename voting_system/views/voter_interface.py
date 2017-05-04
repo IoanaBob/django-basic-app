@@ -162,7 +162,7 @@ def CastElectionSelect(request):
 	user = Verify.objects.get(email = request.session['verify_username'])
 
 	elections = GetAvailableElectionsForUser(user.voter_id, False)
-
+	print(elections)
 	return render(request, 'voter_interface/pages/voting/cast_election_select.html', {"title": "Cast Vote Online - Select Election", "breadcrumb": [ ('Home', "http://www.gov.uk"), ('Elections', None), ('Summary', None) ], 'first_name':request.session['verify_forename'], 'last_name': request.session['verify_surname'], 'elections':elections })
 
 
@@ -428,17 +428,14 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Aberconwy
 
 	elections = []
-	print(region_name_list)
 	if(registering):
 		for region_name in region_name_list:
 			if(not region_name == None):
 				try:
 					region = Region.objects.get(name = region_name)
-					print(region)
 					
 					if(not region == None):
 						# date checking
-						print(Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()))
 						for election in Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()):
 							# check if voter registered for the election
 							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():
@@ -460,7 +457,6 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 								elections.append(election)
 				except:
 					print("Region not found, likely a non created admin_district")
-
 	return elections
 
 

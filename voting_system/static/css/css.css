@@ -691,6 +691,8 @@ section.election_sec a {
 .dashboard-font p {
 	font-size: 16px;
 }
+
+
 #navbar-table {
 	margin-top: -1px;
 }
@@ -704,6 +706,10 @@ section.election_sec a {
 
 #row:hover {
 	border-bottom: 1px solid white;
+}
+
+#logoedit {
+	padding-right: 0;
 }
 
 #txt {

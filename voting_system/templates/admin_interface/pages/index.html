@@ -91,6 +91,19 @@
 				</div>
 			</div>
 		{% endif %}
+
+		{% if 'electoral_officer' in roles %}
+			<div class="dashboard-font col-md-4 col-sm-4">
+				<div class="icon">
+					<i class="fa fa-pie-chart fa-fw low" aria-hidden="true"></i>
+				</div>
+				<div class="dashboard-content">
+					<a href="{% url 'results_select_election' %}"><h3>Results</h3></a>
+					<p>View Election Results</p>
+				</div>
+			</div>
+		{% endif %}
+		
 	</div>
 	
 
