@@ -97,10 +97,16 @@ $(document).ready(function() {
 			name: {
 				required: true
 			},
-			start_date: {
+			voting_start_date: {
 				required: true
 			},
-			end_date: {
+			voting_end_date: {
+				required: true
+			},
+			registration_start_date: {
+				required: true 
+			},
+			registration_end_date: {
 				required: true
 			},
 			region_id: {
@@ -111,11 +117,17 @@ $(document).ready(function() {
 			name: {
 				required: "Please enter an election title"
 			},
-			start_date: {
-				required: "Please enter a start date"
+			voting_start_date: {
+				required: "Please select an election start date"
 			},
-			end_date: {
-				required: "Please enter an end date"
+			voting_end_date: {
+				required: "Please enter the election's end date"
+			},
+			registration_start_date: {
+				required: "Please select the registration start date"
+			},
+			registration_end_date: {
+				required: "Please enter the registration's end date"
 			},
 			region_id: {
 				required: "Please select a region"
