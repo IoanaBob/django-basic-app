@@ -18,10 +18,10 @@ class ElectionForm(forms.ModelForm):
 		model = Election
 		fields = ('id','name', 'voting_start_date','voting_end_date','registration_start_date','registration_end_date', 'election_method',  'region_id' ,'regions_type' )
 		widgets = {
-			'voting_start_date':  forms.DateTimeInput(),
-			'voting_end_date':  forms.DateTimeInput(),
-			'registration_start_date': forms.DateTimeInput(),
-			'registration_end_date': forms.DateTimeInput(),
+			'voting_start_date':  forms.DateTimeInput(format='%d-%m-%Y %H:%M'),
+			'voting_end_date':  forms.DateTimeInput(format='%d-%m-%Y %H:%M'),
+			'registration_start_date': forms.DateTimeInput(format='%m-%d-%Y %H:%M'),
+			'registration_end_date': forms.DateTimeInput(format='%m-%d-%Y %H:%M'),
 			
 		 }
 		labels = {
