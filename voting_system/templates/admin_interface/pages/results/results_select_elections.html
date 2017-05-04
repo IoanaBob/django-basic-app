@@ -1,0 +1,48 @@
+{% extends 'admin_interface/base.html' %}
+
+{% block content %}
+
+    <style>
+        tr,td
+        {
+            padding-right: 20px;
+        }
+    </style>
+
+    
+    <h1><b>Election Results - Select Election</b></h1>
+    <hr>
+
+    
+    <h2><b>Available Elections</b></h2>
+    
+    {% if elections %}
+        {% for region in elections %}
+            
+            <h3>Region: {{ region.0.name }}</h3>
+            <ul class="list-group expandable">
+                {% for election in region.1 %}
+                    <li class="list-group-item"> <a href="{% url 'election_results' election.id region.0.id%}" >{{ election.name }} </a></li>
+                {% endfor %}
+                
+            </ul>
+        {% endfor %}
+    {% endif %}
+
+   
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        if( $('.expandable li').length > 3)
+            $('<button class="btn btn-success" role="button" id="expandList">View All Avilable Elections</button>').insertAfter('.expandable');
+
+        
+        $('#expandList').on('click', function(e) {
+            e.preventDefault();
+            $('.expandable').toggleClass('expanded');
+            $(this).text(( $(this).text() == "View All Avilable Elections") ? "Hide Elections" : "View All Avilable Elections" );
+        });
+    });
+    </script>
+{% endblock %}

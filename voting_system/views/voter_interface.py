@@ -428,17 +428,14 @@ def GetAvailableElectionsForUser(voter_id,registering=True):
 	#Aberconwy
 
 	elections = []
-	print(region_name_list)
 	if(registering):
 		for region_name in region_name_list:
 			if(not region_name == None):
 				try:
 					region = Region.objects.get(name = region_name)
-					print(region)
 					
 					if(not region == None):
 						# date checking
-						print(Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()))
 						for election in Election.objects.filter(regions__in=[region], registration_end_date__gte = datetime.date.today(), registration_start_date__lte = datetime.date.today()):
 							# check if voter registered for the election
 							if not VoterCode.objects.filter(voter_id = voter_id, election_id = election.id).exists():

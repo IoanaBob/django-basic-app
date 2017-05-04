@@ -1169,6 +1169,27 @@ def GetGraph(request,election_id,region_id):
 		return render(request, 'admin_interface/pages/statistics/get_graph.html', {'title': "Election Demographics Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks')], "election":election, "demographic_statistics":demographic_statistics })
 
 
+def ResultsSelectElection(request):
+	authorised,username = CheckAuthorisation(request,True,[('electoral_officer',)])
+	if(not authorised):
+		messages.error(request, "Access Denied. You do not have sufficient privileges.")
+		return redirect('admin_login')
+	else:
+		region_roles = GetUserRoles(username)
+		
+		region_ids = [int(role.replace("officer_region_","")) for role in region_roles if "officer_region_" in role]
+
+		print(region_ids)
+
+		elections = []
+
+		for region_id in region_ids:
+			region = Region.objects.get(id = region_id)
+			elections.append( (region, Election.objects.filter(regions__in=[region], voting_end_date__lte = datetime.date.today()) ) )
+						  
+		return render(request, 'admin_interface/pages/results/results_select_elections.html', {'title': "Election Results - Select Election", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Results - Select Election", '#', 'tasks')], "elections":elections })
+
+
 def Results(request,election_id,region_id):
 	authorised,username = CheckAuthorisation(request,True,[('electoral_officer',)])
 	if(not authorised):
@@ -1185,7 +1206,7 @@ def Results(request,election_id,region_id):
 		graph = MakeGraphInstance(region.name + ': Results for '+region.name,processed_results,1) 
 
 
-		return render(request, 'admin_interface/pages/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks')], "election":election, "processed_results":processed_results,"graph":graph })
+		return render(request, 'admin_interface/pages/results/results.html', {'title': "Election Results", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'),("Results - Select Election", reverse('results_select_election'), 'tasks'), ("Results", '#', 'tasks')], "election":election, "processed_results":processed_results,"graph":graph })
 
 
 def ProcessResultsFPTP(votes):
