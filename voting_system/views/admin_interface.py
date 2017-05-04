@@ -25,6 +25,7 @@ from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
+		print(GetUserRoles(request.session.get('username')))
 		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		return redirect('admin_login')
@@ -119,7 +120,7 @@ def admin_edit(request, id =None): #editing a specific admin
 					if admin_password_check(request.POST.get('current_password'), admin_init.password_hash):
 						if 'password' not in request.POST:
 							messages.error(request, "New password field is empty.")
-							return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
+							return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 						else:
 
 							if(request.POST.get('password') != request.POST.get('repeatPassword')):
@@ -130,7 +131,7 @@ def admin_edit(request, id =None): #editing a specific admin
 							 
 					else:
 						messages.error(request, "Current Password Does not match our records")
-						return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
+						return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 				
 				admin.save()
 				# Dirty way... 
@@ -150,7 +151,7 @@ def admin_edit(request, id =None): #editing a specific admin
 		else:
 			form = AdminForm(instance=admin_init)
 			
-		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Admin Edit" , 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
+		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Admin Edit" , 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
 
 
 def admin_create(request):#creates an admin

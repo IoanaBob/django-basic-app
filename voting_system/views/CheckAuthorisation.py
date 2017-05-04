@@ -29,5 +29,7 @@ def CheckAuthorisation(request, require_login=True, required_roles = []):
 def GetUserRoles(username):
 	admin = Admin.objects.get(user_name = username)
 	role_current = AdminRole.objects.filter(admin_id = admin.id).values_list("role_id", flat=True)
-	roles = [role.name for role in Role.objects.all()]
+	role_name = []
+	roles = [role.name for role in admin.roles.all()]
+	
 	return roles
