@@ -1,5 +1,7 @@
 {% extends 'admin_interface/base.html' %} {% load staticfiles %} {% block content %}
-<link rel="stylesheet" href="{% static 'css/select2.min.css' %}"> {% if not election %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+<link rel='stylesheet' type='text/css' href='https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css'/>
+{% if not election %}
 
 <h1>New Election</h1> {% else %}
 <h1>Edit Election</h1> {% endif %} {% if candidates %}
@@ -20,6 +22,10 @@
 
 {% endblock %}
 {% block js %}
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="{% static 'js/timepicker.js' %}"></script>
+<script src="{% static 'js/admin/adminvalidation.js' %}"></script>
 <script src="{% static 'js/select2.full.min.js' %}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -33,6 +39,15 @@
         $("#region_selectAll").click(function(a) {
             a.preventDefault(), "false" == $("#region_selectAll").attr("data-clicked") ? ($("select#id_region_id option").attr("selected", !0).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "true"), $("#region_selectAll").text("Deselect All Regions")) : ($("select#id_region_id option").attr("selected", !1).parent().trigger("change"), $("#region_selectAll").attr("data-clicked", "false"), $("#region_selectAll").text("Select All Regions"))
         });
+        var vsd = new Date(Date.parse( $("#id_voting_start_date").val()));
+        var ved = new Date(Date.parse( $("#id_voting_end_date").val()));
+        var rsd = new Date(Date.parse( $("#id_registration_start_date").val()));
+        var red = new Date(Date.parse( $("#id_registration_end_date").val()));
+       
+        $("#id_voting_start_date").datetimepicker({dateFormat: 'dd-mm-yy', hour: vsd.getHours(), minute: vsd.getMinutes()});
+        $("#id_voting_end_date").datetimepicker({dateFormat: 'dd-mm-yy', hour: ved.getHours(), minute: ved.getMinutes()});
+        $("#id_registration_start_date").datetimepicker({dateFormat: 'dd-mm-yy', hour: rsd.getHours(), minute: rsd.getMinutes()});
+        $("#id_registration_end_date").datetimepicker({dateFormat: 'dd-mm-yy',hour: red.getHours(), minute: red.getMinutes()});
     });
 </script>
 
