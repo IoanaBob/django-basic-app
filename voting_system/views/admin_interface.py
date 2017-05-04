@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password as admin_password_check
 from voting_system.forms import *
-from voting_system.views.CheckAuthorisation import CheckAuthorisation
+from voting_system.views.CheckAuthorisation import CheckAuthorisation, GetUserRoles
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -25,7 +25,7 @@ from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
-		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home')], 'first_name': request.session['forename']})
+		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		return redirect('admin_login')
 
@@ -84,7 +84,7 @@ def admin_view(request, page_id=1): #list of all admins
 			admins = paginator.page(1)
 		except EmptyPage:
 			admins = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ('View',  reverse('admin_view'), 'list')],  'first_name':request.session['forename'], 'admins': admins})
+		return render(request, 'admin_interface/pages/admin/view.html', {'title': "View Admins", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ('View',  reverse('admin_view'), 'list')],  'first_name':request.session['forename'], 'admins': admins, "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_homepage')
@@ -93,7 +93,8 @@ def admin_view(request, page_id=1): #list of all admins
 def admins_homepage(request): #page with link to admin list and creating an admin (maybe this page isn't required??)
 	authorised,username = CheckAuthorisation(request,True,[('admin',)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/admin/index.html', {'title': 'Admin Homepage','breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user')], 'first_name': request.session['forename']})
+		print(GetUserRoles(request.session.get('username')))
+		return render(request, 'admin_interface/pages/admin/index.html', {'title': 'Admin Homepage','breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		return redirect('admin_login')
 
@@ -118,7 +119,7 @@ def admin_edit(request, id =None): #editing a specific admin
 					if admin_password_check(request.POST.get('current_password'), admin_init.password_hash):
 						if 'password' not in request.POST:
 							messages.error(request, "New password field is empty.")
-							return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
+							return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 						else:
 
 							if(request.POST.get('password') != request.POST.get('repeatPassword')):
@@ -129,7 +130,7 @@ def admin_edit(request, id =None): #editing a specific admin
 							 
 					else:
 						messages.error(request, "Current Password Does not match our records")
-						return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
+						return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Edit Admin", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 				
 				admin.save()
 				# Dirty way... 
@@ -149,7 +150,7 @@ def admin_edit(request, id =None): #editing a specific admin
 		else:
 			form = AdminForm(instance=admin_init)
 			
-		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Admin Edit" , 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/admin/form.html', {'form': form, 'title': "Admin Edit" , 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user'), ("Edit Admin", reverse('admin_edit', kwargs={'id':id}), 'pencil')], 'roles': roles, 'current_roles': role_current,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 
 
 def admin_create(request):#creates an admin
@@ -209,7 +210,7 @@ def voter_code_homepage(request): #not sure we need these home pages??
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
 	else:
-		return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card')], 'first_name': request.session['forename']})
+		return render(request, 'admin_interface/pages/codes/index.html', {'title': "Voter Code Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 
 
 def voter_code_view(request, page_id=1, id=None, election_id=None, sort=None):
@@ -318,7 +319,7 @@ def voter_code_print_unissued(request):
 				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter( Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).exists():
 					elections.append(elec)
 			
-			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card'), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections})
+			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card'), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections, "roles": GetUserRoles(request.session.get('username'))})
 
 
 	return True
@@ -356,7 +357,7 @@ def candidate_homepage(request):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
 	else:
-		return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user')], 'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/candidates/index.html', {"title": "Candidates Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user')], 'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 
 
 def candidate_view(request, page_id=1):
@@ -374,7 +375,7 @@ def candidate_view(request, page_id=1):
 		except EmptyPage:
 			candidates = paginator.page(paginator.num_pages)
 		
-		return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user'), ("View Candidates", reverse('candidate_view'), 'list')], 'candidates':candidates,  'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/candidates/view.html', {'title': "View Candidates", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user'), ("View Candidates", reverse('candidate_view'), 'list')], 'candidates':candidates,  'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 
 
 def candidate_create(request):
@@ -400,7 +401,7 @@ def candidate_create(request):
 		else:
 			regions = Region.objects.all()
 			form = CandidateForm()
-			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user'), ("Create new Candidate", reverse('candidate_create'), 'plus')],  'first_name':request.session['forename'], 'form': form, 'regions': regions })
+			return render(request, 'admin_interface/pages/candidates/form.html', {"title": "Create Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user'), ("Create new Candidate", reverse('candidate_create'), 'plus')],  'first_name':request.session['forename'], 'form': form, 'regions': regions, "roles": GetUserRoles(request.session.get('username')) })
 
 
 def candidate_edit(request, id=None):
@@ -428,7 +429,7 @@ def candidate_edit(request, id=None):
 			form.fields['region_id'].initial = candidate.region_id
 
 		return render(request, 'admin_interface/pages/candidates/form.html', { "title": "Edit Candidate", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Candidate Homepage", reverse('candidate_homepage'), 'user'), ("Edit Candidate", reverse('candidate_edit',kwargs={'id':id}), 'pencil')], 'first_name':request.session['forename'], 'form': form
-		})
+		, "roles": GetUserRoles(request.session.get('username'))})
 
 
 def candidate_delete(request, id=None):
@@ -455,7 +456,7 @@ def election_homepage(request):
 		return redirect('admin_login')
 	else:		
 		elections = Election.objects.all()
-		return render(request, 'admin_interface/pages/elections/index.html', {"title": 'Election Homepage', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o')],'first_name':request.session['forename'], 'elections': elections })
+		return render(request, 'admin_interface/pages/elections/index.html', {"title": 'Election Homepage', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o')],'first_name':request.session['forename'], 'elections': elections, "roles": GetUserRoles(request.session.get('username')) })
 	
 
 def election_view(request, page_id=None):
@@ -472,7 +473,7 @@ def election_view(request, page_id=None):
 			elections = paginator.page(1)
 		except EmptyPage:
 			elections = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("View Elections", reverse('election_view'), 'list')],'first_name':request.session['forename'], 'elections': elections})
+		return render(request, 'admin_interface/pages/elections/view.html', {'title': "View Elections", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("View Elections", reverse('election_view'), 'list')],'first_name':request.session['forename'], 'elections': elections, "roles": GetUserRoles(request.session.get('username'))})
 	
 
 def election_create(request):
@@ -529,7 +530,7 @@ def election_create(request):
 			form = ElectionForm()
 			regions = Region.objects.all()
 	
-		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("Create new Election", reverse('election_create'), 'plus')],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates})
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Create Election', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("Create new Election", reverse('election_create'), 'plus')],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, "roles": GetUserRoles(request.session.get('username'))})
 
 
 def election_edit(request, id=None):
@@ -612,7 +613,7 @@ def election_edit(request, id=None):
 			form = ElectionForm(instance=election)
 		candidates = Candidate.objects.all()
 		regions = Region.objects.all()
-		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Edit Election', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("Edit Election", reverse('election_edit',kwargs={'id':id}), 'pencil')],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current })
+		return render(request, 'admin_interface/pages/elections/form.html', {'title': 'Edit Election', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Election Homepage", reverse('election_homepage'), 'file-text-o'), ("Edit Election", reverse('election_edit',kwargs={'id':id}), 'pencil')],'first_name': request.session['forename'], 'form': form, 'regions': regions,'candidates': candidates, 'current_candidates': candidates_current,'current_regions':region_current , "roles": GetUserRoles(request.session.get('username'))})
 
 
 def election_delete(request, id=None):
@@ -637,7 +638,7 @@ def role_homepage(request):
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_login')
 	else:		
-		return render(request, 'admin_interface/pages/roles/index.html', {'title': "Roles Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks')], 'first_name':request.session['forename'] })
+		return render(request, 'admin_interface/pages/roles/index.html', {'title': "Roles Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks')], 'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username')) })
 
 
 def role_view(request, page_id=1):
@@ -655,7 +656,7 @@ def role_view(request, page_id=1):
 		except EmptyPage:
 			roles = paginator.page(paginator.num_pages)
 		
-		return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks'), ("View Role", reverse('role_view'), 'list')], 'first_name':request.session['forename'], 'roles': roles})
+		return render(request, 'admin_interface/pages/roles/view.html', {'title': "View Roles", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Roles Homepage", reverse('role_homepage'), 'tasks'), ("View Role", reverse('role_view'), 'list')], 'first_name':request.session['forename'], 'roles': roles, "adminRoles": GetUserRoles(request.session.get('username'))})
 	
 
 def role_create(request):
@@ -717,7 +718,7 @@ def role_delete(request, id=None):
 def party_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[("party",)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/parties/index.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Parties Homepage", reverse('party_homepage'), 'users')], 'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/parties/index.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Parties Homepage", reverse('party_homepage'), 'users')], 'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
@@ -734,7 +735,7 @@ def party_view(request, page_id=None):
 			parties = paginator.page(1)
 		except EmptyPage:
 			parties = paginator.page(paginator.num_pages)
-		return render(request, 'admin_interface/pages/parties/view.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Parties Homepage", reverse('party_homepage'), 'users'),("View all Parties", reverse('party_view'), 'list')], 'first_name':request.session['forename'], 'parties': parties,})
+		return render(request, 'admin_interface/pages/parties/view.html', {'title': "Party Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Parties Homepage", reverse('party_homepage'), 'users'),("View all Parties", reverse('party_view'), 'list')], 'first_name':request.session['forename'], 'parties': parties, "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('party_homepage')
@@ -798,7 +799,7 @@ def party_edit(request, id=None):
 def region_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[("region",)])
 	if(authorised):
-		return render(request, 'admin_interface/pages/regions/index.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Region Homepage", reverse('region_homepage'), 'map-marker')], 'first_name':request.session['forename']})
+		return render(request, 'admin_interface/pages/regions/index.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Region Homepage", reverse('region_homepage'), 'map-marker')], 'first_name':request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('admin_master_homepage')
@@ -817,7 +818,7 @@ def region_view(request, page_id=None):
 		except EmptyPage:
 			regions = paginator.page(paginator.num_pages)
 
-		return render(request, 'admin_interface/pages/regions/view.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Region Homepage", reverse('region_homepage'), 'map-marker'), ("View Regions", reverse('region_view'), 'list')], 'first_name':request.session['forename'], 'regions': regions})
+		return render(request, 'admin_interface/pages/regions/view.html', {'title': "Regions Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Region Homepage", reverse('region_homepage'), 'map-marker'), ("View Regions", reverse('region_view'), 'list')], 'first_name':request.session['forename'], 'regions': regions, "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		messages.error(request, "Access Denied. You do not have sufficient privileges.")
 		return redirect('region_homepage')
@@ -1185,9 +1186,3 @@ def ProcessResultsFPTP(votes):
 		processed_results.append( [candidate.last_name+","+candidate.first_name,value] )
 
 	return processed_results
-
-
-
-
-
-
