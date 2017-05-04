@@ -202,11 +202,11 @@ input[type="password"]:after {
 	padding-top: 10px
 }
 
-.navbar-inverse .navbar-brand:hover,
+/*.navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus,
 .navbar-inverse .navbar-brand > img {
 	text-decoration: underline
-}
+}*/
 
 /*FOR PHONE DEVICES */
 @media (max-width: 667px) {
@@ -480,11 +480,11 @@ span {
 	padding-top: 10px
 }
 
-.navbar-inverse .navbar-brand:hover,
+/*.navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus,
 .navbar-inverse .navbar-brand > img {
 	text-decoration: underline
-}
+}*/
 
 /*FOR PHONE DEVICES */
 @media (max-width: 667px) {
@@ -632,7 +632,7 @@ section.election_sec a {
 .center {
 	text-align: center;
 }
-S
+
 /*Craig's CSS*/
 .election-font {
 	font-size: 16px
@@ -642,9 +642,43 @@ S
 	text-decoration: none;
 	color: white;
 }
-.dashboard-font {
-	position: relative;
-	min-height: 125px;
+
+
+@media screen and (max-width: 700px) {
+	.dashboard-font {
+		position: relative;
+		min-height: 125px;
+		display: block;
+		float: none !important;
+		width: 100% !important;
+		vertical-align: top;
+
+	}
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-md-4,
+	.dashboard-font.col-sm-4 {
+		width: 100% !important
+	}
+	
+}
+@media screen and (min-width: 700px) {
+	.dashboard-font {
+		position: relative;
+		min-height: 125px;
+		float: none !important;
+		display: inline-block;
+		vertical-align: top;
+
+	}
+	.dashboard-font.col-md-4,
+	.dashboard-font.col-sm-4 {
+		width: 30% !important
+	}
+	.dashboard-font.col-md-6,
+	.dashboard-font.col-sm-6 {
+		width: 49% !important
+	}
 }
 
 .dashboard-font h3 {
@@ -657,7 +691,29 @@ S
 .dashboard-font p {
 	font-size: 16px;
 }
+#navbar-table {
+	margin-top: -1px;
+}
 
+#row {
+	display: block;
+	font-family: arial;
+	font-size: 18px;
+	padding-bottom: 1px;
+}
+
+#row:hover {
+	border-bottom: 1px solid white;
+}
+
+#txt {
+  	vertical-align: middle;
+  	padding-left: 5px;
+  	font-size: 30px; /*match gov website CA */
+  	font-weight: bold;
+  	padding-top: 3px;
+	color: white;
+}
 .noHover {
 	color: inherit !important;
 	text-decoration: inherit !important;
@@ -710,4 +766,5 @@ p.dashboard-item p,
 }
 p.dashboard-item {
 	min-height: 44px;
+
 }

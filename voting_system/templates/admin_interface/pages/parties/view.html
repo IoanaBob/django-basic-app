@@ -22,10 +22,10 @@
                     {{ party.name }}
                     </td>
                     <td>
-                        <a href="{% url 'party_edit' id=party.id %}" class="btn btn-success">Edit</a>
+                        <a href="{% url 'party_edit' id=party.id %}" class="btn btn-success {% if 'party__edit' not in roles %}disabled{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
                     </td>
                     <td>
-                        <a href="{% url 'party_delete' id=party.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'party_delete' id=party.id %}" class="btn btn-danger {% if 'party__delete' not in roles %}disabled{% endif %}"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
                     </td>
                     
                 </tr>
@@ -58,6 +58,6 @@
 {% endif %}
 <br>
 <h2><b>Actions</b></h2>
-<a href="{% url 'party_create' %}" class="btn btn-success">Create</a>
+<a href="{% url 'party_create' %}" class="btn btn-success {% if 'party__create' not in roles %}disabled{% endif %}"><i class="fa fa-plus" aria-hidden="true"></i> Create</a>
 
 {% endblock %}

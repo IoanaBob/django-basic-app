@@ -31,10 +31,10 @@
                     {{ election.voting_end_date }}
                     </td>
                     <td>
-                        <a href="{% url 'election_edit' id=election.id %}" class="btn btn-success">Edit</a>
+                        <a href="{% url 'election_edit' id=election.id %}" class="btn btn-success {% if 'elections__edit' not in roles %}disabled{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
                     </td>
                     <td>
-                        <a href="{% url 'election_delete' id=election.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'election_delete' id=election.id %}" class="btn btn-danger {% if 'elections__delete' not in roles %}disabled{% endif %}"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -66,6 +66,6 @@
 {% endif %}
 
 <h2><b>Actions</b></h2>
-<a href="{% url 'election_create' %}" class="btn btn-success">Create</a>
+<a href="{% url 'election_create' %}" class="btn btn-success {% if 'elections__create' not in roles %}disabled{% endif %}"><i class="fa fa-plus" aria-hidden="true"></i> Create</a>
 
 {% endblock %}

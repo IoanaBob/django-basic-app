@@ -35,10 +35,10 @@
         </td>
 
         <td>
-          <a href="{% url 'admin_edit' id=admin.id %}" class="btn btn-success">edit</a>
+          <a href="{% url 'admin_edit' id=admin.id %}" class="btn btn-success {% if 'admin__edit' not in roles %}disabled{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
         </td>
         <td>
-          <a href="{% url 'admin_delete' id=admin.id %}" class="btn btn-danger">delete</a>
+          <a href="{% url 'admin_delete' id=admin.id %}" class="btn btn-danger {% if 'admin__delete' not in roles %}disabled{% endif %}"><i class="fa fa-times" aria-hidden="true"></i> Delete</a>
         </td>
     </tr>
     {% endfor %}
@@ -67,6 +67,6 @@
       </ul>
   {% endif %}
   <h2><b>Actions</b></h2>
-  <a href="{% url 'admin_create'%}" class="btn btn-success">Create</a>
+  <a href="{% url 'admin_create'%}" class="btn btn-success {% if 'admin__create' not in roles %}disabled{% endif %}"><i class="fa fa-plus" aria-hidden="true"></i> Create</a>
 
 {% endblock %}
