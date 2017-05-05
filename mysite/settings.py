@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!(%e(7zo4+kan(h!eb%yt3&r_2#p&jf=43&$m1xfqrd0n591(v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 PAGINATION_LENGTH = 25
 ALLOWED_HOSTS = ["*"]
 
