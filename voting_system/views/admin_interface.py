@@ -318,7 +318,7 @@ def voter_code_print_unissued(request):
 				if VoterCode.objects.all().filter(election_id=elec.id).filter(sent_status = False).filter( Q(invalidated_date__isnull = True) | Q(invalidated_date__gte = datetime.date.today())).exists():
 					elections.append(elec)
 			
-			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card'), ("Print Unissued", reverse('voter_code_print_unissued'))], 'first_name': request.session['forename'], "elections": elections, "roles": GetUserRoles(request.session.get('username'))})
+			return render(request, 'admin_interface/pages/codes/unissued.html', {'title': 'Print Unissued voter codes', 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Voter Codes Homepage", reverse('voter_code_homepage'), 'address-card'), ("Print Unissued", reverse('voter_code_print_unissued'), 'print')], 'first_name': request.session['forename'], "elections": elections, "roles": GetUserRoles(request.session.get('username'))})
 
 
 	return True

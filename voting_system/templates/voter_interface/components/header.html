@@ -38,25 +38,14 @@
     <div class="container">
         <ol class="breadcrumb">
            {% for item in breadcrumb %}
-                {% if forloop.first %}
-                    <li class="breadcrumb-item">
-                        {% ifequal item.1  None %}
-                            <a class="noHover"><i class="fa fa-home fa-fw" aria-hidden="true"></i>{{ item.0 }}</a>
-                        
-                        {% else %}
-                            <a href="{{ item.1 }}"><i class="fa fa-home fa-fw" aria-hidden="true"></i>{{ item.0 }}</a></li>
-                        {% endifequal %}
-                    </li>
-                {% else %}
-                    <li class="breadcrumb-item">
-                        {% ifequal item.1  None %}
-                            <a class="noHover">{{ item.0 }}</a>
-                        
-                        {% else %}
-                            <a href="{{ item.1 }}">{{ item.0 }}</a></li>
-                        {% endifequal %}
-                    </li>
-                {% endif %}
+               <li class="breadcrumb-item">
+                    {% ifequal item.1  None %}
+                        <a class="noHover"><i class="fa fa-{{ item.2 }}" aria-hidden="true"></i> {{ item.0 }}</a>
+                    
+                    {% else %}
+                        <a href="{{ item.1 }}"><i class="fa fa-{{ item.2 }}" aria-hidden="true"></i> {{ item.0 }}</a></li>
+                    {% endifequal %}
+                </li>
             {% endfor %}
         </ol>
     </div>
