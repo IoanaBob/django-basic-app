@@ -25,7 +25,6 @@ from voting_system.views.voter_interface import PostcodeToRegion
 def admin_master_homepage(request):
 	authorised,username = CheckAuthorisation(request,True,[])
 	if(authorised):
-		print(GetUserRoles(request.session.get('username')))
 		return render(request, 'admin_interface/pages/index.html', {'title': "Homepage", 'breadcrumb': [("Home", reverse('admin_master_homepage'), 'home')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		return redirect('admin_login')
@@ -94,7 +93,6 @@ def admin_view(request, page_id=1): #list of all admins
 def admins_homepage(request): #page with link to admin list and creating an admin (maybe this page isn't required??)
 	authorised,username = CheckAuthorisation(request,True,[('admin',)])
 	if(authorised):
-		print(GetUserRoles(request.session.get('username')))
 		return render(request, 'admin_interface/pages/admin/index.html', {'title': 'Admin Homepage','breadcrumb': [("Home", reverse('admin_master_homepage'), 'home'), ("Admin Homepage", reverse('admin_homepage'), 'user')], 'first_name': request.session['forename'], "roles": GetUserRoles(request.session.get('username'))})
 	else:
 		return redirect('admin_login')

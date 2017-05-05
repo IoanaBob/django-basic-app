@@ -13,10 +13,10 @@ class ElectionForm(forms.ModelForm):
 	election_method = forms.ChoiceField(label='Election Method', choices=( ('fptp', 'First Past the Post'), ('stv','Single Transferable Vote')), widget=forms.Select(attrs={'style':'background_color:#F5F8EC;', 'class': 'js-example-basic-single'}))
 	regions_type = forms.ChoiceField(label='Regions Type', choices=( ('admin_district', 'Admin District'), ('parliamentary_constituency','Parliamentary Constituency'), ('european_electoral_region','European Electoral Region'),('admin_ward','Admin Ward')), widget=forms.Select(attrs={'style':'background_color:#F5F8EC;', 'class': 'js-example-basic-single'}))
 	region_id = UserModelChoiceField(required=True, label="Regions",empty_label=None, queryset=(Region.objects.only('id', 'name')), widget=forms.Select(attrs={'name':'regions[]', 'style':'background_color:#F5F8EC; ', 'multiple':'multiple', 'class': 'js-example-basic-multiple'}))
-	voting_start_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M'] )
-	voting_end_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M'] )
+	voting_start_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M', '%m-%d-%Y %H:%M'] )
+	voting_end_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M', '%m-%d-%Y %H:%M'] )
 	registration_start_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M', '%m-%d-%Y %H:%M'] )
-	registration_end_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M'] )
+	registration_end_date = forms.DateTimeField(required=True, input_formats=['%d-%m-%Y %H:%M', '%m-%d-%Y %H:%M'] )
 	class Meta:
 		model = Election
 		fields = ('id','name', 'voting_start_date','voting_end_date','registration_start_date', 'registration_end_date', 'election_method',  'region_id' ,'regions_type' )

@@ -680,7 +680,7 @@ section.election_sec a {
 		width: 49% !important
 	}
 }
-
+.dashboard-content
 .dashboard-font h3 {
 	text-decoration: underline;
 	font-weight: bold;
@@ -747,12 +747,7 @@ section.election_sec a {
 .dashboard-content:hover + .icon .fa {
 	color: #005EAC;
 }
-.dashboard-font .fa.large {
-    margin-top: -20px;
-}
-.dashboard-font .fa.low {
-	margin-top: 20px;
-}
+
 p.dashboard-item p,
 .dashboard-item h3,
 .dashboard-font .icon {
@@ -762,13 +757,14 @@ p.dashboard-item p,
  .dashboard-font .icon {
 	display: inline-block;
 	height: 62.5px;
-	margin-top: 0;
+	margin-top: 20px;
+	width: 80px;
 }
 .dashboard-content {
 	display: inline-block;
-	width: calc( 100% - 80px);
-	margin-left: 70px;
+	width: calc( 100% - 84px);
 	min-height: 125px;
+	vertical-align: top;
 }
 p.dashboard-item {
 	min-height: 44px;
