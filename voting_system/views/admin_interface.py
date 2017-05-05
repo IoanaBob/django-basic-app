@@ -1139,10 +1139,8 @@ def GetGraph(request,election_id,region_id):
 		election = 	get_object_or_404(Election, id=election_id)	
 		
 		elegible_voters = AllVoters(election_id)
-		print(len(elegible_voters))
-
+		
 		registered_voters = FilterVotersByRegistered(elegible_voters,election_id)
-		print(len(registered_voters))
 		
 
 		demographic_statistics = []
@@ -1157,9 +1155,12 @@ def GetGraph(request,election_id,region_id):
 
 		region_elegible_voters = FilterVotersByRegion(elegible_voters,region.name,election.regions_type)
 		elegible_voters_count = len(region_elegible_voters)
+		print(elegible_voters_count)
 
 		region_registered_voters = FilterVotersByRegistered(region_elegible_voters,election_id)
 		registered_voters_count = len(region_registered_voters)
+		print(region_registered_voters)
+
 
 		demographic_statistics.append( MakeGraphInstance(region.name + ': Eligible Voters who Registered Online',[['Did not Register Online',elegible_voters_count-registered_voters_count],['Registered Online',registered_voters_count]],i+1) )
 
